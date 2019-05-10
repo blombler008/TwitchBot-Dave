@@ -32,7 +32,9 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class WebListener extends Thread {
 
@@ -43,6 +45,7 @@ public class WebListener extends Thread {
     private String preLine;
     private Timeout timeout;
     private Socket client;
+    public static List<String> sites = new ArrayList<>();
 
 
     public WebListener(String prefix, Socket client, String name) throws IOException {
@@ -77,102 +80,94 @@ public class WebListener extends Thread {
                     got = line.split("\\s+");
                     if(got.length > 2 && got[0].equalsIgnoreCase("get")) {
                         StringBuilder output = new StringBuilder();
-                        String s1 = got[1];
 
-                        if(s1.equalsIgnoreCase("/json")) {
-                            File json = new File("json/index.json");
-                            StringBuilder stringBuilder = new StringBuilder();
-                            BufferedReader bf = new BufferedReader(new FileReader(json));
-                            String vLine = "";
+                        String s1 = got[1].replaceFirst(Strings.URL_PATH_SEPARATOR, "");
+                        String [] paths = s1.split(Strings.URL_PATH_SEPARATOR);
+                        File index = null;
 
-                            while((vLine = bf.readLine()) != null) {
-                                stringBuilder.append(vLine);
+                        output.append(Strings.HTML_HTTP_11_200_OK);
+                        output.append(Strings.HTML_CONNECTION_CLOSE);
+
+                        if(sideExists(s1)) {
+                            if(paths[0].equalsIgnoreCase("json")) {
+                                index = handleJSON(paths);
                             }
 
-                            String b = stringBuilder.toString();
-
-                            output.append(Strings.HTML_HTTP_11_200_OK);
-                            output.append(Strings.HTML_CONNECTION_CLOSE);
-                            output.append(Strings.HTML_CONTENT_APPLICATION_JSON);
-                            output.append(Strings.HTML_CONTENT_LENGTH);
-                            output.append(b.length());
-                            output.append(Strings.HTML_END_OF_HEADERS);
-                            output.append(b);
-                        }
-
-                        if(s1.equalsIgnoreCase("/main.js")) {
-                            File index = new File("html/main.js");
-                            StringBuilder stringBuilder = new StringBuilder();
-                            BufferedReader bf = new BufferedReader(new FileReader(index));
-                            String vLine = "";
-
-                            while((vLine = bf.readLine()) != null) {
-                                stringBuilder.append(vLine);
+                            if(s1.equalsIgnoreCase("favicon.ico")) {
+                                handleFavicon();
+                                continue;
                             }
 
-                            String b = stringBuilder.toString();
-
-                            output.append(Strings.HTML_HTTP_11_200_OK);
-                            output.append(Strings.HTML_CONNECTION_CLOSE);
-                            output.append(Strings.HTML_CONTENT_TEXT_JAVASCRIPT);
-                            output.append(Strings.HTML_CONTENT_LENGTH);
-                            output.append(b.length());
-                            output.append(Strings.HTML_END_OF_HEADERS);
-                            output.append(b);
-                        }
-
-                        if(s1.equalsIgnoreCase("/favicon.ico")) {
-                            BufferedImage image = ImageIO.read(new File("favicon.png"));
-                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                            ImageIO.write(image, "png", stream);
-
-                            output.append(Strings.HTML_HTTP_11_200_OK);
-                            output.append(Strings.HTML_CONNECTION_CLOSE);
-                            output.append(Strings.HTML_CONTENT_IMAGE_PNG);
-                            output.append(Strings.HTML_CONTENT_LENGTH);
-                            output.append(stream.toByteArray().length);
-                            output.append(Strings.HTML_END_OF_HEADERS);
-                            webOutWriter.write(output.toString());
-                            webOutWriter.flush();
-                            webOut.write(stream.toByteArray());
-                            webOut.flush();
-                            continue;
-                            /*
-                            byte[] bytes = Files.readAllBytes(Paths.get("favicon.png"));
-                            output = Strings.OUTPUT_HEADERS_IMAGE + bytes.length + Strings.HTML_END_OF_HEADERS+ new String(bytes);*/
-                        }
-
-                        if(s1.equalsIgnoreCase("/")) {
-                            BufferedImage image = ImageIO.read(new File("favicon.png"));
-                            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-                            ImageIO.write(image, "png", outputStream);
-                            String encodedImage = Base64.encode(outputStream.toByteArray());
-                            File index = new File("html/index.html");
-                            StringBuilder stringBuilder = new StringBuilder();
-                            BufferedReader bf = new BufferedReader(new FileReader(index));
-                            String vLine = "";
-
-                            while((vLine = bf.readLine()) != null) {
-                                stringBuilder.append(vLine);
+                            if(s1.equalsIgnoreCase("")) {
+                                handleRoot();
+                                continue;
                             }
 
-                            String b = stringBuilder.toString();
-                            b = b.replaceAll("%favicon%", encodedImage);
+                        } else {
+                            if (s1.contains(".")) {
+                                String extension = null;
+                                for (String sx : paths) {
+                                    if (sx.contains(".")) {
+                                        extension = sx.substring(sx.lastIndexOf(".") + 1);
+                                        break;
+                                    }
+                                }
 
-                            output.append(Strings.HTML_HTTP_11_200_OK);
-                            output.append(Strings.HTML_CONNECTION_CLOSE);
-                            output.append(Strings.HTML_CONTENT_TEXT_HTML);
-                            output.append(Strings.HTML_CONTENT_LENGTH);
-                            output.append(b.length());
-                            output.append(Strings.HTML_END_OF_HEADERS);
-                            output.append(b);
+                                if (extension != null) {
+                                    switch (extension) {
+                                        case "js":
+                                            index = new File("html", s1);
+                                            output.append(Strings.HTML_CONTENT_TEXT_JAVASCRIPT);
+                                            break;
+                                        case "css":
+                                            index = new File("html", s1);
+                                            output.append(Strings.HTML_CONTENT_TEXT_STYLESHEET);
+                                            break;
+                                        case "json":
+                                            index = new File("json", s1);
+                                            output.append(Strings.HTML_CONTENT_APPLICATION_JSON);
+                                            break;
+                                        case "html":
+                                            index = new File("html", s1);
+                                            output.append(Strings.HTML_CONTENT_TEXT_HTML);
+                                            break;
+                                        default:
+                                            index = new File("html/404index.html");
+                                            output.append(Strings.HTML_CONTENT_TEXT_HTML);
+                                            break;
+                                    }
+                                }else {
+
+                                    output.append(Strings.HTML_HTTP_11_200_OK);
+                                    output.append(Strings.HTML_CONNECTION_CLOSE);
+                                    output.append(Strings.HTML_CONTENT_TEXT_HTML);
+
+                                    index = new File("html/404index.html");
+                                }
+                            }
                         }
+
+
+                        StringBuilder stringBuilder = new StringBuilder();
+                        BufferedReader bf = new BufferedReader(new FileReader(index));
+                        String vLine;
+
+                        while((vLine = bf.readLine()) != null) {
+                            stringBuilder.append(vLine);
+                            stringBuilder.append("\n");
+                        }
+
+                        String b = stringBuilder.toString();
+
+                        output.append(Strings.HTML_CONTENT_LENGTH);
+                        output.append(b.length());
+                        output.append(Strings.HTML_END_OF_HEADERS);
+                        output.append(b);
+
                         webOutWriter.write(output.toString());
                         webOutWriter.flush();
 
-                        String send = Arrays.toString(output.toString().split("\r\n"));
-                        System.out.println(prefix + preLine + got[1] + " :" + send);
+                        System.out.println(prefix + preLine + got[1] + " ,file send :" + index);
 
                     }
                     if(line.equalsIgnoreCase("")) {
@@ -195,6 +190,86 @@ public class WebListener extends Thread {
                 e.printStackTrace();
             }
         }
+    }
+
+    private boolean sideExists(String s1) {
+        for(String s: sites) {
+            if(s.equalsIgnoreCase(s1))
+                 return true;
+        }
+        return false;
+    }
+
+    private void handleFavicon() throws IOException {
+        StringBuilder output = new StringBuilder();
+        BufferedImage image = ImageIO.read(new File("favicon.png"));
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", stream);
+
+        output.append(Strings.HTML_HTTP_11_200_OK);
+        output.append(Strings.HTML_CONNECTION_CLOSE);
+        output.append(Strings.HTML_CONTENT_IMAGE_PNG);
+        output.append(Strings.HTML_CONTENT_LENGTH);
+        output.append(stream.toByteArray().length);
+        output.append(Strings.HTML_END_OF_HEADERS);
+        webOutWriter.write(output.toString());
+        webOutWriter.flush();
+        webOut.write(stream.toByteArray());
+        webOut.flush();
+    }
+
+    private File handleJSON(String paths[]) throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+        File json;
+
+        if(paths.length == 1) {
+            json = new File("json", "index.json");
+        } else if (paths.length > 1) {
+            StringBuilder s = new StringBuilder();
+            for(int i=1; i<paths.length; i++) {
+                s.append(paths[i]);
+                if(i != paths.length-1) s.append("/");
+            }
+            json = new File("json", s.toString() );
+        } else {
+            json = new File("html/404index.html");
+        }
+
+        return json;
+    }
+
+    private void handleRoot() throws IOException {
+        StringBuilder output = new StringBuilder();
+        BufferedImage image = ImageIO.read(new File("favicon.png"));
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        ImageIO.write(image, "png", outputStream);
+        String encodedImage = Base64.encode(outputStream.toByteArray());
+        File index = new File("html/index.html");
+        StringBuilder stringBuilder = new StringBuilder();
+        BufferedReader bf = new BufferedReader(new FileReader(index));
+        String vLine = "";
+
+        while((vLine = bf.readLine()) != null) {
+            stringBuilder.append(vLine);
+            stringBuilder.append("\n");
+        }
+
+        String b = stringBuilder.toString();
+        b = b.replaceAll("%favicon%", encodedImage);
+
+        output.append(Strings.HTML_HTTP_11_200_OK);
+        output.append(Strings.HTML_CONNECTION_CLOSE);
+        output.append(Strings.HTML_CONTENT_TEXT_HTML);
+        output.append(Strings.HTML_CONTENT_LENGTH);
+        output.append(b.length());
+        output.append(Strings.HTML_END_OF_HEADERS);
+        output.append(b);
+        webOutWriter.write(output.toString());
+        webOutWriter.flush();
+
+        String send = Arrays.toString(output.toString().split("\r\n"));
+        System.out.println(prefix + preLine + "/ ,file send :" + index);
     }
 
     public Socket getClient() {

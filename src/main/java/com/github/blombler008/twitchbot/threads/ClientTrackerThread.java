@@ -25,6 +25,7 @@ package com.github.blombler008.twitchbot.threads;/*
 
 import com.github.blombler008.twitchbot.TwitchBot;
 
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,24 +37,26 @@ public class ClientTrackerThread extends Thread {
 
     @Override
     public void run() {
+
         boolean isBreaking = false;
-        List<WebListener> threads;
+
+        String name;
+        String prefix;
+        Socket client;
         while(!isBreaking) {
             try {
-                threads = new ArrayList<>(TwitchBot.getWebClientThreads());
-                if(threads.size() != 0) {
-                    for (WebListener thread : threads) {
-                        if(thread != null) {
-                            if (thread.getClient().isClosed()) {
-                                thread.interrupt();
-                                TwitchBot.getWebClientThreads().remove(thread);
-                                System.out.println("Thread> Terminated Thread :" + thread.getName());
-                            }
-                        }
-                    }
+                client = TwitchBot.getWebServerSocket().accept();
+                if(client != null) {
+                    name = "Web-Listener";
+                    prefix = "Web> ";
+
+                    WebListener webListener = new WebListener(prefix, client, name);
+                    webListener.start();
+                    Thread.sleep(100);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                isBreaking = true;
             }
         }
     }

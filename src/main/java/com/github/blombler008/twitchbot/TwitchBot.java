@@ -53,29 +53,15 @@ public class TwitchBot {
         try {
             instance = new TwitchBot();
             if(instance.startTwitchIRC()) {
+                WebListener.sites.add("");
+                WebListener.sites.add("json");
+                WebListener.sites.add("favicon.ico");
+
+
                 if(instance.startWebListener() ) {
-                    boolean isBreaking = false;
+                    if(instance.startTracker()) {
 
-                    String name;
-                    String prefix;
-                    Socket client;
-                    while(!isBreaking) {
-                        try {
-                            client = instance.webServerSocket.accept();
-                            if(client != null) {
-                                name = "Web-Listener";
-                                prefix = "Web> ";
-
-                                WebListener webListener = new WebListener(prefix, client, name);
-                                webListener.start();
-                                Thread.sleep(100);
-                                }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            isBreaking = true;
-                        }
                     }
-
                 }
             }
         } catch (Exception e) {
@@ -84,11 +70,26 @@ public class TwitchBot {
         }
     }
 
+    private boolean startTracker() {
+        try {
+            clientTracker = new ClientTrackerThread();
+            clientTracker.start();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static List<WebListener> getWebClientThreads() {
         return instance.threadTracker;
     }
     public static Thread getWebClientThread() {
         return instance.clientTracker;
+    }
+
+    public static ServerSocket getWebServerSocket() {
+        return instance.webServerSocket;
     }
 
     public boolean startTwitchIRC() {

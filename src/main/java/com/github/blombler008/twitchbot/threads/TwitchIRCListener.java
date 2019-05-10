@@ -87,10 +87,10 @@ public class TwitchIRCListener extends Thread {
                                 got[4] = got[4].replaceFirst("\\!", "");
                                 if(got[4].equalsIgnoreCase("dice")) {
                                     stringBuilder.append("You rolled a ");
-                                    stringBuilder.append(new Random().nextInt(50));
+                                    stringBuilder.append(new Random().nextInt(5000000));
                                     stringBuilder.append("!");
                                 }
-                                if(got[4].equalsIgnoreCase("zoggos")) {
+                                /*if(got[4].equalsIgnoreCase("zoggos")) {
                                     String [] subGot = got[0].split(";");
                                     String name = subGot[3].split("=")[1];
                                     stringBuilder.append(name);
@@ -98,7 +98,7 @@ public class TwitchIRCListener extends Thread {
                                     stringBuilder.append("has ");
                                     stringBuilder.append(new Random().nextInt(Integer.MAX_VALUE));
                                     stringBuilder.append(" binary11Zoggos");
-                                }
+                                }*/
                             }
                             string = string.replaceAll("%message%", stringBuilder.toString());
                             // Thread.sleep(3000);
