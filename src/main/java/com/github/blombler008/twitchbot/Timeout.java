@@ -49,30 +49,26 @@ public class Timeout {
     }
 
     public static void startTimer() {
-        thread = new Thread(new Runnable() {
-            public void run() {
-                boolean breakOut = false;
-                Random random = new Random();
-                while(!breakOut) {
-                    try {
-                        int low = 60000; // 1 Minute
-                        int high = 300000;// 5 Minute
-                        Thread.sleep(Long.parseLong(String.valueOf(random.nextInt(high - low) + low)));
-                        if (!katch) {
-                            katch = true;
-                            autoTimeout = new Date().getTime();
-                            TwitchBot.updateCatch("true", null, -1);
-                            System.out.println("Timer> New Catch");
-                        }
-
-
-                    } catch (Exception ignore) {
-                        ignore.printStackTrace();
-                        breakOut = true;
-                    }
+        thread = new Thread(() -> {
+            boolean breakOut = false;
+            Random random = new Random();
+            while(!breakOut) {
+                try {
+                    int low = 60000; // 1 Minute
+                    int high = 300000;// 5 Minute
+                    long sleep = Long.parseLong(String.valueOf(random.nextInt(high - low) + low));
+                    System.out.println("Timer> Sleeping for " + sleep);
+                    Thread.sleep(sleep);
+                    if (!katch)
+                        katch = true;
+                    autoTimeout = new Date().getTime();
+                    TwitchBot.updateCatch("true", null, -1);
+                    System.out.println("Timer> New Catch");
+                } catch (Exception ignore) {
+                    ignore.printStackTrace();
+                    breakOut = true;
                 }
             }
-
         },"Timer");
         thread.start();
     }
