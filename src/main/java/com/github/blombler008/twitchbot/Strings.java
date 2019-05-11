@@ -61,4 +61,11 @@ public class Strings {
 
     public static final String HTML_END_OF_HEADERS = "\r\n\r\n";
     public static final String URL_PATH_SEPARATOR = "\\/+";
+
+
+    public static final String CONFIG_PENGUIN_LOCATION = "penguinLocation";
+    public static final String CONFIG_MIN_TIME = "minTime";
+    public static final String CONFIG_MAX_TIME = "maxTime";
+    public static final String CONFIG_PORT = "port";
+    public static final String CONFIG_FILE = "config.properties";
 }

@@ -40,8 +40,19 @@ public class ConsoleListener extends Thread {
         while (!breakOut) {
             try {
                 Scanner s = new Scanner(System.in);
+                String line;
                 while (s.hasNextLine()) {
-                    listener.send(s.nextLine());
+                    line = s.nextLine();
+
+                    if(line.equalsIgnoreCase("q") ||
+                            line.equalsIgnoreCase("exit") ||
+                            line.equalsIgnoreCase("stop") ||
+                            line.equalsIgnoreCase("quit"))
+                    {
+                        System.exit(0);
+                    }
+
+                    listener.send(line);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

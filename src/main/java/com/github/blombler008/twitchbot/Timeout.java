@@ -51,19 +51,26 @@ public class Timeout {
     public static void startTimer() {
         thread = new Thread(() -> {
             boolean breakOut = false;
+            long sleep;
             Random random = new Random();
+
+            int low = Integer.parseInt(TwitchBot.getConfig().getProperty(Strings.CONFIG_MIN_TIME));
+            int high = Integer.parseInt(TwitchBot.getConfig().getProperty(Strings.CONFIG_MAX_TIME));
+
             while(!breakOut) {
                 try {
-                    int low = 60000; // 1 Minute
-                    int high = 300000;// 5 Minute
-                    long sleep = Long.parseLong(String.valueOf(random.nextInt(high - low) + low));
+
+                    sleep = Long.parseLong(String.valueOf(random.nextInt(high - low) + low));
                     System.out.println("Timer> Sleeping for " + sleep);
                     Thread.sleep(sleep);
+
                     if (!katch)
                         katch = true;
+
                     autoTimeout = new Date().getTime();
                     TwitchBot.updateCatch("true", null, -1);
                     System.out.println("Timer> New Catch");
+
                 } catch (Exception ignore) {
                     ignore.printStackTrace();
                     breakOut = true;

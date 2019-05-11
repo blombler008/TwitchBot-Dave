@@ -39,6 +39,7 @@ public class TwitchBot {
     private static String prefixGot = "> ";
     private static String prefixSend = "< ";
     private static TwitchBot instance;
+    private static Properties config;
 
     private List<WebListener> threadTracker;
     private ClientTrackerThread clientTracker;
@@ -48,21 +49,69 @@ public class TwitchBot {
 
         try {
             instance = new TwitchBot();
-            if(instance.startTwitchIRC()) {
-                WebListener.sites.add("");
-                WebListener.sites.add("json");
-                WebListener.sites.add("favicon.ico");
+            if(instance.parseConfig(Strings.CONFIG_FILE)) {
+                if  (instance.checkConfig(Strings.CONFIG_FILE)) {
+                    if (instance.startTwitchIRC()) {
+                        WebListener.sites.add("");
+                        WebListener.sites.add("json");
+                        WebListener.sites.add("favicon.ico");
+                        WebListener.sites.add("getPenguin");
 
 
-                if(instance.startWebListener() ) {
-                    if(instance.startTracker()) {
-                        Timeout.startTimer();
+                        if (instance.startWebListener()) {
+                            if (instance.startTracker()) {
+                                Timeout.startTimer();
+                            }
+                        }
                     }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
+        }
+    }
+
+    public static Properties getConfig() {
+        return config;
+    }
+
+    private boolean checkConfig(String file) {
+        try {
+            File File = new File(file);
+            if(!config.containsKey(Strings.CONFIG_MIN_TIME))
+                config.put(Strings.CONFIG_MIN_TIME, "60000");
+            if(!config.containsKey(Strings.CONFIG_MAX_TIME))
+                config.put(Strings.CONFIG_MAX_TIME, "300000");
+            if(!config.containsKey(Strings.CONFIG_PORT))
+                config.put(Strings.CONFIG_PORT, "8087");
+            if(!config.containsKey(Strings.CONFIG_PENGUIN_LOCATION))
+                config.put(Strings.CONFIG_PENGUIN_LOCATION, "html/penguin.png");
+            config.store(new FileWriter(File), "configs of TwitchBot-Dave");
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private boolean parseConfig(String file) {
+        try {
+            File File = new File(file);
+            if(!File.exists()) {
+                File.createNewFile();
+
+            } else if (File.isDirectory()) {
+                File.delete();
+                File.createNewFile();
+            }
+            config = new Properties();
+            config.load(new FileReader(File));
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -167,9 +216,9 @@ public class TwitchBot {
             server.start();
             return false;
 */
+            String port = config.getProperty(Strings.CONFIG_PORT);
 
-
-            webServerSocket = new ServerSocket(8080);
+            webServerSocket = new ServerSocket(Integer.parseInt(port));
             webServerSocket.setReuseAddress(true);
             /*clientTracker = new ClientTrackerThread();
             clientTracker.start();*/

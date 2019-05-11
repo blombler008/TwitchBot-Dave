@@ -25,6 +25,7 @@ package com.github.blombler008.twitchbot.threads;/*
 
 import com.github.blombler008.twitchbot.Strings;
 import com.github.blombler008.twitchbot.Timeout;
+import com.github.blombler008.twitchbot.TwitchBot;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 import javax.imageio.ImageIO;
@@ -99,6 +100,13 @@ public class WebListener extends Thread {
 
                             if(s1.equalsIgnoreCase("")) {
                                 handleRoot();
+                                continue;
+                            }
+
+                            if(paths[0].equalsIgnoreCase("getPenguin")) {
+                                String penguinLocation = TwitchBot.getConfig().getProperty(Strings.CONFIG_PENGUIN_LOCATION);
+                                File penguin = new File(penguinLocation);
+                                handlePNG(penguin);
                                 continue;
                             }
 
@@ -194,6 +202,7 @@ public class WebListener extends Thread {
             }
         }
     }
+
 
     private boolean sideExists(String s1) {
         for(String s: sites) {
