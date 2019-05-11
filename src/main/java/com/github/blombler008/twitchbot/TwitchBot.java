@@ -27,11 +27,7 @@ import com.github.blombler008.twitchbot.threads.ClientTrackerThread;
 import com.github.blombler008.twitchbot.threads.ConsoleListener;
 import com.github.blombler008.twitchbot.threads.TwitchIRCListener;
 import com.github.blombler008.twitchbot.threads.WebListener;
-import com.sun.deploy.net.HttpRequest;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-import sun.net.httpserver.HttpServerImpl;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.net.*;
@@ -60,13 +56,54 @@ public class TwitchBot {
 
                 if(instance.startWebListener() ) {
                     if(instance.startTracker()) {
-
+                        Timeout.startTimer();
                     }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
+        }
+    }
+
+    public static String[] updateCatch(String aTrue, String name, long diff) {
+        try {
+            File catchFile = new File("json/index.json");
+            BufferedReader reader = new BufferedReader(new FileReader(catchFile));
+            StringBuilder builder = new StringBuilder();
+            boolean fastest = false;
+
+            String line;
+            while((line = reader.readLine() )!= null) {
+                builder.append(line);
+            }
+            System.out.println(builder);
+            JSONObject jsonObj = new JSONObject(builder.toString());
+            jsonObj.put("catch", aTrue);
+            String lastTime = "0";
+            String lastWinner = "";
+            if(jsonObj.has("bestTime") && jsonObj.has("lastWinner")) {
+
+                lastTime = String.valueOf(jsonObj.getLong("bestTime"));
+                lastWinner = jsonObj.getString("lastWinner");
+
+                if (name != null) {
+                    jsonObj.put("lastWinner", name);
+                }
+                if ((diff != -1 && diff < Long.parseLong(lastTime)) || Long.parseLong(lastTime) == -1) {
+                    jsonObj.put("bestTime", diff);
+                }
+            } else {
+                if(!jsonObj.has("lastWinner")) jsonObj.put("lastWinner", name) ;
+                if(!jsonObj.has("bestTime")) jsonObj.put("bestTime", "-1");
+            }
+            jsonObj.write(new FileWriter(catchFile)).flush();
+
+            String s [] = new String[] {lastTime, lastWinner};
+            return s;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -133,7 +170,7 @@ public class TwitchBot {
 
 
             webServerSocket = new ServerSocket(8080);
-
+            webServerSocket.setReuseAddress(true);
             /*clientTracker = new ClientTrackerThread();
             clientTracker.start();*/
             return true;

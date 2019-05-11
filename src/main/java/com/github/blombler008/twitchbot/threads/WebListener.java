@@ -56,7 +56,6 @@ public class WebListener extends Thread {
         this.webOut = client.getOutputStream();
         this.webOutWriter = new OutputStreamWriter(client.getOutputStream());
         this.preLine = (client.getInetAddress()).getHostAddress() + " on " + client.getPort() + " requested ";
-        this.timeout = new Timeout(client);
         System.out.println(prefix + " Socket: " + client.getInetAddress() + ":" + client.getPort() + " created!");
     }
 
@@ -127,6 +126,10 @@ public class WebListener extends Thread {
                                             index = new File("json", s1);
                                             output.append(Strings.HTML_CONTENT_APPLICATION_JSON);
                                             break;
+                                        case "png":
+                                            index = new File("html", s1);
+                                            handlePNG(index);
+                                            continue;
                                         case "html":
                                             index = new File("html", s1);
                                             output.append(Strings.HTML_CONTENT_TEXT_HTML);
@@ -198,6 +201,24 @@ public class WebListener extends Thread {
                  return true;
         }
         return false;
+    }
+
+    private void handlePNG(File png) throws IOException {
+        StringBuilder output = new StringBuilder();
+        BufferedImage image = ImageIO.read(png);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", stream);
+
+        output.append(Strings.HTML_HTTP_11_200_OK);
+        output.append(Strings.HTML_CONNECTION_CLOSE);
+        output.append(Strings.HTML_CONTENT_IMAGE_PNG);
+        output.append(Strings.HTML_CONTENT_LENGTH);
+        output.append(stream.toByteArray().length);
+        output.append(Strings.HTML_END_OF_HEADERS);
+        webOutWriter.write(output.toString());
+        webOutWriter.flush();
+        webOut.write(stream.toByteArray());
+        webOut.flush();
     }
 
     private void handleFavicon() throws IOException {

@@ -24,28 +24,60 @@ package com.github.blombler008.twitchbot;/*
  */
 
 import java.net.Socket;
+import java.util.Date;
+import java.util.Random;
 
 public class Timeout {
-    private boolean exists = false;
-    private Socket client;
-    private String lastRequest = "";
+    private static boolean katch = false;
 
-    private long autoTimeout;
+    private static long autoTimeout;
+    private static Thread thread;
 
-    public Timeout(Socket client) {
-        this.client = client;
+    public static String byTimeout(String name) {
+        long now = new Date().getTime();
+        if(katch) {
+            katch = false;
+            long diff = now - autoTimeout;
+            StringBuilder message = new StringBuilder();
+            message.append(name);
+            message.append(" caught the penguin first!");
+            TwitchBot.updateCatch("false", name, diff);
+            System.out.println(message.toString());
+            return message.toString();
+        }
+        return null;
     }
 
-    public boolean newRequest(String request) {
-        if(
-        !request.equalsIgnoreCase(lastRequest) || autoTimeout < System.currentTimeMillis() ) {
-            exists = true;
-            lastRequest = request;
-            autoTimeout = System.currentTimeMillis() + 300000;
-            return true;
-        } else {
-            return false;
-        }
+    public static void startTimer() {
+        thread = new Thread(new Runnable() {
+            public void run() {
+                boolean breakOut = false;
+                Random random = new Random();
+                while(!breakOut) {
+                    try {
+                        int low = 60000; // 1 Minute
+                        int high = 300000;// 5 Minute
+                        Thread.sleep(Long.parseLong(String.valueOf(random.nextInt(high - low) + low)));
+                        if (!katch) {
+                            katch = true;
+                            autoTimeout = new Date().getTime();
+                            TwitchBot.updateCatch("true", null, -1);
+                            System.out.println("Timer> New Catch");
+                        }
 
+
+                    } catch (Exception ignore) {
+                        ignore.printStackTrace();
+                        breakOut = true;
+                    }
+                }
+            }
+
+        },"Timer");
+        thread.start();
+    }
+    
+    public static void newTimeout() {
+        katch=false;
     }
 }

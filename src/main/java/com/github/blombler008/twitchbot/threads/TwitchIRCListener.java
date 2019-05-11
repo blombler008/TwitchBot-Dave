@@ -24,8 +24,11 @@ package com.github.blombler008.twitchbot.threads;/*
  */
 
 import com.github.blombler008.twitchbot.Strings;
+import com.github.blombler008.twitchbot.Timeout;
 
 import java.io.*;
+import java.sql.Time;
+import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -35,6 +38,7 @@ public class TwitchIRCListener extends Thread {
     private InputStream in;
     private OutputStreamWriter outWriter;
     private String prefixA;
+    private long last;
 
     public TwitchIRCListener(String prefixA, String prefixB, OutputStream out, InputStream in) {
         this.setName("Twitch-Socket-Listener");
@@ -68,14 +72,14 @@ public class TwitchIRCListener extends Thread {
                             send(Strings.CAP_TAGS);
 
                             String string;
-                            /*
+
                             string = Strings.JOIN_TEMPLATE;
                             string = string.replaceAll("%channel%", "#tattyplay");
-                            send(string);
-                            */
+                            send(string);/*
                             string = Strings.JOIN_TEMPLATE;
                             string = string.replaceAll("%channel%", "#binarydave");
                             send(string);
+                            */
                         }
                         if(got.length >= 5 && got[2].equalsIgnoreCase("PRIVMSG")) {
 
@@ -85,11 +89,33 @@ public class TwitchIRCListener extends Thread {
                             StringBuilder stringBuilder = new StringBuilder();
                             if(got[4].startsWith("!")) {
                                 got[4] = got[4].replaceFirst("\\!", "");
+
+
                                 if(got[4].equalsIgnoreCase("dice")) {
                                     stringBuilder.append("You rolled a ");
                                     stringBuilder.append(new Random().nextInt(5000000));
                                     stringBuilder.append("!");
                                 }
+
+                                if(got[4].equalsIgnoreCase("catch")) {
+                                    String [] subGot = got[0].split(";");
+                                    String name = subGot[3].split("=")[1];
+                                    String ssss = Timeout.byTimeout(name);
+                                    if(ssss != null) {
+                                        stringBuilder.append(ssss);
+                                        last = new Date().getTime();
+                                    } else {
+                                        if((last + 10000) > new Date().getTime()) {
+                                            stringBuilder.append("You just missed it! ");
+                                            stringBuilder.append(name);
+                                            stringBuilder.append(" was first!");
+                                        } else {
+                                            stringBuilder.append("There is currently no catch on going!");
+                                        }
+                                    }
+                                }
+
+
                                 /*if(got[4].equalsIgnoreCase("zoggos")) {
                                     String [] subGot = got[0].split(";");
                                     String name = subGot[3].split("=")[1];
