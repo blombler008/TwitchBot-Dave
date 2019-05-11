@@ -87,6 +87,8 @@ public class TwitchBot {
                 config.put(Strings.CONFIG_PORT, "8087");
             if(!config.containsKey(Strings.CONFIG_PENGUIN_LOCATION))
                 config.put(Strings.CONFIG_PENGUIN_LOCATION, "html/penguin.png");
+            if(!config.containsKey(Strings.CONFIG_TWITCH_CHANNEL))
+                config.put(Strings.CONFIG_TWITCH_CHANNEL, "binarydave");
             config.store(new FileWriter(File), "configs of TwitchBot-Dave");
             return true;
         } catch (Exception e) {

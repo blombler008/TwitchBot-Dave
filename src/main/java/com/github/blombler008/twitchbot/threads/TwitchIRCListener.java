@@ -25,6 +25,7 @@ package com.github.blombler008.twitchbot.threads;/*
 
 import com.github.blombler008.twitchbot.Strings;
 import com.github.blombler008.twitchbot.Timeout;
+import com.github.blombler008.twitchbot.TwitchBot;
 
 import java.io.*;
 import java.sql.Time;
@@ -73,8 +74,14 @@ public class TwitchIRCListener extends Thread {
 
                             String string;
 
+                            String channel = TwitchBot.getConfig().getProperty(Strings.CONFIG_TWITCH_CHANNEL);
+                            if (!channel.startsWith("#")) {
+                                channel = "#" + channel;
+                            }
+
+
                             string = Strings.JOIN_TEMPLATE;
-                            string = string.replaceAll("%channel%", "#tattyplay");
+                            string = string.replaceAll("%channel%", channel);
                             send(string);/*
                             string = Strings.JOIN_TEMPLATE;
                             string = string.replaceAll("%channel%", "#binarydave");

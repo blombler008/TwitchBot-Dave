@@ -68,4 +68,5 @@ public class Strings {
     public static final String CONFIG_MAX_TIME = "maxTime";
     public static final String CONFIG_PORT = "port";
     public static final String CONFIG_FILE = "config.properties";
+    public static final String CONFIG_TWITCH_CHANNEL = "twitchChannel";
 }
