@@ -76,4 +76,6 @@ public class Strings {
     public static final String CONFIG_AFTER_CATCH_MESSAGE = "afterCatchMessage";
     public static final String CONFIG_DICE_ENABLE = "diceEnable";
     public static final String CONFIG_CATCH_ENABLE = "catchEnable";
+    public static final String CONFIG_AFTER_CATCH_CHAT_COMMAND = "afterCatchChatCommand";
+    public static final String CONFIG_AFTER_CATCH_CHAT_COMMAND_ENABLE = "afterCatchChatCommandEnable";
 }

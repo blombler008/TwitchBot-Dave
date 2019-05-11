@@ -61,6 +61,7 @@ public class TwitchIRCListener extends Thread {
                 boolean afterCatchEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_ENABLE));
                 boolean diceEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_DICE_ENABLE));
                 boolean catchEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_ENABLE));
+                boolean afterCatchChatCommandEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_CHAT_COMMAND_ENABLE));
                 while(s.hasNextLine()) {
                     line = s.nextLine();
                     System.out.println(prefixB + line);
@@ -118,6 +119,11 @@ public class TwitchIRCListener extends Thread {
                                         if (byTimeoutUser != null) {
                                             stringBuilder.append(byTimeoutUser);
                                             last = new Date().getTime();
+
+                                            if(afterCatchChatCommandEnable) {
+                                                String m = TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_CHAT_COMMAND);
+                                                send(string.replaceAll("%message%", m.replaceAll("%name%", name)));
+                                            }
                                         } else {
 
                                             if(afterCatchEnable) {

@@ -103,6 +103,12 @@ public class TwitchBot {
             if(!config.containsKey(Strings.CONFIG_AFTER_CATCH_MESSAGE))
                 config.put(Strings.CONFIG_AFTER_CATCH_MESSAGE, "You just missed it! %name% was first!");
 
+            if(!config.containsKey(Strings.CONFIG_AFTER_CATCH_CHAT_COMMAND))
+                config.put(Strings.CONFIG_AFTER_CATCH_CHAT_COMMAND, "!addpoints %name% 5000");
+
+            if(!config.containsKey(Strings.CONFIG_AFTER_CATCH_CHAT_COMMAND_ENABLE))
+                config.put(Strings.CONFIG_AFTER_CATCH_CHAT_COMMAND_ENABLE, "true");
+
             if(!config.containsKey(Strings.CONFIG_AFTER_CATCH_ENABLE))
                 config.put(Strings.CONFIG_AFTER_CATCH_ENABLE, "true");
 
