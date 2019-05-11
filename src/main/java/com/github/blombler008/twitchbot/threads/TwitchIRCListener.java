@@ -57,6 +57,10 @@ public class TwitchIRCListener extends Thread {
                 Scanner s = new Scanner(in);
                 String line;
                 String [] got;
+                int afterCatchTime = Integer.parseInt(TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_TIME));
+                boolean afterCatchEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_ENABLE));
+                boolean diceEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_DICE_ENABLE));
+                boolean catchEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_ENABLE));
                 while(s.hasNextLine()) {
                     line = s.nextLine();
                     System.out.println(prefixB + line);
@@ -97,27 +101,34 @@ public class TwitchIRCListener extends Thread {
                             if(got[4].startsWith("!")) {
                                 got[4] = got[4].replaceFirst("\\!", "");
 
-
-                                if(got[4].equalsIgnoreCase("dice")) {
-                                    stringBuilder.append("You rolled a ");
-                                    stringBuilder.append(new Random().nextInt(5000000));
-                                    stringBuilder.append("!");
+                                if(diceEnable) {
+                                    if (got[4].equalsIgnoreCase("dice")) {
+                                        stringBuilder.append("You rolled a ");
+                                        stringBuilder.append(new Random().nextInt(5000000));
+                                        stringBuilder.append("!");
+                                    }
                                 }
 
-                                if(got[4].equalsIgnoreCase("catch")) {
-                                    String [] subGot = got[0].split(";");
-                                    String name = subGot[3].split("=")[1];
-                                    String ssss = Timeout.byTimeout(name);
-                                    if(ssss != null) {
-                                        stringBuilder.append(ssss);
-                                        last = new Date().getTime();
-                                    } else {
-                                        if((last + 10000) > new Date().getTime()) {
-                                            stringBuilder.append("You just missed it! ");
-                                            stringBuilder.append(name);
-                                            stringBuilder.append(" was first!");
+                                if(catchEnable) {
+                                    if (got[4].equalsIgnoreCase("catch")) {
+                                        String[] subGot = got[0].split(";");
+                                        String name = subGot[3].split("=")[1];
+                                        String byTimeoutUser = Timeout.byTimeout(name);
+
+                                        if (byTimeoutUser != null) {
+                                            stringBuilder.append(byTimeoutUser);
+                                            last = new Date().getTime();
                                         } else {
-                                            stringBuilder.append("There is currently no catch on going!");
+
+                                            if(afterCatchEnable) {
+                                                if ((last + afterCatchTime) > new Date().getTime()) {
+
+                                                    String m = TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_MESSAGE);
+                                                    stringBuilder.append(m.replaceAll("%name%", name));
+                                                } else {
+                                                    stringBuilder.append(TwitchBot.getConfig().getProperty(Strings.CONFIG_NO_CATCH));
+                                                }
+                                            }
                                         }
                                     }
                                 }

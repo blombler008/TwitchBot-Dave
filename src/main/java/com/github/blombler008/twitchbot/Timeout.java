@@ -39,8 +39,8 @@ public class Timeout {
             katch = false;
             long diff = now - autoTimeout;
             StringBuilder message = new StringBuilder();
-            message.append(name);
-            message.append(" caught the penguin first!");
+            String m = TwitchBot.getConfig().getProperty(Strings.CONFIG_FIRST_CATCH);
+            message.append(m.replaceAll("%name%", name));
             TwitchBot.updateCatch("false", name, diff);
             System.out.println(message.toString());
             return message.toString();
@@ -64,12 +64,12 @@ public class Timeout {
                     System.out.println("Timer> Sleeping for " + sleep);
                     Thread.sleep(sleep);
 
-                    if (!katch)
+                    if (!katch) {
                         katch = true;
-
-                    autoTimeout = new Date().getTime();
-                    TwitchBot.updateCatch("true", null, -1);
-                    System.out.println("Timer> New Catch");
+                        autoTimeout = new Date().getTime();
+                        TwitchBot.updateCatch("true", null, -1);
+                        System.out.println("Timer> New Catch");
+                    }
 
                 } catch (Exception ignore) {
                     ignore.printStackTrace();
@@ -81,6 +81,9 @@ public class Timeout {
     }
     
     public static void newTimeout() {
-        katch=false;
+        katch = true;
+        autoTimeout = new Date().getTime();
+        TwitchBot.updateCatch("true", null, -1);
+        System.out.println("Timer> New Catch");
     }
 }

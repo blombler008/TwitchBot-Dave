@@ -81,14 +81,41 @@ public class TwitchBot {
             File File = new File(file);
             if(!config.containsKey(Strings.CONFIG_MIN_TIME))
                 config.put(Strings.CONFIG_MIN_TIME, "60000");
+
             if(!config.containsKey(Strings.CONFIG_MAX_TIME))
                 config.put(Strings.CONFIG_MAX_TIME, "300000");
+
             if(!config.containsKey(Strings.CONFIG_PORT))
                 config.put(Strings.CONFIG_PORT, "8087");
+
             if(!config.containsKey(Strings.CONFIG_PENGUIN_LOCATION))
                 config.put(Strings.CONFIG_PENGUIN_LOCATION, "html/penguin.png");
+
             if(!config.containsKey(Strings.CONFIG_TWITCH_CHANNEL))
                 config.put(Strings.CONFIG_TWITCH_CHANNEL, "binarydave");
+
+            if(!config.containsKey(Strings.CONFIG_FIRST_CATCH))
+                config.put(Strings.CONFIG_FIRST_CATCH, "%name% caught the penguin first!");
+
+            if(!config.containsKey(Strings.CONFIG_NO_CATCH))
+                config.put(Strings.CONFIG_NO_CATCH, "There is currently no catch on going!");
+
+            if(!config.containsKey(Strings.CONFIG_AFTER_CATCH_MESSAGE))
+                config.put(Strings.CONFIG_AFTER_CATCH_MESSAGE, "You just missed it! %name% was first!");
+
+            if(!config.containsKey(Strings.CONFIG_AFTER_CATCH_ENABLE))
+                config.put(Strings.CONFIG_AFTER_CATCH_ENABLE, "true");
+
+            if(!config.containsKey(Strings.CONFIG_DICE_ENABLE))
+                config.put(Strings.CONFIG_DICE_ENABLE, "true");
+
+            if(!config.containsKey(Strings.CONFIG_AFTER_CATCH_TIME))
+                config.put(Strings.CONFIG_AFTER_CATCH_TIME, "10000");
+
+            if(!config.containsKey(Strings.CONFIG_CATCH_ENABLE))
+                config.put(Strings.CONFIG_CATCH_ENABLE, "true");
+
+
             config.store(new FileWriter(File), "configs of TwitchBot-Dave");
             return true;
         } catch (Exception e) {

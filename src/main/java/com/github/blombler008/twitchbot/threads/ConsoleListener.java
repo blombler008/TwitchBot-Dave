@@ -23,6 +23,8 @@ package com.github.blombler008.twitchbot.threads;/*
  * SOFTWARE.
  */
 
+import com.github.blombler008.twitchbot.Timeout;
+
 import java.util.Scanner;
 
 public class ConsoleListener extends Thread {
@@ -50,6 +52,11 @@ public class ConsoleListener extends Thread {
                             line.equalsIgnoreCase("quit"))
                     {
                         System.exit(0);
+                        continue;
+                    }
+                    if(line.equalsIgnoreCase("newCatch") ){
+                        Timeout.newTimeout();
+                        continue;
                     }
 
                     listener.send(line);

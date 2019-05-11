@@ -69,4 +69,11 @@ public class Strings {
     public static final String CONFIG_PORT = "port";
     public static final String CONFIG_FILE = "config.properties";
     public static final String CONFIG_TWITCH_CHANNEL = "twitchChannel";
+    public static final String CONFIG_FIRST_CATCH = "firstCatch";
+    public static final String CONFIG_NO_CATCH = "noCatch";
+    public static final String CONFIG_AFTER_CATCH_TIME = "afterCatchTime";
+    public static final String CONFIG_AFTER_CATCH_ENABLE = "afterCatchEnable";
+    public static final String CONFIG_AFTER_CATCH_MESSAGE = "afterCatchMessage";
+    public static final String CONFIG_DICE_ENABLE = "diceEnable";
+    public static final String CONFIG_CATCH_ENABLE = "catchEnable";
 }
