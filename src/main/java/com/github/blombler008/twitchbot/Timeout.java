@@ -32,30 +32,26 @@ public class Timeout {
 
     private static long autoTimeout;
     private static Thread thread;
+    private static String winner;
+    private static int low;
+    private static int high;
+    private static long sleep;
+    private static Random random = new Random();
 
-    public static String byTimeout(String name) {
-        long now = new Date().getTime();
-        if(katch) {
-            katch = false;
-            long diff = now - autoTimeout;
-            StringBuilder message = new StringBuilder();
-            String m = TwitchBot.getConfig().getProperty(Strings.CONFIG_FIRST_CATCH);
-            message.append(m.replaceAll("%name%", name));
-            TwitchBot.updateCatch("false", name, diff);
-            System.out.println(message.toString());
-            return message.toString();
-        }
-        return null;
+    static{
+        low = Integer.parseInt(TwitchBot.getConfig().getProperty(Strings.CONFIG_MIN_TIME));
+        high = Integer.parseInt(TwitchBot.getConfig().getProperty(Strings.CONFIG_MAX_TIME));
+        winner = TwitchBot.getCatchWinner();
+    }
+
+    public static boolean byTimeout() {
+        return katch;
     }
 
     public static void startTimer() {
         thread = new Thread(() -> {
             boolean breakOut = false;
-            long sleep;
-            Random random = new Random();
 
-            int low = Integer.parseInt(TwitchBot.getConfig().getProperty(Strings.CONFIG_MIN_TIME));
-            int high = Integer.parseInt(TwitchBot.getConfig().getProperty(Strings.CONFIG_MAX_TIME));
 
             while(!breakOut) {
                 try {
@@ -65,10 +61,7 @@ public class Timeout {
                     Thread.sleep(sleep);
 
                     if (!katch) {
-                        katch = true;
-                        autoTimeout = new Date().getTime();
-                        TwitchBot.updateCatch("true", null, -1);
-                        System.out.println("Timer> New Catch");
+                        newTimeout();
                     }
 
                 } catch (Exception ignore) {
@@ -85,5 +78,26 @@ public class Timeout {
         autoTimeout = new Date().getTime();
         TwitchBot.updateCatch("true", null, -1);
         System.out.println("Timer> New Catch");
+    }
+
+    public static String getWinner() {
+        return winner;
+    }
+
+    public static String setWinner(String name) {
+        if(katch) {
+            long now = new Date().getTime();
+            katch = false;
+            long diff = now - autoTimeout;
+            StringBuilder message = new StringBuilder();
+            String m = TwitchBot.getConfig().getProperty(Strings.CONFIG_FIRST_CATCH);
+            message.append(m.replaceAll("%name%", name));
+            winner = name;
+            TwitchBot.updateCatch("false", name, diff);
+            System.out.println(message.toString());
+            return message.toString();
+        } else {
+            return null;
+        }
     }
 }

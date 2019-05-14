@@ -27,6 +27,7 @@ import com.github.blombler008.twitchbot.threads.ClientTrackerThread;
 import com.github.blombler008.twitchbot.threads.ConsoleListener;
 import com.github.blombler008.twitchbot.threads.TwitchIRCListener;
 import com.github.blombler008.twitchbot.threads.WebListener;
+import com.github.blombler008.twitchbot.window.GraphicsWindow;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -40,6 +41,7 @@ public class TwitchBot {
     private static String prefixSend = "< ";
     private static TwitchBot instance;
     private static Properties config;
+    private static boolean noGraph = false;
 
     private List<WebListener> threadTracker;
     private ClientTrackerThread clientTracker;
@@ -49,20 +51,29 @@ public class TwitchBot {
 
         try {
             instance = new TwitchBot();
-            if(instance.parseConfig(Strings.CONFIG_FILE)) {
-                if  (instance.checkConfig(Strings.CONFIG_FILE)) {
-                    if (instance.startTwitchIRC()) {
-                        WebListener.sites.add("");
-                        WebListener.sites.add("json");
-                        WebListener.sites.add("favicon.ico");
-                        WebListener.sites.add("getPenguin");
 
+            if(instance.checkArgs(args)) {
+                if (instance.parseConfig(Strings.CONFIG_FILE)) {
+                    if (instance.checkConfig(Strings.CONFIG_FILE)) {
 
-                        if (instance.startWebListener()) {
-                            if (instance.startTracker()) {
-                                Timeout.startTimer();
+                        if (noGraph) {
+                            if (instance.startTwitchIRC()) {
+                                WebListener.sites.add("");
+                                WebListener.sites.add("json");
+                                WebListener.sites.add("favicon.ico");
+                                WebListener.sites.add("getPenguin");
+
+                                if (instance.startWebListener()) {
+                                    if (instance.startTracker()) {
+                                        Timeout.startTimer();
+                                    }
+                                }
                             }
+                        } else {
+                            GraphicsWindow graphicsWindow = new GraphicsWindow(instance);
+                            graphicsWindow.start();
                         }
+
                     }
                 }
             }
@@ -72,11 +83,30 @@ public class TwitchBot {
         }
     }
 
+    public boolean checkArgs(String[] args) {
+        try {
+            if(args.length > 0) {
+                for (String s: args) {
+                    if(s.startsWith("--")) {
+                        String command = s.replaceFirst("--", "");
+                        if(command.equals("noGraph")) {
+                            noGraph = true;
+                        }
+                    }
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static Properties getConfig() {
         return config;
     }
 
-    private boolean checkConfig(String file) {
+    public boolean checkConfig(String file) {
         try {
             File File = new File(file);
             if(!config.containsKey(Strings.CONFIG_MIN_TIME))
@@ -121,6 +151,12 @@ public class TwitchBot {
             if(!config.containsKey(Strings.CONFIG_CATCH_ENABLE))
                 config.put(Strings.CONFIG_CATCH_ENABLE, "true");
 
+            if(!config.containsKey(Strings.CONFIG_CATCH_REPEAT_SAME_WINNER))
+                config.put(Strings.CONFIG_CATCH_REPEAT_SAME_WINNER, "false");
+
+            if(!config.containsKey(Strings.CONFIG_CATCH_REPEAT_SAME_WINNER_MESSAGE))
+                config.put(Strings.CONFIG_CATCH_REPEAT_SAME_WINNER_MESSAGE, "You won last catch already!");
+
 
             config.store(new FileWriter(File), "configs of TwitchBot-Dave");
             return true;
@@ -130,7 +166,7 @@ public class TwitchBot {
         }
     }
 
-    private boolean parseConfig(String file) {
+    public boolean parseConfig(String file) {
         try {
             File File = new File(file);
             if(!File.exists()) {
@@ -155,7 +191,6 @@ public class TwitchBot {
             File catchFile = new File("json/index.json");
             BufferedReader reader = new BufferedReader(new FileReader(catchFile));
             StringBuilder builder = new StringBuilder();
-            boolean fastest = false;
 
             String line;
             while((line = reader.readLine() )!= null) {
@@ -181,17 +216,44 @@ public class TwitchBot {
                 if(!jsonObj.has("lastWinner")) jsonObj.put("lastWinner", name) ;
                 if(!jsonObj.has("bestTime")) jsonObj.put("bestTime", "-1");
             }
+
+
             jsonObj.write(new FileWriter(catchFile)).flush();
 
-            String s [] = new String[] {lastTime, lastWinner};
-            return s;
+            return new String[] {lastTime, lastWinner};
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    private boolean startTracker() {
+    public static String getCatchWinner() {
+        try {
+            File catchFile = new File("json/index.json");
+            BufferedReader reader = new BufferedReader(new FileReader(catchFile));
+            StringBuilder builder = new StringBuilder();
+
+            String line;
+            while((line = reader.readLine() )!= null) {
+                builder.append(line);
+            }
+            System.out.println(builder);
+            JSONObject jsonObj = new JSONObject(builder.toString());
+
+            if(!jsonObj.has("lastWinner")) {
+                if(updateCatch("false", "", -1) != null) {
+                    return getCatchWinner();
+                }
+            }
+
+            return jsonObj.getString("lastWinner");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean startTracker() {
         try {
             clientTracker = new ClientTrackerThread();
             clientTracker.start();

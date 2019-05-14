@@ -78,4 +78,6 @@ public class Strings {
     public static final String CONFIG_CATCH_ENABLE = "catchEnable";
     public static final String CONFIG_AFTER_CATCH_CHAT_COMMAND = "afterCatchChatCommand";
     public static final String CONFIG_AFTER_CATCH_CHAT_COMMAND_ENABLE = "afterCatchChatCommandEnable";
+    public static final String CONFIG_CATCH_REPEAT_SAME_WINNER = "catchRepeatSameWinner";
+    public static final String CONFIG_CATCH_REPEAT_SAME_WINNER_MESSAGE = "catchRepeatSameWinnerMessage";
 }

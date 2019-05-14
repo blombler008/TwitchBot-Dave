@@ -28,7 +28,6 @@ import com.github.blombler008.twitchbot.Timeout;
 import com.github.blombler008.twitchbot.TwitchBot;
 
 import java.io.*;
-import java.sql.Time;
 import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
@@ -62,6 +61,7 @@ public class TwitchIRCListener extends Thread {
                 boolean diceEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_DICE_ENABLE));
                 boolean catchEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_ENABLE));
                 boolean afterCatchChatCommandEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_CHAT_COMMAND_ENABLE));
+                boolean repeat = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_REPEAT_SAME_WINNER));
                 while(s.hasNextLine()) {
                     line = s.nextLine();
                     System.out.println(prefixB + line);
@@ -114,23 +114,39 @@ public class TwitchIRCListener extends Thread {
                                     if (got[4].equalsIgnoreCase("catch")) {
                                         String[] subGot = got[0].split(";");
                                         String name = subGot[3].split("=")[1];
-                                        String byTimeoutUser = Timeout.byTimeout(name);
+
+                                        String byTimeoutUser = null;
+                                        if(Timeout.byTimeout()) {
+                                            if(Timeout.getWinner().equals(name)) {
+                                                if(repeat) {
+                                                    byTimeoutUser = Timeout.setWinner(name);
+                                                } else {
+                                                    String mss = TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_REPEAT_SAME_WINNER_MESSAGE);
+                                                    send(string.replaceAll("%message%", mss.replaceAll("%name%", Timeout.getWinner())));
+                                                    continue;
+                                                }
+                                            } else {
+                                                byTimeoutUser = Timeout.setWinner(name);
+                                            }
+                                        }
 
                                         if (byTimeoutUser != null) {
                                             stringBuilder.append(byTimeoutUser);
                                             last = new Date().getTime();
+                                            send(string.replaceAll("%message%", stringBuilder.toString()));
 
                                             if(afterCatchChatCommandEnable) {
                                                 String m = TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_CHAT_COMMAND);
-                                                send(string.replaceAll("%message%", m.replaceAll("%name%", name)));
+                                                send(string.replaceAll("%message%", m.replaceAll("%name%", Timeout.getWinner())));
                                             }
+                                            continue;
                                         } else {
 
                                             if(afterCatchEnable) {
                                                 if ((last + afterCatchTime) > new Date().getTime()) {
 
                                                     String m = TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_MESSAGE);
-                                                    stringBuilder.append(m.replaceAll("%name%", name));
+                                                    stringBuilder.append(m.replaceAll("%name%", Timeout.getWinner()));
                                                 } else {
                                                     stringBuilder.append(TwitchBot.getConfig().getProperty(Strings.CONFIG_NO_CATCH));
                                                 }
