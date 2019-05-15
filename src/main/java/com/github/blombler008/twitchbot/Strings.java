@@ -56,6 +56,7 @@ public class Strings {
     public static final String HTML_CONTENT_TEXT_JAVASCRIPT = "Content-Type: text/javascript\r\n";
     public static final String HTML_CONTENT_TEXT_STYLESHEET = "Content-Type: text/css\r\n";
     public static final String HTML_CONTENT_IMAGE_PNG = "Content-Type: image/png\r\n";
+    public static final String HTML_CONTENT_IMAGE_X_ICON = "Content-Type: image/x-icon\r\n";
     public static final String HTML_CONNECTION_CLOSE = "Connection: close\r\n";
     public static final String HTML_CONTENT_LENGTH = "Content-Length: ";
 

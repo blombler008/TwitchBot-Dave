@@ -106,7 +106,11 @@ public class WebListener extends Thread {
                             if(paths[0].equalsIgnoreCase("getPenguin")) {
                                 String penguinLocation = TwitchBot.getConfig().getProperty(Strings.CONFIG_PENGUIN_LOCATION);
                                 File penguin = new File(penguinLocation);
-                                handlePNG(penguin);
+                                if(penguin.getName().endsWith(".gif")) {
+                                    handleGIF(penguin);
+                                }else {
+                                    handlePNG(penguin);
+                                }
                                 continue;
                             }
 
@@ -137,6 +141,10 @@ public class WebListener extends Thread {
                                         case "png":
                                             index = new File("html", s1);
                                             handlePNG(index);
+                                            continue;
+                                        case "gif":
+                                            index = new File("html", s1);
+                                            handleGIF(index);
                                             continue;
                                         case "html":
                                             index = new File("html", s1);
@@ -201,6 +209,37 @@ public class WebListener extends Thread {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void handleGIF(File png) throws IOException {
+        StringBuilder output = new StringBuilder();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        InputStream in = new FileInputStream(png);
+        try {
+            byte[] buffer = new byte[1024];
+            int count;
+
+            while ((count = in.read(buffer)) != -1) {
+                out.write(buffer, 0, count);
+            }
+
+            // Flush out stream, to write any remaining buffered data
+            out.flush();
+        } finally {
+            in.close();
+        }
+        out.close();
+
+        output.append(Strings.HTML_HTTP_11_200_OK);
+        output.append(Strings.HTML_CONNECTION_CLOSE);
+        output.append(Strings.HTML_CONTENT_IMAGE_X_ICON);
+        output.append(Strings.HTML_CONTENT_LENGTH);
+        output.append(out.toByteArray().length);
+        output.append(Strings.HTML_END_OF_HEADERS);
+        webOutWriter.write(output.toString());
+        webOutWriter.flush();
+        webOut.write(out.toByteArray());
+        webOut.flush();
     }
 
 
