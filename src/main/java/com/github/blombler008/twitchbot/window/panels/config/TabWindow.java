@@ -38,6 +38,7 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 public class TabWindow {
 
 
+    private String buttonResetAllText = "Reset All";
     private String labelPositionText = "Position:";
     private String labelTitleText = "Title:";
     private String labelSizeText = "Size:";
@@ -60,6 +61,8 @@ public class TabWindow {
 
     private JButton changeButtonDefaultExitMethod;
     private JButton resetButtonDefaultExitMethod;
+
+    private JButton resetAllButton;
 
     private JLabel labelSize;
     private JLabel labelDefaultExitMethod;
@@ -98,6 +101,8 @@ public class TabWindow {
 
         changeButtonDefaultExitMethod = new JButton(buttonChangeText);
         resetButtonDefaultExitMethod = new JButton(buttonResetText);
+
+        resetAllButton = new JButton(buttonResetAllText);
 
         labelTimesX = new JLabel(X);
         labelTimesX2 = new JLabel(X);
@@ -144,6 +149,8 @@ public class TabWindow {
         changeButtonTitle.addMouseListener(new MouseAdapterHandler());
         resetButtonTitle.addMouseListener(new MouseAdapterHandler());
 
+        resetAllButton.addMouseListener(new MouseAdapterHandler());
+
         // Label Positions //
         labelPosition.setBounds(10, 77, 118, 22); // Position
 
@@ -165,7 +172,7 @@ public class TabWindow {
         sizeTextFieldX.setBounds(138, 11, 118, 22); // Size width
         sizeTextFieldY.setBounds(282, 11, 118, 22); // Size height
 
-        comboBoxDefaultExitMethod.setBounds(138, 111, 262, 20); // Default Exit Method (ComboBox)
+        comboBoxDefaultExitMethod.setBounds(138, 110, 262, 22); // Default Exit Method (ComboBox)
 
         // Button Positions //
         changeButtonPosition.setBounds(414, 77, 90, 22); // Position Change
@@ -180,6 +187,8 @@ public class TabWindow {
 
         changeButtonDefaultExitMethod.setBounds(414, 110, 90, 22); // Default Exit Method Change
         resetButtonDefaultExitMethod.setBounds(518, 110, 90, 22); // Default Exit Method Reset
+
+        resetAllButton.setBounds(10, 141, 90, 22);
         // Adding components to panel //
         panel.add(labelSize);
         panel.add(labelTitle);
@@ -209,8 +218,11 @@ public class TabWindow {
         panel.add(changeButtonTitle);
         panel.add(resetButtonTitle);
 
+        panel.add(resetAllButton);
+
         panel.add(changeButtonDefaultExitMethod);
         panel.add(resetButtonDefaultExitMethod);
+
 
         panel.setLayout(null);
         updateAll();
@@ -366,6 +378,12 @@ public class TabWindow {
             if(e.getSource().equals(changeButtonTitle)) {
                 frame.setTitle(titleTextField.getText());
                 updateTitle();
+            }
+
+            // reset all //
+
+            if(e.getSource().equals(resetAllButton)) {
+                resetAll();
             }
         }
 
