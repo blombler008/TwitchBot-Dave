@@ -37,8 +37,13 @@ public class GraphicsWindow {
 
     public GraphicsWindow(TwitchBot instance) {
         this.instance = instance;
-        this.frame = new GUIGraphicsWindow();
-        this.frame.setTitle("Dave's - TwitchBot Manager");
+
+        frame = new GUIGraphicsWindow();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setTitle("Dave's - TwitchBot Manager");
+        frame.setSize(new Dimension(1024, 576)); // 16:9 a 1024:576 Resolution
+        frame.setLocation(0,0);
+
         try {
             this.frame.setIconImage(ImageIO.read(instance.getClass().getResource("/favicon.png")));
         } catch (IOException e) {
@@ -55,6 +60,7 @@ public class GraphicsWindow {
             frame.initialize();
             if(frame.isInitialized()) {
                 frame.setVisible(true);
+                frame.getConfigPanel().getTabWindow().updateAll();
             }
             return true;
 

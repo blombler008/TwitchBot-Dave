@@ -23,6 +23,9 @@ package com.github.blombler008.twitchbot.window;/*
  * SOFTWARE.
  */
 
+import com.github.blombler008.twitchbot.window.panels.ConfigPanel;
+import com.github.blombler008.twitchbot.window.panels.ConsolePanel;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -36,10 +39,6 @@ public class GUIGraphicsWindow extends JFrame {
     private final ButtonGroup viewButtonGroup = new ButtonGroup();
     private final ButtonGroup menuBarGroup = new ButtonGroup();
 
-    private JTextField twitchInput;
-    private JTextField webInput;
-    private JTextField timerInput;
-
     private JMenuBar menuBar;
 
     private JMenuItem applicationExitMenuItem;
@@ -52,40 +51,17 @@ public class GUIGraphicsWindow extends JFrame {
 
     private JPanel contentPane;
     private JPanel consolePanel;
+    private JPanel configPanel;
 
-    private JPanel timerPanel;
-    private JPanel twitchPanel;
-    private JPanel webPanel;
-    private JPanel windowPanel;
-
-    private JPanel webInputPanel;
-    private JPanel timerInputPanel;
-    private JPanel twitchInputPanel;
-
-    private JTextPane twitchLog;
-    private JTextPane webLog;
-    private JTextPane timerLog;
-    private JTextPane windowLog;
-
-    private JTabbedPane consoleViewTab;
-
-    private JButton webInputButton;
-    private JButton twitchInputButton;
-    private JButton timerInputButton;
+    private ConsolePanel pConsolePanel;
+    private ConfigPanel pConfigPanel;
 
     private String viewText = "View";
     private String applicationText = "Application";
 
-    private String exitText = "Exit (CRTL + Q)";
-    private String configText = "Config (CRTL + W)";
-    private String consoleText = "Console (CRTL + S)";
-
-    private String sendText = "Send";
-
-    private String viewConsoleTabWindowText = "Application";
-    private String viewConsoleTabTwitchText = "Twitch";
-    private String viewConsoleTabTimerText = "Timer";
-    private String viewConsoleTabWebText = "Web";
+    private String exitText = "Exit (CTRL + Q)";
+    private String configText = "Config (CTRL + W)";
+    private String consoleText = "Console (CTRL + S)";
 
     private boolean finishedInitializing = false;
 
@@ -93,10 +69,16 @@ public class GUIGraphicsWindow extends JFrame {
     private final AtomicBoolean isConfigPanelSelected = new AtomicBoolean(false);
     private final AtomicBoolean isStatusPanelSelected = new AtomicBoolean(false);
 
+    private final int defaultExitOpteration = EXIT_ON_CLOSE;
+    private final Dimension defaultSize = new Dimension(1024, 576); // 16:9 a 1024:576 Resolution
+    private final Point defaultLocation = new Point(50, 50);
+    private final String defaultTitle = "Dave's - TwitchBot Manager";
 
     public void initialize() {
 
         // Initialize components //
+        contentPane = new JPanel(); // Root pane
+
         menuBar = new JMenuBar(); // Menu bar
 
         applicationMenu = new JMenu(applicationText); // Application menu
@@ -107,11 +89,17 @@ public class GUIGraphicsWindow extends JFrame {
 
         applicationExitMenuItem = new JMenuItem(exitText); // exit button -> application menu
 
-        contentPane = new JPanel(); // Root pane
-        consolePanel = new JPanel(); // console view panel
-        consoleViewTab = new JTabbedPane(JTabbedPane.TOP); // console view tab -> console view panel
+
+        // Console panel //
+        pConsolePanel = new ConsolePanel();
+        consolePanel = pConsolePanel.get();
+
+        // Config panel //
+        pConfigPanel = new ConfigPanel(this);
+        configPanel = pConfigPanel.get();
 
         // Listener //
+
         applicationExitMenuItem.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -124,16 +112,7 @@ public class GUIGraphicsWindow extends JFrame {
                 isConsolePanelSelected.set(false);
                 isStatusPanelSelected.set(false);
                 isConfigPanelSelected.set(true);
-
-                consolePanel.setVisible(isConsolePanelSelected.get());
-                consolePanel.setFocusable(isConsolePanelSelected.get());
-
-//                configPanel.setVisible(isConfigPanelSelected.get());
-//                configPanel.setFocusable(isConfigPanelSelected.get());
-
-//                statusPanel.setVisible(isStatusPanelSelected.get());
-//                statusPanel.setFocusable(isStatusPanelSelected.get());
-
+                updatePanels();
             }
         });
 /*
@@ -151,16 +130,7 @@ public class GUIGraphicsWindow extends JFrame {
                 isConsolePanelSelected.set(true);
                 isStatusPanelSelected.set(false);
                 isConfigPanelSelected.set(false);
-
-                consolePanel.setVisible(isConsolePanelSelected.get());
-                consolePanel.setFocusable(isConsolePanelSelected.get());
-
-//                configPanel.setVisible(isConfigPanelSelected.get());
-//                configPanel.setFocusable(isConfigPanelSelected.get());
-
-//                statusPanel.setVisible(isStatusPanelSelected.get());
-//                statusPanel.setFocusable(isStatusPanelSelected.get());
-
+                updatePanels();
             }
         });
 
@@ -171,69 +141,6 @@ public class GUIGraphicsWindow extends JFrame {
         // Root pane //
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setLayout(new BorderLayout(0, 0));
-
-        // console panel //
-        consolePanel.setLayout(new BorderLayout(0, 0));
-        consolePanel.setVisible(isConsolePanelSelected.get());
-        consolePanel.setFocusable(isConsolePanelSelected.get());
-        consolePanel.setOpaque(isConsolePanelSelected.get());
-
-        // config panel //
-
-        // Timer Tab //
-        timerPanel = new JPanel();
-        timerPanel.setLayout(new BorderLayout(5, 5));
-
-        timerLog = new JTextPane();
-        timerLog.setEditable(false);
-
-        timerInputPanel = new JPanel();
-        timerInputPanel.setLayout(new BorderLayout(5, 5));
-
-        timerInput = new JTextField();
-        timerInput.setColumns(10);
-
-        timerInputButton = new JButton(sendText);
-        timerInputButton.setPreferredSize(new Dimension(70, 23));
-
-        // Twitch Tab //
-        twitchPanel = new JPanel();
-        twitchPanel.setLayout(new BorderLayout(5, 5));
-
-        twitchLog = new JTextPane();
-        twitchLog.setEditable(false);
-
-        twitchInputPanel = new JPanel();
-        twitchInputPanel.setLayout(new BorderLayout(5, 5));
-
-        twitchInput = new JTextField();
-        twitchInput.setColumns(10);
-
-        twitchInputButton = new JButton(sendText);
-        twitchInputButton.setPreferredSize(new Dimension(70, 23));
-
-        // Web Tab //
-        webPanel = new JPanel();
-        webPanel.setLayout(new BorderLayout(5, 5));
-
-        webLog = new JTextPane();
-        webLog.setEditable(false);
-
-        webInputPanel = new JPanel();
-        webInputPanel.setLayout(new BorderLayout(5, 5));
-
-        webInput = new JTextField();
-        webInput.setColumns(10);
-
-        webInputButton = new JButton(sendText);
-        webInputButton.setPreferredSize(new Dimension(70, 23));
-
-        // Application Tab //
-        windowPanel = new JPanel();
-        windowPanel.setLayout(new BorderLayout(0, 0));
-
-        windowLog = new JTextPane();
-        windowLog.setEditable(false);
 
         // Menu Bar //
         menuBar.add(applicationMenu);
@@ -252,48 +159,13 @@ public class GUIGraphicsWindow extends JFrame {
         menuBarGroup.add(applicationMenu);
         menuBarGroup.add(viewMenu);
 
-        // Putting panels together //
-        // Web //
-        webInputPanel.add(webInput);
-        webInputPanel.add(webInputButton, BorderLayout.EAST);
-
-        webPanel.add(webLog);
-        webPanel.add(webInputPanel, BorderLayout.SOUTH);
-
-        // Timer //
-        timerInputPanel.add(timerInput);
-        timerInputPanel.add(timerInputButton, BorderLayout.EAST);
-
-        timerPanel.add(timerLog);
-        timerPanel.add(timerInputPanel, BorderLayout.SOUTH);
-
-        // Twitch //
-        twitchInputPanel.add(twitchInput);
-        twitchInputPanel.add(twitchInputButton, BorderLayout.EAST);
-
-        twitchPanel.add(twitchLog);
-        twitchPanel.add(twitchInputPanel, BorderLayout.SOUTH);
-
-        // Window //
-        windowPanel.add(windowLog);
-
-        // Adding all log panels to the tab View //
-        consoleViewTab.addTab(viewConsoleTabWindowText, null, windowPanel, null);
-        consoleViewTab.addTab(viewConsoleTabWebText, null, webPanel, null);
-        consoleViewTab.addTab(viewConsoleTabTwitchText, null, twitchPanel, null);
-        consoleViewTab.addTab(viewConsoleTabTimerText, null, timerPanel, null);
-
-        // Adding tab View to the console view panel //
-        consolePanel.add(consoleViewTab);
 
         // Adding views to root pane //
-        contentPane.add(consolePanel);
+        updatePanels();
 
         // setting frame options //
         setJMenuBar(menuBar); // Menu bar
-        setContentPane(contentPane); // Root pane
-        setSize(new Dimension(1024, 576)); // 16:9 a 1024:576 Resolution
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Exits the program when hit the Red X
+        //setContentPane(contentPane); // Root pane
 
 
         // Key Listener //
@@ -331,170 +203,47 @@ public class GUIGraphicsWindow extends JFrame {
         finishedInitializing = true;
     }
 
+    public void center() {
+        // Get the size of the screen
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+
+        // Determine the new location of the window
+        int w = this.getSize().width;
+        int h = this.getSize().height;
+        int x = (dim.width-w)/2;
+        int y = (dim.height-h)/2;
+
+        // Move the window
+        this.setLocation(x, y);
+    }
+
+    public ConsolePanel getConsolePanel() {
+        return pConsolePanel;
+    }
+
+    public ConfigPanel getConfigPanel() {
+        return pConfigPanel;
+    }
+
     public void updatePanels() {
-        consolePanel.setVisible(isConsolePanelSelected.get());
-        consolePanel.setFocusable(isConsolePanelSelected.get());
+        contentPane.removeAll();
+        contentPane.revalidate();
+        if(isConsolePanelSelected.get()) {
+            contentPane.add(consolePanel);
+        }
 
-        // configPanel.setVisible(isConfigPanelSelected.get());
-        // configPanel.setFocusable(isConfigPanelSelected.get());
+        if(isConfigPanelSelected.get()) {
+            contentPane.add(configPanel);
+        }
 
+        if(isStatusPanelSelected.get()) {
+            //setContentPane(statusPanel);
+            //contentPane.add(statusPanel);
+        }
+        setContentPane(contentPane);
         // statusPanel.setVisible(isStatusPanelSelected.get());
         // statusPanel.setFocusable(isStatusPanelSelected.get());
     }
-
-
-    public ButtonGroup getViewButtonGroup() {
-        return viewButtonGroup;
-    }
-
-    public ButtonGroup getMenuBarGroup() {
-        return menuBarGroup;
-    }
-
-    public JTextField getTwitchInput() {
-        return twitchInput;
-    }
-
-    public JTextField getWebInput() {
-        return webInput;
-    }
-
-    public JTextField getTimerInput() {
-        return timerInput;
-    }
-
-    public JMenuBar getJMenuBar() {
-        return menuBar;
-    }
-
-    public JMenuItem getApplicationExitMenuItem() {
-        return applicationExitMenuItem;
-    }
-
-    public JMenu getApplicationMenu() {
-        return applicationMenu;
-    }
-
-    public JMenu getViewMenu() {
-        return viewMenu;
-    }
-
-    public JRadioButtonMenuItem getViewRadioConfig() {
-        return viewRadioConfig;
-    }
-
-    public JRadioButtonMenuItem getViewRadioConsole() {
-        return viewRadioConsole;
-    }
-
-    public JPanel getContentPane() {
-        return contentPane;
-    }
-
-    public JPanel getConsolePanel() {
-        return consolePanel;
-    }
-
-    public JPanel getTimerPanel() {
-        return timerPanel;
-    }
-
-    public JPanel getTwitchPanel() {
-        return twitchPanel;
-    }
-
-    public JPanel getWebPanel() {
-        return webPanel;
-    }
-
-    public JPanel getWindowPanel() {
-        return windowPanel;
-    }
-
-    public JPanel getWebInputPanel() {
-        return webInputPanel;
-    }
-
-    public JPanel getTimerInputPanel() {
-        return timerInputPanel;
-    }
-
-    public JPanel getTwitchInputPanel() {
-        return twitchInputPanel;
-    }
-
-    public JTextPane getTwitchLog() {
-        return twitchLog;
-    }
-
-    public JTextPane getWebLog() {
-        return webLog;
-    }
-
-    public JTextPane getTimerLog() {
-        return timerLog;
-    }
-
-    public JTextPane getWindowLog() {
-        return windowLog;
-    }
-
-    public JTabbedPane getConsoleViewTab() {
-        return consoleViewTab;
-    }
-
-    public JButton getWebInputButton() {
-        return webInputButton;
-    }
-
-    public JButton getTwitchInputButton() {
-        return twitchInputButton;
-    }
-
-    public JButton getTimerInputButton() {
-        return timerInputButton;
-    }
-
-    public String getView() {
-        return viewText;
-    }
-
-    public String getApplicationText() {
-        return applicationText;
-    }
-
-    public String getExitText() {
-        return exitText;
-    }
-
-    public String getConfigText() {
-        return configText;
-    }
-
-    public String getConsoleText() {
-        return consoleText;
-    }
-
-    public String getSendText() {
-        return sendText;
-    }
-
-    public String getViewConsoleTabWindowText() {
-        return viewConsoleTabWindowText;
-    }
-
-    public String getViewConsoleTabTwitchText() {
-        return viewConsoleTabTwitchText;
-    }
-
-    public String getViewConsoleTabTimerText() {
-        return viewConsoleTabTimerText;
-    }
-
-    public String getViewConsoleTabWebText() {
-        return viewConsoleTabWebText;
-    }
-
 
     public boolean isInitialized() {
         while(!finishedInitializing) {
@@ -503,15 +252,19 @@ public class GUIGraphicsWindow extends JFrame {
         return finishedInitializing;
     }
 
-    public boolean isConsolePanelSelected() {
-        return isConsolePanelSelected.get();
+    public int getDefaultExitOperation() {
+        return defaultExitOpteration;
     }
 
-    public boolean isConfigPanelSelected() {
-        return isConfigPanelSelected.get();
+    public Dimension getDefaultSize() {
+        return defaultSize;
     }
 
-    public boolean isStatusPanelSelected() {
-        return isStatusPanelSelected.get();
+    public Point getDefaultLocation() {
+        return defaultLocation;
+    }
+
+    public String getDefaultTitle() {
+        return defaultTitle;
     }
 }
