@@ -25,3 +25,4 @@ password.txt
 .idea/
 target/
 test-dave/
+config.properties
