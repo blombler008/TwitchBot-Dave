@@ -84,20 +84,20 @@ public class Strings {
 
     public static final String CONFIG_FILE = "config.properties";
 
-    public static final String CONFIG_PENGUIN_LOCATION = "reward.location";
-    public static final String CONFIG_MIN_TIME = "timer.min";
-    public static final String CONFIG_MAX_TIME = "timer.max";
+    public static final String CONFIG_REWARD_LOCATION = "reward.location";
+    public static final String CONFIG_TIMER_MIN = "timer.min";
+    public static final String CONFIG_TIMER_MAX = "timer.max";
     public static final String CONFIG_PORT = "port";
     public static final String CONFIG_TWITCH_CHANNEL = "twitch.channel";
-    public static final String CONFIG_FIRST_CATCH = "catch.winner.message";
+    public static final String CONFIG_CATCH_WINNER_MESSAGE = "catch.winner.message";
     public static final String CONFIG_DICE_ENABLE = "dice.enable";
     public static final String CONFIG_CATCH_ENABLE = "catch.enable";
-    public static final String CONFIG_NO_CATCH = "catch.no";
-    public static final String CONFIG_AFTER_CATCH_TIME = "catch.missed.time";
-    public static final String CONFIG_AFTER_CATCH_ENABLE = "catch.missed.enable";
-    public static final String CONFIG_AFTER_CATCH_MESSAGE = "catch.missed.message";
-    public static final String CONFIG_AFTER_CATCH_CHAT_COMMAND = "catch.winner.command";
-    public static final String CONFIG_AFTER_CATCH_CHAT_COMMAND_ENABLE = "catch.winner.command.enable";
-    public static final String CONFIG_CATCH_REPEAT_SAME_WINNER = "catch.winner.repeat.enable";
-    public static final String CONFIG_CATCH_REPEAT_SAME_WINNER_MESSAGE = "catch.winner.repeat.message";
+    public static final String CONFIG_CATCH_NO = "catch.no";
+    public static final String CONFIG_CATCH_MISSED_TIME = "catch.missed.time";
+    public static final String CONFIG_CATCH_MISSED_ENABLE = "catch.missed.enable";
+    public static final String CONFIG_CATCH_MISSED_MESSAGE = "catch.missed.message";
+    public static final String CONFIG_CATCH_WINNER_COMMAND = "catch.winner.command";
+    public static final String CONFIG_CATCH_WINNER_COMMAND_ENABLE = "catch.winner.command.enable";
+    public static final String CONFIG_CATCH_WINNER_REPEAT_ENABLE = "catch.winner.repeat.enable";
+    public static final String CONFIG_CATCH_WINNER_REPEAT_MESSAGE = "catch.winner.repeat.message";
 }

@@ -25,7 +25,6 @@ package com.github.blombler008.twitchbot;/*
 
 import com.github.blombler008.twitchbot.commands.CommandCatch;
 import com.github.blombler008.twitchbot.commands.CommandDice;
-import com.github.blombler008.twitchbot.commands.CommandZoggos;
 import com.github.blombler008.twitchbot.threads.ClientTrackerThread;
 import com.github.blombler008.twitchbot.threads.ConsoleListener;
 import com.github.blombler008.twitchbot.threads.TwitchIRCListener;
@@ -60,10 +59,8 @@ public class TwitchBot {
             if (instance.checkArgs(args)) {
                 if (instance.parseConfig(Strings.CONFIG_FILE)) {
                     if (instance.checkConfig(Strings.CONFIG_FILE)) {
-                        if (mergeOld) {
-                            if(instance.checkOldConfig(Strings.CONFIG_FILE)) {
-                                return;
-                            }
+                        if (instance.checkOldConfig(Strings.CONFIG_FILE) && mergeOld) {
+                            instance.checkConfig(Strings.CONFIG_FILE);
                             return;
                         }
                         if (noGraph) {
@@ -95,6 +92,70 @@ public class TwitchBot {
 
     private boolean checkOldConfig(String configFile) {
         try {
+            File f = new File(configFile);
+            if(config.containsKey(Strings.CONFIG_OLD_MIN_TIME)) {
+                config.put(Strings.CONFIG_TIMER_MIN, config.getProperty(Strings.CONFIG_OLD_MIN_TIME));
+                config.remove(Strings.CONFIG_OLD_MIN_TIME);
+            }
+            if(config.containsKey(Strings.CONFIG_OLD_MAX_TIME)) {
+                config.put(Strings.CONFIG_TIMER_MAX, config.getProperty(Strings.CONFIG_OLD_MAX_TIME));
+                config.remove(Strings.CONFIG_OLD_MAX_TIME);
+            }
+            if(config.containsKey(Strings.CONFIG_OLD_PENGUIN_LOCATION)) {
+                config.put(Strings.CONFIG_REWARD_LOCATION, config.getProperty(Strings.CONFIG_OLD_PENGUIN_LOCATION));
+                config.remove(Strings.CONFIG_OLD_PENGUIN_LOCATION);
+            }
+            if(config.containsKey(Strings.CONFIG_OLD_TWITCH_CHANNEL)) {
+                config.put(Strings.CONFIG_TWITCH_CHANNEL, config.getProperty(Strings.CONFIG_OLD_TWITCH_CHANNEL));
+                config.remove(Strings.CONFIG_OLD_TWITCH_CHANNEL);
+            }
+            if(config.containsKey(Strings.CONFIG_OLD_FIRST_CATCH)) {
+                config.put(Strings.CONFIG_CATCH_WINNER_MESSAGE, config.getProperty(Strings.CONFIG_OLD_FIRST_CATCH));
+                config.remove(Strings.CONFIG_OLD_FIRST_CATCH);
+            }
+            if(config.containsKey(Strings.CONFIG_OLD_NO_CATCH)) {
+                config.put(Strings.CONFIG_CATCH_NO, config.getProperty(Strings.CONFIG_OLD_NO_CATCH));
+                config.remove(Strings.CONFIG_OLD_NO_CATCH);
+            }
+            if(config.containsKey(Strings.CONFIG_OLD_AFTER_CATCH_MESSAGE)) {
+                config.put(Strings.CONFIG_CATCH_MISSED_MESSAGE, config.getProperty(Strings.CONFIG_OLD_AFTER_CATCH_MESSAGE));
+                config.remove(Strings.CONFIG_OLD_AFTER_CATCH_MESSAGE);
+            }
+            if(config.containsKey(Strings.CONFIG_OLD_AFTER_CATCH_CHAT_COMMAND)) {
+                config.put(Strings.CONFIG_CATCH_WINNER_COMMAND, config.getProperty(Strings.CONFIG_OLD_AFTER_CATCH_CHAT_COMMAND));
+                config.remove(Strings.CONFIG_OLD_AFTER_CATCH_CHAT_COMMAND);
+            }
+            if(config.containsKey(Strings.CONFIG_OLD_AFTER_CATCH_CHAT_COMMAND_ENABLE)) {
+                config.put(Strings.CONFIG_CATCH_WINNER_COMMAND_ENABLE, config.getProperty(Strings.CONFIG_OLD_AFTER_CATCH_CHAT_COMMAND_ENABLE));
+                config.remove(Strings.CONFIG_OLD_AFTER_CATCH_CHAT_COMMAND_ENABLE);
+            }
+            if(config.containsKey(Strings.CONFIG_OLD_AFTER_CATCH_ENABLE)) {
+                config.put(Strings.CONFIG_CATCH_MISSED_ENABLE, config.getProperty(Strings.CONFIG_OLD_AFTER_CATCH_ENABLE));
+                config.remove(Strings.CONFIG_OLD_AFTER_CATCH_ENABLE);
+            }
+            if(config.containsKey(Strings.CONFIG_OLD_DICE_ENABLE)) {
+                config.put(Strings.CONFIG_DICE_ENABLE, config.getProperty(Strings.CONFIG_OLD_DICE_ENABLE));
+                config.remove(Strings.CONFIG_OLD_DICE_ENABLE);
+            }
+            if(config.containsKey(Strings.CONFIG_OLD_AFTER_CATCH_TIME)) {
+                config.put(Strings.CONFIG_CATCH_MISSED_TIME, config.getProperty(Strings.CONFIG_OLD_AFTER_CATCH_TIME));
+                config.remove(Strings.CONFIG_OLD_AFTER_CATCH_TIME);
+            }
+            if(config.containsKey(Strings.CONFIG_OLD_CATCH_ENABLE)) {
+                config.put(Strings.CONFIG_CATCH_ENABLE, config.getProperty(Strings.CONFIG_OLD_CATCH_ENABLE));
+                config.remove(Strings.CONFIG_OLD_CATCH_ENABLE);
+            }
+            if(config.containsKey(Strings.CONFIG_OLD_CATCH_REPEAT_SAME_WINNER)) {
+                config.put(Strings.CONFIG_CATCH_WINNER_REPEAT_ENABLE, config.getProperty(Strings.CONFIG_OLD_CATCH_REPEAT_SAME_WINNER));
+                config.remove(Strings.CONFIG_OLD_CATCH_REPEAT_SAME_WINNER);
+            }
+            if(config.containsKey(Strings.CONFIG_OLD_CATCH_REPEAT_SAME_WINNER_MESSAGE)) {
+                config.put(Strings.CONFIG_CATCH_WINNER_REPEAT_MESSAGE, config.getProperty(Strings.CONFIG_OLD_CATCH_REPEAT_SAME_WINNER_MESSAGE));
+                config.remove(Strings.CONFIG_OLD_CATCH_REPEAT_SAME_WINNER_MESSAGE);
+            }
+
+            config.store(System.out, "d");
+            config.store(new FileWriter(f), "configs of TwitchBot-Dave");
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -131,53 +192,53 @@ public class TwitchBot {
     public boolean checkConfig(String file) {
         try {
             File File = new File(file);
-            if(!config.containsKey(Strings.CONFIG_MIN_TIME))
-                config.put(Strings.CONFIG_MIN_TIME, "60000");
+            if(!config.containsKey(Strings.CONFIG_TIMER_MIN))
+                config.put(Strings.CONFIG_TIMER_MIN, "60000");
 
-            if(!config.containsKey(Strings.CONFIG_MAX_TIME))
-                config.put(Strings.CONFIG_MAX_TIME, "300000");
+            if(!config.containsKey(Strings.CONFIG_TIMER_MAX))
+                config.put(Strings.CONFIG_TIMER_MAX, "300000");
 
             if(!config.containsKey(Strings.CONFIG_PORT))
                 config.put(Strings.CONFIG_PORT, "8087");
 
-            if(!config.containsKey(Strings.CONFIG_PENGUIN_LOCATION))
-                config.put(Strings.CONFIG_PENGUIN_LOCATION, "html/penguin.png");
+            if(!config.containsKey(Strings.CONFIG_REWARD_LOCATION))
+                config.put(Strings.CONFIG_REWARD_LOCATION, "html/penguin.png");
 
             if(!config.containsKey(Strings.CONFIG_TWITCH_CHANNEL))
                 config.put(Strings.CONFIG_TWITCH_CHANNEL, "binarydave");
 
-            if(!config.containsKey(Strings.CONFIG_FIRST_CATCH))
-                config.put(Strings.CONFIG_FIRST_CATCH, "%name% caught the penguin first!");
+            if(!config.containsKey(Strings.CONFIG_CATCH_WINNER_MESSAGE))
+                config.put(Strings.CONFIG_CATCH_WINNER_MESSAGE, "%name% caught the penguin first!");
 
-            if(!config.containsKey(Strings.CONFIG_NO_CATCH))
-                config.put(Strings.CONFIG_NO_CATCH, "There is currently no catch on going!");
+            if(!config.containsKey(Strings.CONFIG_CATCH_NO))
+                config.put(Strings.CONFIG_CATCH_NO, "There is currently no catch on going!");
 
-            if(!config.containsKey(Strings.CONFIG_AFTER_CATCH_MESSAGE))
-                config.put(Strings.CONFIG_AFTER_CATCH_MESSAGE, "You just missed it! %name% was first!");
+            if(!config.containsKey(Strings.CONFIG_CATCH_MISSED_MESSAGE))
+                config.put(Strings.CONFIG_CATCH_MISSED_MESSAGE, "You just missed it! %name% was first!");
 
-            if(!config.containsKey(Strings.CONFIG_AFTER_CATCH_CHAT_COMMAND))
-                config.put(Strings.CONFIG_AFTER_CATCH_CHAT_COMMAND, "!addpoints %name% 5000");
+            if(!config.containsKey(Strings.CONFIG_CATCH_WINNER_COMMAND))
+                config.put(Strings.CONFIG_CATCH_WINNER_COMMAND, "!addpoints %name% 5000");
 
-            if(!config.containsKey(Strings.CONFIG_AFTER_CATCH_CHAT_COMMAND_ENABLE))
-                config.put(Strings.CONFIG_AFTER_CATCH_CHAT_COMMAND_ENABLE, "true");
+            if(!config.containsKey(Strings.CONFIG_CATCH_WINNER_COMMAND_ENABLE))
+                config.put(Strings.CONFIG_CATCH_WINNER_COMMAND_ENABLE, "true");
 
-            if(!config.containsKey(Strings.CONFIG_AFTER_CATCH_ENABLE))
-                config.put(Strings.CONFIG_AFTER_CATCH_ENABLE, "true");
+            if(!config.containsKey(Strings.CONFIG_CATCH_MISSED_ENABLE))
+                config.put(Strings.CONFIG_CATCH_MISSED_ENABLE, "true");
 
             if(!config.containsKey(Strings.CONFIG_DICE_ENABLE))
                 config.put(Strings.CONFIG_DICE_ENABLE, "true");
 
-            if(!config.containsKey(Strings.CONFIG_AFTER_CATCH_TIME))
-                config.put(Strings.CONFIG_AFTER_CATCH_TIME, "10000");
+            if(!config.containsKey(Strings.CONFIG_CATCH_MISSED_TIME))
+                config.put(Strings.CONFIG_CATCH_MISSED_TIME, "10000");
 
             if(!config.containsKey(Strings.CONFIG_CATCH_ENABLE))
                 config.put(Strings.CONFIG_CATCH_ENABLE, "true");
 
-            if(!config.containsKey(Strings.CONFIG_CATCH_REPEAT_SAME_WINNER))
-                config.put(Strings.CONFIG_CATCH_REPEAT_SAME_WINNER, "false");
+            if(!config.containsKey(Strings.CONFIG_CATCH_WINNER_REPEAT_ENABLE))
+                config.put(Strings.CONFIG_CATCH_WINNER_REPEAT_ENABLE, "false");
 
-            if(!config.containsKey(Strings.CONFIG_CATCH_REPEAT_SAME_WINNER_MESSAGE))
-                config.put(Strings.CONFIG_CATCH_REPEAT_SAME_WINNER_MESSAGE, "You won last catch already!");
+            if(!config.containsKey(Strings.CONFIG_CATCH_WINNER_REPEAT_MESSAGE))
+                config.put(Strings.CONFIG_CATCH_WINNER_REPEAT_MESSAGE, "You won last catch already!");
 
 
             config.store(new FileWriter(File), "configs of TwitchBot-Dave");

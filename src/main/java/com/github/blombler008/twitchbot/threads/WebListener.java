@@ -104,7 +104,7 @@ public class WebListener extends Thread {
                             }
 
                             if(paths[0].equalsIgnoreCase("getPenguin")) {
-                                String penguinLocation = TwitchBot.getConfig().getProperty(Strings.CONFIG_PENGUIN_LOCATION);
+                                String penguinLocation = TwitchBot.getConfig().getProperty(Strings.CONFIG_REWARD_LOCATION);
                                 File penguin = new File(penguinLocation);
                                 if(penguin.getName().endsWith(".gif")) {
                                     handleGIF(penguin);

@@ -23,7 +23,6 @@ package com.github.blombler008.twitchbot;/*
  * SOFTWARE.
  */
 
-import java.net.Socket;
 import java.util.Date;
 import java.util.Random;
 
@@ -39,8 +38,8 @@ public class Timeout {
     private static Random random = new Random();
 
     static{
-        low = Integer.parseInt(TwitchBot.getConfig().getProperty(Strings.CONFIG_MIN_TIME));
-        high = Integer.parseInt(TwitchBot.getConfig().getProperty(Strings.CONFIG_MAX_TIME));
+        low = Integer.parseInt(TwitchBot.getConfig().getProperty(Strings.CONFIG_TIMER_MIN));
+        high = Integer.parseInt(TwitchBot.getConfig().getProperty(Strings.CONFIG_TIMER_MAX));
         winner = TwitchBot.getCatchWinner();
     }
 
@@ -90,7 +89,7 @@ public class Timeout {
             katch = false;
             long diff = now - autoTimeout;
             StringBuilder message = new StringBuilder();
-            String m = TwitchBot.getConfig().getProperty(Strings.CONFIG_FIRST_CATCH);
+            String m = TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_WINNER_MESSAGE);
             message.append(m.replaceAll("%name%", name));
             winner = name;
             TwitchBot.updateCatch("false", name, diff);

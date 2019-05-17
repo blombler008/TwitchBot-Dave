@@ -36,10 +36,10 @@ public class CommandCatch extends Command{
     public CommandCatch() {
         super("catch");
     }
-    int afterCatchTime = Integer.parseInt(TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_TIME));
-    boolean afterCatchEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_ENABLE));
-    boolean afterCatchChatCommandEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_CHAT_COMMAND_ENABLE));
-    boolean repeat = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_REPEAT_SAME_WINNER));
+    int afterCatchTime = Integer.parseInt(TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_MISSED_TIME));
+    boolean afterCatchEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_MISSED_ENABLE));
+    boolean afterCatchChatCommandEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_WINNER_COMMAND_ENABLE));
+    boolean repeat = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_WINNER_REPEAT_ENABLE));
     private long last;
     StringBuilder stringBuilder = new StringBuilder();
 
@@ -57,7 +57,7 @@ public class CommandCatch extends Command{
                 if(repeat) {
                     byTimeoutUser = Timeout.setWinner(name);
                 } else {
-                    String mss = TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_REPEAT_SAME_WINNER_MESSAGE);
+                    String mss = TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_WINNER_REPEAT_MESSAGE);
                     instance.send(string.replaceAll("%message%", mss.replaceAll("%name%", Timeout.getWinner())));
                     return null;
                 }
@@ -72,7 +72,7 @@ public class CommandCatch extends Command{
             instance.send(string.replaceAll("%message%", stringBuilder.toString()));
 
             if(afterCatchChatCommandEnable) {
-                String m = TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_CHAT_COMMAND);
+                String m = TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_WINNER_COMMAND);
                 instance.send(string.replaceAll("%message%", m.replaceAll("%name%", Timeout.getWinner())));
             }
             return null;
@@ -81,10 +81,10 @@ public class CommandCatch extends Command{
             if (afterCatchEnable) {
                 if ((last + afterCatchTime) > new Date().getTime()) {
 
-                    String m = TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_MESSAGE);
+                    String m = TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_MISSED_MESSAGE);
                     stringBuilder.append(m.replaceAll("%name%", Timeout.getWinner()));
                 } else {
-                    stringBuilder.append(TwitchBot.getConfig().getProperty(Strings.CONFIG_NO_CATCH));
+                    stringBuilder.append(TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_NO));
                 }
             }
         }
