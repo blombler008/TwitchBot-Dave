@@ -24,12 +24,12 @@ package com.github.blombler008.twitchbot.threads;/*
  */
 
 import com.github.blombler008.twitchbot.Strings;
-import com.github.blombler008.twitchbot.Timeout;
 import com.github.blombler008.twitchbot.TwitchBot;
+import com.github.blombler008.twitchbot.commands.Command;
 
 import java.io.*;
-import java.util.Date;
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class TwitchIRCListener extends Thread {
@@ -38,7 +38,7 @@ public class TwitchIRCListener extends Thread {
     private InputStream in;
     private OutputStreamWriter outWriter;
     private String prefixA;
-    private long last;
+    private List<Command> commands = new ArrayList<>();
 
     public TwitchIRCListener(String prefixA, String prefixB, OutputStream out, InputStream in) {
         this.setName("Twitch-Socket-Listener");
@@ -56,12 +56,7 @@ public class TwitchIRCListener extends Thread {
                 Scanner s = new Scanner(in);
                 String line;
                 String [] got;
-                int afterCatchTime = Integer.parseInt(TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_TIME));
-                boolean afterCatchEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_ENABLE));
-                boolean diceEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_DICE_ENABLE));
-                boolean catchEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_ENABLE));
-                boolean afterCatchChatCommandEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_CHAT_COMMAND_ENABLE));
-                boolean repeat = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_REPEAT_SAME_WINNER));
+
                 while(s.hasNextLine()) {
                     line = s.nextLine();
                     System.out.println(prefixB + line);
@@ -95,80 +90,24 @@ public class TwitchIRCListener extends Thread {
                         }
                         if(got.length >= 5 && got[2].equalsIgnoreCase("PRIVMSG")) {
 
-                            String string = Strings.MSG_TEMPLATE;
-                            string = string.replaceAll("%channel%", got[3]);
                             got[4] = got[4].replaceFirst(":", "");
-                            StringBuilder stringBuilder = new StringBuilder();
+
                             if(got[4].startsWith("!")) {
                                 got[4] = got[4].replaceFirst("\\!", "");
-
-                                if(diceEnable) {
-                                    if (got[4].equalsIgnoreCase("dice")) {
-                                        stringBuilder.append("You rolled a ");
-                                        stringBuilder.append(new Random().nextInt(5000000));
-                                        stringBuilder.append("!");
-                                    }
-                                }
-
-                                if(catchEnable) {
-                                    if (got[4].equalsIgnoreCase("catch")) {
-                                        String[] subGot = got[0].split(";");
-                                        String name = subGot[3].split("=")[1];
-
-                                        String byTimeoutUser = null;
-                                        if(Timeout.byTimeout()) {
-                                            if(Timeout.getWinner().equals(name)) {
-                                                if(repeat) {
-                                                    byTimeoutUser = Timeout.setWinner(name);
-                                                } else {
-                                                    String mss = TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_REPEAT_SAME_WINNER_MESSAGE);
-                                                    send(string.replaceAll("%message%", mss.replaceAll("%name%", Timeout.getWinner())));
-                                                    continue;
-                                                }
-                                            } else {
-                                                byTimeoutUser = Timeout.setWinner(name);
-                                            }
-                                        }
-
-                                        if (byTimeoutUser != null) {
-                                            stringBuilder.append(byTimeoutUser);
-                                            last = new Date().getTime();
-                                            send(string.replaceAll("%message%", stringBuilder.toString()));
-
-                                            if(afterCatchChatCommandEnable) {
-                                                String m = TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_CHAT_COMMAND);
-                                                send(string.replaceAll("%message%", m.replaceAll("%name%", Timeout.getWinner())));
-                                            }
-                                            continue;
-                                        } else {
-
-                                            if(afterCatchEnable) {
-                                                if ((last + afterCatchTime) > new Date().getTime()) {
-
-                                                    String m = TwitchBot.getConfig().getProperty(Strings.CONFIG_AFTER_CATCH_MESSAGE);
-                                                    stringBuilder.append(m.replaceAll("%name%", Timeout.getWinner()));
-                                                } else {
-                                                    stringBuilder.append(TwitchBot.getConfig().getProperty(Strings.CONFIG_NO_CATCH));
-                                                }
-                                            }
+                                for(Command cmd: commands) {
+                                    if(got[4].equalsIgnoreCase(cmd.getCommandName())) {
+                                        String outCome = cmd.run(got, this);
+                                        if(outCome != null) {
+                                            String string = Strings.MSG_TEMPLATE;
+                                            string = string.replaceAll("%channel%", got[3]);
+                                            string = string.replaceAll("%message%", outCome);
+                                            // Thread.sleep(3000);
+                                            send(string);
                                         }
                                     }
                                 }
-
-
-                                /*if(got[4].equalsIgnoreCase("zoggos")) {
-                                    String [] subGot = got[0].split(";");
-                                    String name = subGot[3].split("=")[1];
-                                    stringBuilder.append(name);
-                                    stringBuilder.append(" ");
-                                    stringBuilder.append("has ");
-                                    stringBuilder.append(new Random().nextInt(Integer.MAX_VALUE));
-                                    stringBuilder.append(" binary11Zoggos");
-                                }*/
                             }
-                            string = string.replaceAll("%message%", stringBuilder.toString());
-                            // Thread.sleep(3000);
-                            send(string);
+
                         }
                     }
                 }
@@ -183,6 +122,10 @@ public class TwitchIRCListener extends Thread {
     public void send(String message) throws IOException {
         outWriter.write(message + "\r\n");
         outWriter.flush();
+    }
+
+    public void addCommand(Command cmd) {
+        commands.add(cmd);
     }
 
     public boolean login() {
@@ -202,7 +145,7 @@ public class TwitchIRCListener extends Thread {
             send(string);
 
             string = Strings.NICK_TEMPLATE;
-            string = string.replaceAll("%name%", "blombler");
+            string = string.replaceAll("%name%", "dave-bot");
             send(string);
             return true;
         } catch (Exception e) {

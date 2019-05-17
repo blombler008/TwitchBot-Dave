@@ -23,6 +23,9 @@ package com.github.blombler008.twitchbot;/*
  * SOFTWARE.
  */
 
+import com.github.blombler008.twitchbot.commands.CommandCatch;
+import com.github.blombler008.twitchbot.commands.CommandDice;
+import com.github.blombler008.twitchbot.commands.CommandZoggos;
 import com.github.blombler008.twitchbot.threads.ClientTrackerThread;
 import com.github.blombler008.twitchbot.threads.ConsoleListener;
 import com.github.blombler008.twitchbot.threads.TwitchIRCListener;
@@ -42,20 +45,27 @@ public class TwitchBot {
     private static TwitchBot instance;
     private static Properties config;
     private static boolean noGraph = false;
+    private static boolean mergeOld = false;
 
     private List<WebListener> threadTracker;
     private ClientTrackerThread clientTracker;
     private ServerSocket webServerSocket;
+    private TwitchIRCListener twitchIRCListener;
 
     public static void main(String[] args) {
 
         try {
             instance = new TwitchBot();
 
-            if(instance.checkArgs(args)) {
+            if (instance.checkArgs(args)) {
                 if (instance.parseConfig(Strings.CONFIG_FILE)) {
                     if (instance.checkConfig(Strings.CONFIG_FILE)) {
-
+                        if (mergeOld) {
+                            if(instance.checkOldConfig(Strings.CONFIG_FILE)) {
+                                return;
+                            }
+                            return;
+                        }
                         if (noGraph) {
                             if (instance.startTwitchIRC()) {
                                 WebListener.sites.add("");
@@ -83,6 +93,15 @@ public class TwitchBot {
         }
     }
 
+    private boolean checkOldConfig(String configFile) {
+        try {
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean checkArgs(String[] args) {
         try {
             if(args.length > 0) {
@@ -91,6 +110,9 @@ public class TwitchBot {
                         String command = s.replaceFirst("--", "");
                         if(command.equals("noGraph")) {
                             noGraph = true;
+                        }
+                        if(command.equals("mergeOld")) {
+                            mergeOld = true;
                         }
                     }
                 }
@@ -277,13 +299,20 @@ public class TwitchBot {
 
     public boolean startTwitchIRC() {
         try {
+            boolean diceEnable = Boolean.parseBoolean(config.getProperty(Strings.CONFIG_DICE_ENABLE));
+            boolean catchEnable = Boolean.parseBoolean(config.getProperty(Strings.CONFIG_DICE_ENABLE));
+
             Socket s = new Socket();
             s.connect(new InetSocketAddress(Strings.SERVER, Integer.parseInt(Strings.PORT)));
             inputStream = s.getInputStream();
             outputStream = s.getOutputStream();
 
-            TwitchIRCListener twitchIRCListener = new TwitchIRCListener(prefixGot, prefixSend, outputStream, inputStream);
+            twitchIRCListener = new TwitchIRCListener(prefixGot, prefixSend, outputStream, inputStream);
             ConsoleListener consoleListener = new ConsoleListener(twitchIRCListener);
+
+            if(catchEnable) twitchIRCListener.addCommand(new CommandCatch());
+            if(diceEnable) twitchIRCListener.addCommand(new CommandDice());
+            //twitchIRCListener.addCommand(new CommandZoggos());
 
             twitchIRCListener.start();
             consoleListener.start();
@@ -295,6 +324,13 @@ public class TwitchBot {
         }
     }
 
+    public boolean stopTwitchIRC() {
+        return false; // TODO: Later implementation
+    }
+
+    public static TwitchIRCListener getTwitchIRCListener() {
+        return instance.twitchIRCListener;
+    }
 
     public boolean startWebListener() {
         threadTracker = new ArrayList<>();
