@@ -89,7 +89,7 @@ public class ConfigPanel {
 
 
         // Tab Panels //
-        windowPanel = tabWindow.get();
+        windowPanel = tabWindow.getPanel();
         webPanel = tabWeb.get();
         timerPanel = tabTimer.get();
         twitchPanel = tabTwitch.get();
@@ -104,7 +104,7 @@ public class ConfigPanel {
         tab.addTab(tabWindowText, null, windowPanel, null); // Selected Tab
         //tab.addTab(tabTimerText, null, timerPanel, null);
         //tab.addTab(tabWebText, null, webPanel, null);
-        //tab.addTab(tabTwitchText, null, twitchPanel, null);
+        tab.addTab(tabTwitchText, null, twitchPanel, null);
 
 
         // Adding tab View to the config view panel //

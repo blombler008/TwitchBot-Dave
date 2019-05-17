@@ -25,6 +25,7 @@ package com.github.blombler008.twitchbot.window.panels.config;/*
 
 import com.github.blombler008.twitchbot.window.GUIGraphicsWindow;
 import com.github.blombler008.twitchbot.window.panels.ConfigPanel;
+import com.github.blombler008.twitchbot.window.panels.Tab;
 
 import javax.swing.*;
 
@@ -34,34 +35,26 @@ import java.awt.event.*;
 import static javax.swing.WindowConstants.*;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
-public class TabWindow {
+public class TabWindow extends Tab {
 
-
-    private String buttonResetAllText = "Reset All";
     private String labelPositionText = "Position:";
     private String labelTitleText = "Title:";
     private String labelSizeText = "Size:";
     private String labelDefaultExitMethodText = "Default Exit Method:";
 
-    private String buttonChangeText = "Change";
     private String buttonResetText = "Reset";
     private String buttonCenterText = "Center";
     private String X = "X";
 
     private JButton resetButtonPosition;
     private JButton centerButtonPosition;
-    private JButton changeButtonPosition;
 
-    private JButton changeButtonTitle;
     private JButton resetButtonTitle;
 
     private JButton resetButtonSize;
-    private JButton changeButtonSize;
 
-    private JButton changeButtonDefaultExitMethod;
     private JButton resetButtonDefaultExitMethod;
 
-    private JButton resetAllButton;
 
     private JLabel labelSize;
     private JLabel labelDefaultExitMethod;
@@ -78,26 +71,15 @@ public class TabWindow {
     private JTextField sizeTextFieldX;
     private JTextField sizeTextFieldY;
 
-    private JCheckBox sizeCheckbox;
-    private JCheckBox positionCheckbox;
-    private JCheckBox defaultExitMethodCheckBox;
-    private JCheckBox titleCheckbox;
-
     private JPanel panel;
 
     private GUIGraphicsWindow frame;
 
-    private String titleChanged;
-    private String positionXChanged;
-    private String positionYChanged;
-    private String sizeXChanged;
-    private String sizeYChanged;
-    private int defaultExitMethodChanged;
 
     public TabWindow(GUIGraphicsWindow frame) {
         this.frame = frame;
 
-        panel = new JPanel();
+        panel = getMainPanel();
 
         // Labels //
         labelPosition = new JLabel(labelPositionText);
@@ -109,20 +91,14 @@ public class TabWindow {
         labelTimesX2 = new JLabel(X);
 
         // Buttons //
-        changeButtonPosition = new JButton(buttonChangeText);
         centerButtonPosition = new JButton(buttonCenterText);
         resetButtonPosition = new JButton(buttonResetText);
 
-        changeButtonTitle = new JButton(buttonChangeText);
         resetButtonTitle = new JButton(buttonResetText);
 
-        changeButtonSize = new JButton(buttonChangeText);
         resetButtonSize = new JButton(buttonResetText);
 
-        changeButtonDefaultExitMethod = new JButton(buttonChangeText);
         resetButtonDefaultExitMethod = new JButton(buttonResetText);
-
-        resetAllButton = new JButton(buttonResetAllText);
 
         // ComboBox + Text Fields //
         comboBoxDefaultExitMethod = new JComboBox<>();
@@ -134,21 +110,12 @@ public class TabWindow {
         sizeTextFieldY = new JTextField();
 
         // Check boxes //
-        sizeCheckbox = new JCheckBox();
-        defaultExitMethodCheckBox = new JCheckBox();
-        positionCheckbox = new JCheckBox();
-        titleCheckbox = new JCheckBox();
 
         // Setting components up
         comboBoxDefaultExitMethod.insertItemAt(new ConfigPanel.Entry("DO_NOTHING_ON_CLOSE", DO_NOTHING_ON_CLOSE), DO_NOTHING_ON_CLOSE);
         comboBoxDefaultExitMethod.insertItemAt(new ConfigPanel.Entry("HIDE_ON_CLOSE", HIDE_ON_CLOSE), HIDE_ON_CLOSE);
         comboBoxDefaultExitMethod.insertItemAt(new ConfigPanel.Entry("DISPOSE_ON_CLOSE", DISPOSE_ON_CLOSE), DISPOSE_ON_CLOSE);
         comboBoxDefaultExitMethod.insertItemAt(new ConfigPanel.Entry("EXIT_ON_CLOSE", EXIT_ON_CLOSE), EXIT_ON_CLOSE);
-
-        sizeCheckbox.setEnabled(false);
-        defaultExitMethodCheckBox.setEnabled(false);
-        positionCheckbox.setEnabled(false);
-        titleCheckbox.setEnabled(false);
 
         positionTextFieldX.setColumns(10);
         positionTextFieldY.setColumns(10);
@@ -167,21 +134,20 @@ public class TabWindow {
 
         // Register button clicks //
         resetButtonSize.addMouseListener(new MouseAdapterHandler());
-        changeButtonSize.addMouseListener(new MouseAdapterHandler());
+
+        getButtonApply().addMouseListener(new MouseAdapterHandler());
+        getButtonCancel().addMouseListener(new MouseAdapterHandler());
+        getButtonReset().addMouseListener(new MouseAdapterHandler());
 
         resetButtonPosition.addMouseListener(new MouseAdapterHandler());
-        changeButtonPosition.addMouseListener(new MouseAdapterHandler());
         centerButtonPosition.addMouseListener(new MouseAdapterHandler());
 
         resetButtonDefaultExitMethod.addMouseListener(new MouseAdapterHandler());
-        changeButtonDefaultExitMethod.addMouseListener(new MouseAdapterHandler());
 
-        changeButtonTitle.addMouseListener(new MouseAdapterHandler());
         resetButtonTitle.addMouseListener(new MouseAdapterHandler());
 
-        resetAllButton.addMouseListener(new MouseAdapterHandler());
-
         // Register Value Changes of ComboBox and TextFields //
+        /*
         titleTextField.addKeyListener(new ActionListenerHandler());
 
         positionTextFieldX.addKeyListener(new ActionListenerHandler());
@@ -191,6 +157,8 @@ public class TabWindow {
         sizeTextFieldY.addKeyListener(new ActionListenerHandler());
 
         comboBoxDefaultExitMethod.addActionListener(new ActionListenerHandler());
+
+        */
 
         // Label Positions //
         labelPosition.setBounds(10, 77, 118, 22); // Position
@@ -216,29 +184,14 @@ public class TabWindow {
         comboBoxDefaultExitMethod.setBounds(138, 110, 262, 22); // Default Exit Method (ComboBox)
 
         // Button Positions //
-        changeButtonPosition.setBounds(450, 77, 90, 22); // Position Change
-        resetButtonPosition.setBounds(554, 77, 90, 22); // Position reset
-        centerButtonPosition.setBounds(658, 77, 90, 22); // Position Center
+        resetButtonPosition.setBounds(414, 77, 90, 22); // Position reset
+        centerButtonPosition.setBounds(518, 77, 90, 22); // Position Center
 
-        changeButtonTitle.setBounds(450, 44, 90, 22); // Title
-        resetButtonTitle.setBounds(554, 44, 90, 22); // Title
+        resetButtonTitle.setBounds(414, 44, 90, 22); // Title
 
-        changeButtonSize.setBounds(450, 11, 90, 22); // Size Change
-        resetButtonSize.setBounds(554, 11, 90, 22); // Size Reset
+        resetButtonSize.setBounds(414, 11, 90, 22); // Size Reset
 
-        changeButtonDefaultExitMethod.setBounds(450, 110, 90, 22); // Default Exit Method Change
-        resetButtonDefaultExitMethod.setBounds(554, 110, 90, 22); // Default Exit Method Reset
-
-        resetAllButton.setBounds(10, 141, 90, 22);
-
-        // checkbox Positions //
-        positionCheckbox.setBounds(414, 77, 21, 22);
-
-        sizeCheckbox.setBounds(414, 11, 21, 22);
-
-        defaultExitMethodCheckBox.setBounds(414, 110, 21, 22);
-
-        titleCheckbox.setBounds(414, 44, 21, 22);
+        resetButtonDefaultExitMethod.setBounds(414, 110, 90, 22); // Default Exit Method Reset
 
         // Adding components to panel //
         panel.add(labelSize);
@@ -259,26 +212,14 @@ public class TabWindow {
         panel.add(positionTextFieldX);
         panel.add(positionTextFieldY);
 
-        panel.add(changeButtonSize);
         panel.add(resetButtonSize);
 
         panel.add(centerButtonPosition);
         panel.add(resetButtonPosition);
-        panel.add(changeButtonPosition);
 
-        panel.add(changeButtonTitle);
         panel.add(resetButtonTitle);
 
-        panel.add(resetAllButton);
-
-        panel.add(changeButtonDefaultExitMethod);
         panel.add(resetButtonDefaultExitMethod);
-
-        panel.add(positionCheckbox);
-        panel.add(sizeCheckbox);
-        panel.add(defaultExitMethodCheckBox);
-        panel.add(titleCheckbox);
-
 
         panel.setLayout(null);
         updateAll();
@@ -324,8 +265,6 @@ public class TabWindow {
         String title = frame.getTitle();
 
         titleTextField.setText(title);
-        titleChanged = title;
-        checkTitle();
     }
 
     public void updatePosition(Point dim) {
@@ -334,10 +273,6 @@ public class TabWindow {
 
         positionTextFieldX.setText(Integer.toString(X));
         positionTextFieldY.setText(Integer.toString(Y));
-
-        positionXChanged = Integer.toString(X);
-        positionYChanged = Integer.toString(Y);
-        checkPosition();
     }
 
     public void updateSize(Dimension size) {
@@ -346,22 +281,19 @@ public class TabWindow {
 
         sizeTextFieldX.setText(Integer.toString(X));
         sizeTextFieldY.setText(Integer.toString(Y));
-
-        sizeXChanged = Integer.toString(X);
-        sizeYChanged = Integer.toString(Y);
-        checkSize();
     }
 
     public void updateComboBox() {
         int i = frame.getDefaultCloseOperation();
 
         comboBoxDefaultExitMethod.setSelectedIndex(i);
-        defaultExitMethodChanged = i;
-        checkDefaultExitMethod();
     }
 
-    public JPanel get() {
-        return panel;
+    public void saveAll() {
+        frame.setTitle(titleTextField.getText());
+        frame.setLocation(Integer.parseInt(positionTextFieldX.getText()), Integer.parseInt(positionTextFieldY.getText()));
+        frame.setSize(Integer.parseInt(sizeTextFieldX.getText()), Integer.parseInt(sizeTextFieldY.getText()));
+        frame.setDefaultCloseOperation(comboBoxDefaultExitMethod.getSelectedIndex());
     }
 
     private class MouseAdapterHandler extends MouseAdapter {
@@ -369,31 +301,11 @@ public class TabWindow {
         @Override
         public void mousePressed(MouseEvent e) {
 
-
-
             // Size //
             if(e.getSource().equals(resetButtonSize)) {
                 resetSize();
                 updateSize(frame.getSize());
             }
-
-            if(e.getSource().equals(changeButtonSize)) {
-                Dimension dim;
-                try {
-                    int x = Integer.parseInt(sizeTextFieldX.getText());
-                    int y = Integer.parseInt(sizeTextFieldY.getText());
-                    dim = new Dimension(x,y);
-                    frame.setSize(dim);
-                    updateSize(frame.getSize());
-                } catch (Exception ignore) {}
-            }
-
-
-
-
-
-
-
 
             // Position //
             if(e.getSource().equals(resetButtonPosition)) {
@@ -404,114 +316,29 @@ public class TabWindow {
                 updatePosition(frame.getLocation());
             }
 
-            if(e.getSource().equals(changeButtonPosition)) {
-                Point dim;
-                try {
-                    int x = Integer.parseInt(positionTextFieldX.getText());
-                    int y = Integer.parseInt(positionTextFieldY.getText());
-                    dim = new Point(x,y);
-                    frame.setLocation(dim);
-                    updatePosition(frame.getLocation());
-                } catch (Exception ignore) {}
-            }
-
-
-
-
-
-
-
-
             // Combo Box //
-            if(e.getSource().equals(changeButtonDefaultExitMethod)) {
-                frame.setDefaultCloseOperation(comboBoxDefaultExitMethod.getSelectedIndex());
-                updateComboBox();
-            }
             if(e.getSource().equals(resetButtonDefaultExitMethod)) {
                 resetComboBox();
                 updateComboBox();
             }
-
-
-
-
-
-
-
-
 
             // Title //
             if(e.getSource().equals(resetButtonTitle)) {
                 frame.setTitle(frame.getDefaultTitle());
                 updateTitle();
             }
-            if(e.getSource().equals(changeButtonTitle)) {
-                frame.setTitle(titleTextField.getText());
-                updateTitle();
-            }
 
             // reset all //
-
-            if(e.getSource().equals(resetAllButton)) {
+            if(e.getSource().equals(getButtonReset())) {
                 resetAll();
             }
-        }
 
-
-    }
-
-    private class ActionListenerHandler extends KeyAdapter implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-
-            if(e.getSource().equals(comboBoxDefaultExitMethod)) {
-                checkDefaultExitMethod();
+            if(e.getSource().equals(getButtonApply())) {
+                saveAll();
             }
         }
 
-        @Override
-        public void keyReleased(KeyEvent e) {
-            if (e.getSource().equals(titleTextField)) {
-                checkTitle();
-            }
 
-            if(e.getSource().equals(positionTextFieldX) || e.getSource().equals(positionTextFieldY)) {
-                checkPosition();
-            }
-
-            if(e.getSource().equals(sizeTextFieldX) || e.getSource().equals(sizeTextFieldY)) {
-                checkSize();
-            }
-        }
     }
 
-    public void checkTitle() {
-        if (titleTextField.getText().equals(titleChanged)) {
-            titleCheckbox.setSelected(true);
-        } else {
-            titleCheckbox.setSelected(false);
-        }
-    }
-    public void checkSize() {
-        if(sizeTextFieldX.getText().equals(sizeXChanged) && sizeTextFieldY.getText().equals(sizeYChanged)) {
-            sizeCheckbox.setSelected(true);
-        } else {
-            sizeCheckbox.setSelected(false);
-        }
-    }
-    public void checkPosition() {
-        if(positionTextFieldX.getText().equals(positionXChanged) && positionTextFieldY.getText().equals(positionYChanged)) {
-            positionCheckbox.setSelected(true);
-        } else {
-            positionCheckbox.setSelected(false);
-        }
-    }
-    public void checkDefaultExitMethod() {
-        if(comboBoxDefaultExitMethod.getSelectedIndex() == defaultExitMethodChanged) {
-            defaultExitMethodCheckBox.setSelected(true);
-        } else {
-            defaultExitMethodCheckBox.setSelected(false);
-        }
-    }
 }

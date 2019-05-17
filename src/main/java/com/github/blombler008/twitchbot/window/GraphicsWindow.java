@@ -41,6 +41,7 @@ public class GraphicsWindow {
         frame = new GUIGraphicsWindow();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("Dave's - TwitchBot Manager");
+        frame.setMinimumSize(new Dimension(800, 270));
                 try {
             this.frame.setIconImage(ImageIO.read(instance.getClass().getResource("/favicon.png")));
         } catch (IOException e) {

@@ -34,16 +34,14 @@ import java.util.Scanner;
 
 public class TwitchIRCListener extends Thread {
 
-    private String prefixB;
+    private static String prefixB = "> ";
+    private static String prefixA = "< ";
     private InputStream in;
     private OutputStreamWriter outWriter;
-    private String prefixA;
     private List<Command> commands = new ArrayList<>();
 
-    public TwitchIRCListener(String prefixA, String prefixB, OutputStream out, InputStream in) {
+    public TwitchIRCListener(OutputStream out, InputStream in) {
         this.setName("Twitch-Socket-Listener");
-        this.prefixA = prefixA;
-        this.prefixB = prefixB;
         this.outWriter = new OutputStreamWriter(out);
         this.in = in;
     }

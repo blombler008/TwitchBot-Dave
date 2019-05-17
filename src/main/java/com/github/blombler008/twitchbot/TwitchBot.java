@@ -37,10 +37,6 @@ import java.net.*;
 import java.util.*;
 
 public class TwitchBot {
-    private static InputStream inputStream;
-    private static OutputStream outputStream;
-    private static String prefixGot = "> ";
-    private static String prefixSend = "< ";
     private static TwitchBot instance;
     private static Properties config;
     private static boolean noGraph = false;
@@ -154,7 +150,6 @@ public class TwitchBot {
                 config.remove(Strings.CONFIG_OLD_CATCH_REPEAT_SAME_WINNER_MESSAGE);
             }
 
-            config.store(System.out, "d");
             config.store(new FileWriter(f), "configs of TwitchBot-Dave");
             return true;
         } catch (Exception e) {
@@ -365,10 +360,10 @@ public class TwitchBot {
 
             Socket s = new Socket();
             s.connect(new InetSocketAddress(Strings.SERVER, Integer.parseInt(Strings.PORT)));
-            inputStream = s.getInputStream();
-            outputStream = s.getOutputStream();
+            InputStream inputStream = s.getInputStream();
+            OutputStream outputStream = s.getOutputStream();
 
-            twitchIRCListener = new TwitchIRCListener(prefixGot, prefixSend, outputStream, inputStream);
+            twitchIRCListener = new TwitchIRCListener(outputStream, inputStream);
             ConsoleListener consoleListener = new ConsoleListener(twitchIRCListener);
 
             if(catchEnable) twitchIRCListener.addCommand(new CommandCatch());

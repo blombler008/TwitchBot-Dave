@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.window.panels.config;/*
+package com.github.blombler008.twitchbot.window.panels.config.twitch;/*
  *
  * MIT License
  *
@@ -23,50 +23,15 @@ package com.github.blombler008.twitchbot.window.panels.config;/*
  * SOFTWARE.
  */
 
-import com.github.blombler008.twitchbot.window.panels.config.twitch.TabCatch;
-import com.github.blombler008.twitchbot.window.panels.config.twitch.TabGeneral;
+import com.github.blombler008.twitchbot.window.panels.Tab;
 
 import javax.swing.*;
-import java.awt.*;
 
-public class TabTwitch {
+public class TabCatch extends Tab {
 
-    private TabCatch tabCatch;
-    private TabGeneral tabGeneral;
     private JPanel panel;
-    private JPanel general;
-    private JPanel katch;
-    private JTabbedPane tab;
 
-    private String generalTabText = "General";
-    private String catchTabText = "Catch";
+    public TabCatch() {
 
-    public TabTwitch () {
-        panel = new JPanel();
-
-        tab = new JTabbedPane(JTabbedPane.LEFT);
-
-        // Tabs //
-        tabGeneral = new TabGeneral();
-        tabCatch = new TabCatch();
-        
-        // panel setings //
-        panel.setLayout(new BorderLayout(10, 10));
-
-
-        // Panels //
-        general = tabGeneral.getPanel();
-        katch = tabCatch.getPanel();
-
-        // adding panels to twitch //
-        tab.addTab(generalTabText, null, general, null);
-        tab.addTab(catchTabText, null, katch, null);
-
-        // adding tab to panel //
-        panel.add(tab);
-    }
-
-    public JPanel get() {
-        return panel;
     }
 }
