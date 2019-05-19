@@ -95,7 +95,7 @@ public class TwitchIRCListener extends Thread {
                                 for(Command cmd: commands) {
                                     if(got[4].equalsIgnoreCase(cmd.getCommandName())) {
                                         String outCome = cmd.run(got, this);
-                                        /*
+
                                         if(outCome != null) {
                                             String string = Strings.MSG_TEMPLATE;
                                             string = string.replaceAll("%channel%", got[3]);
@@ -103,7 +103,7 @@ public class TwitchIRCListener extends Thread {
                                             // Thread.sleep(3000);
                                             send(string);
                                         }
-                                        */
+
                                     }
                                 }
                             }
