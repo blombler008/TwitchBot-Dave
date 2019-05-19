@@ -44,7 +44,9 @@ public class CommandCatch extends Command{
     StringBuilder stringBuilder = new StringBuilder();
 
     @Override
-    public String run(String[] got, TwitchIRCListener instance) throws IOException {
+    public String
+    run(String[] got, TwitchIRCListener instance) throws IOException {
+        stringBuilder = new StringBuilder();
         String[] subGot = got[0].split(";");
         String name = subGot[3].split("=")[1];
 
