@@ -25,6 +25,7 @@ package com.github.blombler008.twitchbot;/*
 
 import com.github.blombler008.twitchbot.commands.CommandCatch;
 import com.github.blombler008.twitchbot.commands.CommandDice;
+import com.github.blombler008.twitchbot.commands.CommandNewCatch;
 import com.github.blombler008.twitchbot.threads.ClientTrackerThread;
 import com.github.blombler008.twitchbot.threads.ConsoleListener;
 import com.github.blombler008.twitchbot.threads.TwitchIRCListener;
@@ -32,8 +33,10 @@ import com.github.blombler008.twitchbot.threads.WebListener;
 import com.github.blombler008.twitchbot.window.GraphicsWindow;
 import org.json.JSONObject;
 
+import javax.jnlp.DownloadServiceListener;
 import java.io.*;
 import java.net.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class TwitchBot {
@@ -41,13 +44,34 @@ public class TwitchBot {
     private static Properties config;
     private static boolean noGraph = false;
     private static boolean mergeOld = false;
+    private static boolean nothing = true;
+    private static PrintLogger logger;
+    private static ConsoleListener consoleManager;
 
     private List<WebListener> threadTracker;
     private ClientTrackerThread clientTracker;
     private ServerSocket webServerSocket;
     private TwitchIRCListener twitchIRCListener;
 
-    public static void main(String[] args) {
+    // TODO: convert full frame to permanent Frame
+    public static GuiFrame frame;
+
+    public static void main(String[] args) throws FileNotFoundException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss-SSS");
+
+        File logs = new File("logs");
+        File log = new File(logs, File.separator + "log-" + formatter.format(new Date()) + ".txt.log");
+
+        frame = new GuiFrame();
+
+        logs.mkdirs();
+        logger = new PrintLogger(System.out);
+        logger.out = System.out;
+        logger.lg = new PrintStream(log);
+        logger.jTextArea = frame.text;
+        logger.jtextNotNull = true;
+
+        System.setOut(logger);
 
         try {
             instance = new TwitchBot();
@@ -59,7 +83,8 @@ public class TwitchBot {
                             instance.checkConfig(Strings.CONFIG_FILE);
                             return;
                         }
-                        if (noGraph) {
+                        if(nothing || noGraph) {
+                            if(nothing) instance.startNewConsole();
                             if (instance.startTwitchIRC()) {
                                 WebListener.sites.add("");
                                 WebListener.sites.add("json");
@@ -72,9 +97,10 @@ public class TwitchBot {
                                     }
                                 }
                             }
+
                         } else {
-                            GraphicsWindow graphicsWindow = new GraphicsWindow(instance);
-                            graphicsWindow.start();
+                           // GraphicsWindow graphicsWindow = new GraphicsWindow(instance);
+                           // graphicsWindow.start();
                         }
 
                     }
@@ -84,6 +110,14 @@ public class TwitchBot {
             e.printStackTrace();
             System.exit(1);
         }
+    }
+
+    public static void send(String text) throws IOException {
+        consoleManager.progress(text);
+    }
+
+    private void startNewConsole() {
+        frame.setVisible(true);
     }
 
     private boolean checkOldConfig(String configFile) {
@@ -166,6 +200,7 @@ public class TwitchBot {
                         String command = s.replaceFirst("--", "");
                         if(command.equals("noGraph")) {
                             noGraph = true;
+                            nothing = false;
                         }
                         if(command.equals("mergeOld")) {
                             mergeOld = true;
@@ -333,7 +368,7 @@ public class TwitchBot {
 
     public boolean startTracker() {
         try {
-            clientTracker = new ClientTrackerThread();
+            clientTracker = new ClientTrackerThread(logger);
             clientTracker.start();
             return true;
         } catch (Exception e) {
@@ -363,15 +398,16 @@ public class TwitchBot {
             InputStream inputStream = s.getInputStream();
             OutputStream outputStream = s.getOutputStream();
 
-            twitchIRCListener = new TwitchIRCListener(outputStream, inputStream);
-            ConsoleListener consoleListener = new ConsoleListener(twitchIRCListener);
+            twitchIRCListener = new TwitchIRCListener(outputStream, inputStream, logger);
+            consoleManager = new ConsoleListener(twitchIRCListener, logger);
 
             if(catchEnable) twitchIRCListener.addCommand(new CommandCatch());
             if(diceEnable) twitchIRCListener.addCommand(new CommandDice());
+            twitchIRCListener.addCommand(new CommandNewCatch());
             //twitchIRCListener.addCommand(new CommandZoggos());
 
             twitchIRCListener.start();
-            consoleListener.start();
+            consoleManager.start();
 
             twitchIRCListener.login();
             return true;

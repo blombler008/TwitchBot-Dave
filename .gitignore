@@ -26,3 +26,4 @@ password.txt
 target/
 test-dave/
 config.properties
+logs/

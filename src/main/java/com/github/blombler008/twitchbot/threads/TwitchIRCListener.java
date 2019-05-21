@@ -23,6 +23,7 @@ package com.github.blombler008.twitchbot.threads;/*
  * SOFTWARE.
  */
 
+import com.github.blombler008.twitchbot.PrintLogger;
 import com.github.blombler008.twitchbot.Strings;
 import com.github.blombler008.twitchbot.TwitchBot;
 import com.github.blombler008.twitchbot.commands.Command;
@@ -39,11 +40,13 @@ public class TwitchIRCListener extends Thread {
     private InputStream in;
     private OutputStreamWriter outWriter;
     private List<Command> commands = new ArrayList<>();
+    private final PrintLogger logger;
 
-    public TwitchIRCListener(OutputStream out, InputStream in) {
+    public TwitchIRCListener(OutputStream out, InputStream in, PrintLogger logger) {
         this.setName("Twitch-Socket-Listener");
         this.outWriter = new OutputStreamWriter(out);
         this.in = in;
+        this.logger = logger;
     }
 
     @Override
@@ -120,6 +123,8 @@ public class TwitchIRCListener extends Thread {
 
     }
     public void send(String message) throws IOException {
+
+        logger.writeSeparate("Send Twitch> " + message, false);
         outWriter.write(message + "\r\n");
         outWriter.flush();
     }

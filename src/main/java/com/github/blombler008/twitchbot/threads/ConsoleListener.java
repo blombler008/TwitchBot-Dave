@@ -23,16 +23,20 @@ package com.github.blombler008.twitchbot.threads;/*
  * SOFTWARE.
  */
 
+import com.github.blombler008.twitchbot.PrintLogger;
 import com.github.blombler008.twitchbot.Timeout;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class ConsoleListener extends Thread {
 
     private final TwitchIRCListener listener;
+    private final PrintLogger logger;
 
-    public ConsoleListener(TwitchIRCListener listener) {
+    public ConsoleListener(TwitchIRCListener listener, PrintLogger logger) {
         this.setName("Console-Listener");
+        this.logger = logger;
         this.listener = listener;
     }
 
@@ -45,21 +49,9 @@ public class ConsoleListener extends Thread {
                 String line;
                 while (s.hasNextLine()) {
                     line = s.nextLine();
-
-                    if(line.equalsIgnoreCase("q") ||
-                            line.equalsIgnoreCase("exit") ||
-                            line.equalsIgnoreCase("stop") ||
-                            line.equalsIgnoreCase("quit"))
-                    {
-                        System.exit(0);
+                    if(progress(line)) {
                         continue;
                     }
-                    if(line.equalsIgnoreCase("newCatch") ){
-                        Timeout.newTimeout();
-                        continue;
-                    }
-
-                    listener.send(line);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -67,5 +59,24 @@ public class ConsoleListener extends Thread {
                 breakOut = true;
             }
         }
+    }
+
+    public boolean progress(String str) throws IOException {
+        logger.writeSeparate("Console Send> " + str, false);
+        if(str.equalsIgnoreCase("q") ||
+                str.equalsIgnoreCase("exit") ||
+                str.equalsIgnoreCase("stop") ||
+                str.equalsIgnoreCase("quit"))
+        {
+            System.exit(0);
+            return true;
+        }
+        if(str.equalsIgnoreCase("newCatch") ){
+            Timeout.newTimeout();
+            return true;
+        }
+
+        listener.send(str);
+        return false;
     }
 }

@@ -23,6 +23,7 @@ package com.github.blombler008.twitchbot.threads;/*
  * SOFTWARE.
  */
 
+import com.github.blombler008.twitchbot.PrintLogger;
 import com.github.blombler008.twitchbot.TwitchBot;
 
 import java.net.Socket;
@@ -31,8 +32,11 @@ import java.util.List;
 
 public class ClientTrackerThread extends Thread {
 
-    public ClientTrackerThread() {
+    private final PrintLogger logger;
+
+    public ClientTrackerThread(PrintLogger logger) {
         this.setName("ClientTracker-Thread");
+        this.logger = logger;
     }
 
     @Override
@@ -50,7 +54,7 @@ public class ClientTrackerThread extends Thread {
                     name = "Web-Listener";
                     prefix = "Web> ";
 
-                    WebListener webListener = new WebListener(prefix, client, name);
+                    WebListener webListener = new WebListener(prefix, client, name, logger);
                     webListener.start();
                     Thread.sleep(100);
                 }

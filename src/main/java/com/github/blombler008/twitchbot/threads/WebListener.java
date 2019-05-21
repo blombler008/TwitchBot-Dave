@@ -23,6 +23,7 @@ package com.github.blombler008.twitchbot.threads;/*
  * SOFTWARE.
  */
 
+import com.github.blombler008.twitchbot.PrintLogger;
 import com.github.blombler008.twitchbot.Strings;
 import com.github.blombler008.twitchbot.Timeout;
 import com.github.blombler008.twitchbot.TwitchBot;
@@ -47,10 +48,12 @@ public class WebListener extends Thread {
     private Timeout timeout;
     private Socket client;
     public static List<String> sites = new ArrayList<>();
+    public final PrintLogger logger;
 
 
-    public WebListener(String prefix, Socket client, String name) throws IOException {
+    public WebListener(String prefix, Socket client, String name, PrintLogger logger) throws IOException {
         this.setName(name);
+        this.logger = logger;
         this.client = client;
         this.prefix = prefix;
         this.webIn = client.getInputStream();
@@ -75,6 +78,8 @@ public class WebListener extends Thread {
                     break;
                 }
                 String line = bfs.readLine();
+
+                logger.writeSeparate("Send Web> " + line, false);
                 String [] got;
                 while(line != null)  {
                     got = line.split("\\s+");
@@ -203,8 +208,6 @@ public class WebListener extends Thread {
             } catch (SocketException e) {
                 e.getCause();
                 breakOut = true;
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
