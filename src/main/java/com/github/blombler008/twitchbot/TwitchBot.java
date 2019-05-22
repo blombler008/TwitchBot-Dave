@@ -30,6 +30,7 @@ import com.github.blombler008.twitchbot.threads.ClientTrackerThread;
 import com.github.blombler008.twitchbot.threads.ConsoleListener;
 import com.github.blombler008.twitchbot.threads.TwitchIRCListener;
 import com.github.blombler008.twitchbot.threads.WebListener;
+import com.github.blombler008.twitchbot.window.GraphicsWindow;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -101,8 +102,8 @@ public class TwitchBot {
                             }
 
                         } else {
-                            // GraphicsWindow graphicsWindow = new GraphicsWindow(instance);
-                            // graphicsWindow.start();
+                            GraphicsWindow graphicsWindow = new GraphicsWindow(instance);
+                            graphicsWindow.start();
                         }
 
                     }
@@ -295,6 +296,9 @@ public class TwitchBot {
                         }
                         if (command.equals("mergeOld")) {
                             mergeOld = true;
+                        }
+                        if (command.equalsIgnoreCase("testVersion")) {
+                            nothing = false;
                         }
                     }
                 }
