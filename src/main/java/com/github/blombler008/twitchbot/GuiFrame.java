@@ -41,10 +41,10 @@ public class GuiFrame extends JFrame {
         setTitle("Dave's - TwitchBot Manager");
         setMinimumSize(new Dimension(1024, 576));
         setResizable(false);
-        setLayout(new BorderLayout(5,5));
+        setLayout(new BorderLayout(5, 5));
 
-        JPanel root = new JPanel(new BorderLayout(5,5));
-        JPanel panel = new JPanel(new BorderLayout(5,5));
+        JPanel root = new JPanel(new BorderLayout(5, 5));
+        JPanel panel = new JPanel(new BorderLayout(5, 5));
         panel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
         text = new JTextArea();
@@ -55,7 +55,7 @@ public class GuiFrame extends JFrame {
         field.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     try {
                         TwitchBot.send(field.getText());
                         text.append(field.getText() + System.lineSeparator());
@@ -86,10 +86,10 @@ public class GuiFrame extends JFrame {
         super.setVisible(b);
         new Thread(() -> {
             boolean bs = true;
-            while(bs) {
+            while (bs) {
                 try {
 
-                    if(isFocused()) {
+                    if (isFocused()) {
                         field.requestFocusInWindow();
                     }
                     Thread.yield();

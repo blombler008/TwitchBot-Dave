@@ -78,7 +78,7 @@ public class PrintLogger extends PrintStream {
     public void write(int b) {
         lg.write(b);
         out.write(b);
-        jTextArea.append(String.valueOf((char)b));
+        jTextArea.append(String.valueOf((char) b));
     }
 
     @Override
@@ -86,7 +86,7 @@ public class PrintLogger extends PrintStream {
         lg.write(buf, off, len);
         out.write(buf, off, len);
         try {
-            jTextArea.append(new String(buf,off,len, "UTF-8"));
+            jTextArea.append(new String(buf, off, len, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

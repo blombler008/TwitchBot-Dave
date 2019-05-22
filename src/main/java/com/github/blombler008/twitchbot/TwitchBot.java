@@ -30,16 +30,21 @@ import com.github.blombler008.twitchbot.threads.ClientTrackerThread;
 import com.github.blombler008.twitchbot.threads.ConsoleListener;
 import com.github.blombler008.twitchbot.threads.TwitchIRCListener;
 import com.github.blombler008.twitchbot.threads.WebListener;
-import com.github.blombler008.twitchbot.window.GraphicsWindow;
 import org.json.JSONObject;
 
-import javax.jnlp.DownloadServiceListener;
 import java.io.*;
-import java.net.*;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
 public class TwitchBot {
+    // TODO: convert full frame to permanent Frame
+    public static GuiFrame frame;
     private static TwitchBot instance;
     private static Properties config;
     private static boolean noGraph = false;
@@ -47,14 +52,10 @@ public class TwitchBot {
     private static boolean nothing = true;
     private static PrintLogger logger;
     private static ConsoleListener consoleManager;
-
     private List<WebListener> threadTracker;
     private ClientTrackerThread clientTracker;
     private ServerSocket webServerSocket;
     private TwitchIRCListener twitchIRCListener;
-
-    // TODO: convert full frame to permanent Frame
-    public static GuiFrame frame;
 
     public static void main(String[] args) throws FileNotFoundException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss-SSS");
@@ -83,8 +84,9 @@ public class TwitchBot {
                             instance.checkConfig(Strings.CONFIG_FILE);
                             return;
                         }
-                        if(nothing || noGraph) {
-                            if(nothing) instance.startNewConsole();
+                        if (nothing || noGraph) {
+                            if (nothing)
+                                instance.startNewConsole();
                             if (instance.startTwitchIRC()) {
                                 WebListener.sites.add("");
                                 WebListener.sites.add("json");
@@ -99,8 +101,8 @@ public class TwitchBot {
                             }
 
                         } else {
-                           // GraphicsWindow graphicsWindow = new GraphicsWindow(instance);
-                           // graphicsWindow.start();
+                            // GraphicsWindow graphicsWindow = new GraphicsWindow(instance);
+                            // graphicsWindow.start();
                         }
 
                     }
@@ -116,6 +118,95 @@ public class TwitchBot {
         consoleManager.progress(text);
     }
 
+    public static Properties getConfig() {
+        return config;
+    }
+
+    public static String[] updateCatch(String aTrue, String name, long diff) {
+        try {
+            File catchFile = new File("json/index.json");
+            BufferedReader reader = new BufferedReader(new FileReader(catchFile));
+            StringBuilder builder = new StringBuilder();
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+            System.out.println(builder);
+            JSONObject jsonObj = new JSONObject(builder.toString());
+            jsonObj.put("catch", aTrue);
+            String lastTime = "0";
+            String lastWinner = "";
+            if (jsonObj.has("bestTime") && jsonObj.has("lastWinner")) {
+
+                lastTime = String.valueOf(jsonObj.getLong("bestTime"));
+                lastWinner = jsonObj.getString("lastWinner");
+
+                if (name != null) {
+                    jsonObj.put("lastWinner", name);
+                }
+                if ((diff != -1 && diff < Long.parseLong(lastTime)) || Long.parseLong(lastTime) == -1) {
+                    jsonObj.put("bestTime", diff);
+                }
+            } else {
+                if (!jsonObj.has("lastWinner"))
+                    jsonObj.put("lastWinner", name);
+                if (!jsonObj.has("bestTime"))
+                    jsonObj.put("bestTime", "-1");
+            }
+
+
+            jsonObj.write(new FileWriter(catchFile)).flush();
+
+            return new String[]{lastTime, lastWinner};
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String getCatchWinner() {
+        try {
+            File catchFile = new File("json/index.json");
+            BufferedReader reader = new BufferedReader(new FileReader(catchFile));
+            StringBuilder builder = new StringBuilder();
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+            System.out.println(builder);
+            JSONObject jsonObj = new JSONObject(builder.toString());
+
+            if (!jsonObj.has("lastWinner")) {
+                if (updateCatch("false", "", -1) != null) {
+                    return getCatchWinner();
+                }
+            }
+
+            return jsonObj.getString("lastWinner");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<WebListener> getWebClientThreads() {
+        return instance.threadTracker;
+    }
+
+    public static Thread getWebClientThread() {
+        return instance.clientTracker;
+    }
+
+    public static ServerSocket getWebServerSocket() {
+        return instance.webServerSocket;
+    }
+
+    public static TwitchIRCListener getTwitchIRCListener() {
+        return instance.twitchIRCListener;
+    }
+
     private void startNewConsole() {
         frame.setVisible(true);
     }
@@ -123,63 +214,63 @@ public class TwitchBot {
     private boolean checkOldConfig(String configFile) {
         try {
             File f = new File(configFile);
-            if(config.containsKey(Strings.CONFIG_OLD_MIN_TIME)) {
+            if (config.containsKey(Strings.CONFIG_OLD_MIN_TIME)) {
                 config.put(Strings.CONFIG_TIMER_MIN, config.getProperty(Strings.CONFIG_OLD_MIN_TIME));
                 config.remove(Strings.CONFIG_OLD_MIN_TIME);
             }
-            if(config.containsKey(Strings.CONFIG_OLD_MAX_TIME)) {
+            if (config.containsKey(Strings.CONFIG_OLD_MAX_TIME)) {
                 config.put(Strings.CONFIG_TIMER_MAX, config.getProperty(Strings.CONFIG_OLD_MAX_TIME));
                 config.remove(Strings.CONFIG_OLD_MAX_TIME);
             }
-            if(config.containsKey(Strings.CONFIG_OLD_PENGUIN_LOCATION)) {
+            if (config.containsKey(Strings.CONFIG_OLD_PENGUIN_LOCATION)) {
                 config.put(Strings.CONFIG_REWARD_LOCATION, config.getProperty(Strings.CONFIG_OLD_PENGUIN_LOCATION));
                 config.remove(Strings.CONFIG_OLD_PENGUIN_LOCATION);
             }
-            if(config.containsKey(Strings.CONFIG_OLD_TWITCH_CHANNEL)) {
+            if (config.containsKey(Strings.CONFIG_OLD_TWITCH_CHANNEL)) {
                 config.put(Strings.CONFIG_TWITCH_CHANNEL, config.getProperty(Strings.CONFIG_OLD_TWITCH_CHANNEL));
                 config.remove(Strings.CONFIG_OLD_TWITCH_CHANNEL);
             }
-            if(config.containsKey(Strings.CONFIG_OLD_FIRST_CATCH)) {
+            if (config.containsKey(Strings.CONFIG_OLD_FIRST_CATCH)) {
                 config.put(Strings.CONFIG_CATCH_WINNER_MESSAGE, config.getProperty(Strings.CONFIG_OLD_FIRST_CATCH));
                 config.remove(Strings.CONFIG_OLD_FIRST_CATCH);
             }
-            if(config.containsKey(Strings.CONFIG_OLD_NO_CATCH)) {
+            if (config.containsKey(Strings.CONFIG_OLD_NO_CATCH)) {
                 config.put(Strings.CONFIG_CATCH_NO, config.getProperty(Strings.CONFIG_OLD_NO_CATCH));
                 config.remove(Strings.CONFIG_OLD_NO_CATCH);
             }
-            if(config.containsKey(Strings.CONFIG_OLD_AFTER_CATCH_MESSAGE)) {
+            if (config.containsKey(Strings.CONFIG_OLD_AFTER_CATCH_MESSAGE)) {
                 config.put(Strings.CONFIG_CATCH_MISSED_MESSAGE, config.getProperty(Strings.CONFIG_OLD_AFTER_CATCH_MESSAGE));
                 config.remove(Strings.CONFIG_OLD_AFTER_CATCH_MESSAGE);
             }
-            if(config.containsKey(Strings.CONFIG_OLD_AFTER_CATCH_CHAT_COMMAND)) {
+            if (config.containsKey(Strings.CONFIG_OLD_AFTER_CATCH_CHAT_COMMAND)) {
                 config.put(Strings.CONFIG_CATCH_WINNER_COMMAND, config.getProperty(Strings.CONFIG_OLD_AFTER_CATCH_CHAT_COMMAND));
                 config.remove(Strings.CONFIG_OLD_AFTER_CATCH_CHAT_COMMAND);
             }
-            if(config.containsKey(Strings.CONFIG_OLD_AFTER_CATCH_CHAT_COMMAND_ENABLE)) {
+            if (config.containsKey(Strings.CONFIG_OLD_AFTER_CATCH_CHAT_COMMAND_ENABLE)) {
                 config.put(Strings.CONFIG_CATCH_WINNER_COMMAND_ENABLE, config.getProperty(Strings.CONFIG_OLD_AFTER_CATCH_CHAT_COMMAND_ENABLE));
                 config.remove(Strings.CONFIG_OLD_AFTER_CATCH_CHAT_COMMAND_ENABLE);
             }
-            if(config.containsKey(Strings.CONFIG_OLD_AFTER_CATCH_ENABLE)) {
+            if (config.containsKey(Strings.CONFIG_OLD_AFTER_CATCH_ENABLE)) {
                 config.put(Strings.CONFIG_CATCH_MISSED_ENABLE, config.getProperty(Strings.CONFIG_OLD_AFTER_CATCH_ENABLE));
                 config.remove(Strings.CONFIG_OLD_AFTER_CATCH_ENABLE);
             }
-            if(config.containsKey(Strings.CONFIG_OLD_DICE_ENABLE)) {
+            if (config.containsKey(Strings.CONFIG_OLD_DICE_ENABLE)) {
                 config.put(Strings.CONFIG_DICE_ENABLE, config.getProperty(Strings.CONFIG_OLD_DICE_ENABLE));
                 config.remove(Strings.CONFIG_OLD_DICE_ENABLE);
             }
-            if(config.containsKey(Strings.CONFIG_OLD_AFTER_CATCH_TIME)) {
+            if (config.containsKey(Strings.CONFIG_OLD_AFTER_CATCH_TIME)) {
                 config.put(Strings.CONFIG_CATCH_MISSED_TIME, config.getProperty(Strings.CONFIG_OLD_AFTER_CATCH_TIME));
                 config.remove(Strings.CONFIG_OLD_AFTER_CATCH_TIME);
             }
-            if(config.containsKey(Strings.CONFIG_OLD_CATCH_ENABLE)) {
+            if (config.containsKey(Strings.CONFIG_OLD_CATCH_ENABLE)) {
                 config.put(Strings.CONFIG_CATCH_ENABLE, config.getProperty(Strings.CONFIG_OLD_CATCH_ENABLE));
                 config.remove(Strings.CONFIG_OLD_CATCH_ENABLE);
             }
-            if(config.containsKey(Strings.CONFIG_OLD_CATCH_REPEAT_SAME_WINNER)) {
+            if (config.containsKey(Strings.CONFIG_OLD_CATCH_REPEAT_SAME_WINNER)) {
                 config.put(Strings.CONFIG_CATCH_WINNER_REPEAT_ENABLE, config.getProperty(Strings.CONFIG_OLD_CATCH_REPEAT_SAME_WINNER));
                 config.remove(Strings.CONFIG_OLD_CATCH_REPEAT_SAME_WINNER);
             }
-            if(config.containsKey(Strings.CONFIG_OLD_CATCH_REPEAT_SAME_WINNER_MESSAGE)) {
+            if (config.containsKey(Strings.CONFIG_OLD_CATCH_REPEAT_SAME_WINNER_MESSAGE)) {
                 config.put(Strings.CONFIG_CATCH_WINNER_REPEAT_MESSAGE, config.getProperty(Strings.CONFIG_OLD_CATCH_REPEAT_SAME_WINNER_MESSAGE));
                 config.remove(Strings.CONFIG_OLD_CATCH_REPEAT_SAME_WINNER_MESSAGE);
             }
@@ -194,15 +285,15 @@ public class TwitchBot {
 
     public boolean checkArgs(String[] args) {
         try {
-            if(args.length > 0) {
-                for (String s: args) {
-                    if(s.startsWith("--")) {
+            if (args.length > 0) {
+                for (String s : args) {
+                    if (s.startsWith("--")) {
                         String command = s.replaceFirst("--", "");
-                        if(command.equals("noGraph")) {
+                        if (command.equals("noGraph")) {
                             noGraph = true;
                             nothing = false;
                         }
-                        if(command.equals("mergeOld")) {
+                        if (command.equals("mergeOld")) {
                             mergeOld = true;
                         }
                     }
@@ -215,59 +306,55 @@ public class TwitchBot {
         }
     }
 
-    public static Properties getConfig() {
-        return config;
-    }
-
     public boolean checkConfig(String file) {
         try {
             File File = new File(file);
-            if(!config.containsKey(Strings.CONFIG_TIMER_MIN))
+            if (!config.containsKey(Strings.CONFIG_TIMER_MIN))
                 config.put(Strings.CONFIG_TIMER_MIN, "60000");
 
-            if(!config.containsKey(Strings.CONFIG_TIMER_MAX))
+            if (!config.containsKey(Strings.CONFIG_TIMER_MAX))
                 config.put(Strings.CONFIG_TIMER_MAX, "300000");
 
-            if(!config.containsKey(Strings.CONFIG_PORT))
+            if (!config.containsKey(Strings.CONFIG_PORT))
                 config.put(Strings.CONFIG_PORT, "8087");
 
-            if(!config.containsKey(Strings.CONFIG_REWARD_LOCATION))
+            if (!config.containsKey(Strings.CONFIG_REWARD_LOCATION))
                 config.put(Strings.CONFIG_REWARD_LOCATION, "html/penguin.png");
 
-            if(!config.containsKey(Strings.CONFIG_TWITCH_CHANNEL))
+            if (!config.containsKey(Strings.CONFIG_TWITCH_CHANNEL))
                 config.put(Strings.CONFIG_TWITCH_CHANNEL, "binarydave");
 
-            if(!config.containsKey(Strings.CONFIG_CATCH_WINNER_MESSAGE))
+            if (!config.containsKey(Strings.CONFIG_CATCH_WINNER_MESSAGE))
                 config.put(Strings.CONFIG_CATCH_WINNER_MESSAGE, "%name% caught the penguin first!");
 
-            if(!config.containsKey(Strings.CONFIG_CATCH_NO))
+            if (!config.containsKey(Strings.CONFIG_CATCH_NO))
                 config.put(Strings.CONFIG_CATCH_NO, "There is currently no catch on going!");
 
-            if(!config.containsKey(Strings.CONFIG_CATCH_MISSED_MESSAGE))
+            if (!config.containsKey(Strings.CONFIG_CATCH_MISSED_MESSAGE))
                 config.put(Strings.CONFIG_CATCH_MISSED_MESSAGE, "You just missed it! %name% was first!");
 
-            if(!config.containsKey(Strings.CONFIG_CATCH_WINNER_COMMAND))
+            if (!config.containsKey(Strings.CONFIG_CATCH_WINNER_COMMAND))
                 config.put(Strings.CONFIG_CATCH_WINNER_COMMAND, "!addpoints %name% 5000");
 
-            if(!config.containsKey(Strings.CONFIG_CATCH_WINNER_COMMAND_ENABLE))
+            if (!config.containsKey(Strings.CONFIG_CATCH_WINNER_COMMAND_ENABLE))
                 config.put(Strings.CONFIG_CATCH_WINNER_COMMAND_ENABLE, "true");
 
-            if(!config.containsKey(Strings.CONFIG_CATCH_MISSED_ENABLE))
+            if (!config.containsKey(Strings.CONFIG_CATCH_MISSED_ENABLE))
                 config.put(Strings.CONFIG_CATCH_MISSED_ENABLE, "true");
 
-            if(!config.containsKey(Strings.CONFIG_DICE_ENABLE))
+            if (!config.containsKey(Strings.CONFIG_DICE_ENABLE))
                 config.put(Strings.CONFIG_DICE_ENABLE, "true");
 
-            if(!config.containsKey(Strings.CONFIG_CATCH_MISSED_TIME))
+            if (!config.containsKey(Strings.CONFIG_CATCH_MISSED_TIME))
                 config.put(Strings.CONFIG_CATCH_MISSED_TIME, "10000");
 
-            if(!config.containsKey(Strings.CONFIG_CATCH_ENABLE))
+            if (!config.containsKey(Strings.CONFIG_CATCH_ENABLE))
                 config.put(Strings.CONFIG_CATCH_ENABLE, "true");
 
-            if(!config.containsKey(Strings.CONFIG_CATCH_WINNER_REPEAT_ENABLE))
+            if (!config.containsKey(Strings.CONFIG_CATCH_WINNER_REPEAT_ENABLE))
                 config.put(Strings.CONFIG_CATCH_WINNER_REPEAT_ENABLE, "false");
 
-            if(!config.containsKey(Strings.CONFIG_CATCH_WINNER_REPEAT_MESSAGE))
+            if (!config.containsKey(Strings.CONFIG_CATCH_WINNER_REPEAT_MESSAGE))
                 config.put(Strings.CONFIG_CATCH_WINNER_REPEAT_MESSAGE, "You won last catch already!");
 
 
@@ -282,7 +369,7 @@ public class TwitchBot {
     public boolean parseConfig(String file) {
         try {
             File File = new File(file);
-            if(!File.exists()) {
+            if (!File.exists()) {
                 File.createNewFile();
 
             } else if (File.isDirectory()) {
@@ -299,73 +386,6 @@ public class TwitchBot {
         }
     }
 
-    public static String[] updateCatch(String aTrue, String name, long diff) {
-        try {
-            File catchFile = new File("json/index.json");
-            BufferedReader reader = new BufferedReader(new FileReader(catchFile));
-            StringBuilder builder = new StringBuilder();
-
-            String line;
-            while((line = reader.readLine() )!= null) {
-                builder.append(line);
-            }
-            System.out.println(builder);
-            JSONObject jsonObj = new JSONObject(builder.toString());
-            jsonObj.put("catch", aTrue);
-            String lastTime = "0";
-            String lastWinner = "";
-            if(jsonObj.has("bestTime") && jsonObj.has("lastWinner")) {
-
-                lastTime = String.valueOf(jsonObj.getLong("bestTime"));
-                lastWinner = jsonObj.getString("lastWinner");
-
-                if (name != null) {
-                    jsonObj.put("lastWinner", name);
-                }
-                if ((diff != -1 && diff < Long.parseLong(lastTime)) || Long.parseLong(lastTime) == -1) {
-                    jsonObj.put("bestTime", diff);
-                }
-            } else {
-                if(!jsonObj.has("lastWinner")) jsonObj.put("lastWinner", name) ;
-                if(!jsonObj.has("bestTime")) jsonObj.put("bestTime", "-1");
-            }
-
-
-            jsonObj.write(new FileWriter(catchFile)).flush();
-
-            return new String[] {lastTime, lastWinner};
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static String getCatchWinner() {
-        try {
-            File catchFile = new File("json/index.json");
-            BufferedReader reader = new BufferedReader(new FileReader(catchFile));
-            StringBuilder builder = new StringBuilder();
-
-            String line;
-            while((line = reader.readLine() )!= null) {
-                builder.append(line);
-            }
-            System.out.println(builder);
-            JSONObject jsonObj = new JSONObject(builder.toString());
-
-            if(!jsonObj.has("lastWinner")) {
-                if(updateCatch("false", "", -1) != null) {
-                    return getCatchWinner();
-                }
-            }
-
-            return jsonObj.getString("lastWinner");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public boolean startTracker() {
         try {
             clientTracker = new ClientTrackerThread(logger);
@@ -375,17 +395,6 @@ public class TwitchBot {
             e.printStackTrace();
             return false;
         }
-    }
-
-    public static List<WebListener> getWebClientThreads() {
-        return instance.threadTracker;
-    }
-    public static Thread getWebClientThread() {
-        return instance.clientTracker;
-    }
-
-    public static ServerSocket getWebServerSocket() {
-        return instance.webServerSocket;
     }
 
     public boolean startTwitchIRC() {
@@ -401,8 +410,10 @@ public class TwitchBot {
             twitchIRCListener = new TwitchIRCListener(outputStream, inputStream, logger);
             consoleManager = new ConsoleListener(twitchIRCListener, logger);
 
-            if(catchEnable) twitchIRCListener.addCommand(new CommandCatch());
-            if(diceEnable) twitchIRCListener.addCommand(new CommandDice());
+            if (catchEnable)
+                twitchIRCListener.addCommand(new CommandCatch());
+            if (diceEnable)
+                twitchIRCListener.addCommand(new CommandDice());
             twitchIRCListener.addCommand(new CommandNewCatch());
             //twitchIRCListener.addCommand(new CommandZoggos());
 
@@ -418,10 +429,6 @@ public class TwitchBot {
 
     public boolean stopTwitchIRC() {
         return false; // TODO: Later implementation
-    }
-
-    public static TwitchIRCListener getTwitchIRCListener() {
-        return instance.twitchIRCListener;
     }
 
     public boolean startWebListener() {

@@ -27,8 +27,6 @@ import com.github.blombler008.twitchbot.PrintLogger;
 import com.github.blombler008.twitchbot.TwitchBot;
 
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ClientTrackerThread extends Thread {
 
@@ -47,10 +45,10 @@ public class ClientTrackerThread extends Thread {
         String name;
         String prefix;
         Socket client;
-        while(!isBreaking) {
+        while (!isBreaking) {
             try {
                 client = TwitchBot.getWebServerSocket().accept();
-                if(client != null) {
+                if (client != null) {
                     name = "Web-Listener";
                     prefix = "Web> ";
 

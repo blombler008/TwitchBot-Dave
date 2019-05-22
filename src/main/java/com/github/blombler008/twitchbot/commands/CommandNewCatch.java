@@ -23,9 +23,7 @@ package com.github.blombler008.twitchbot.commands;/*
  * SOFTWARE.
  */
 
-import com.github.blombler008.twitchbot.Strings;
 import com.github.blombler008.twitchbot.Timeout;
-import com.github.blombler008.twitchbot.TwitchBot;
 import com.github.blombler008.twitchbot.threads.TwitchIRCListener;
 
 import java.io.IOException;
@@ -48,32 +46,32 @@ public class CommandNewCatch extends Command {
         System.out.println("userInfo: " + Arrays.toString(subGot));
         System.out.println("baggies: " + Arrays.toString(baggies));
         System.out.println("name: " + name);
-        if(baggies[0].startsWith("badges=")) {
+        if (baggies[0].startsWith("badges=")) {
             baggies[0] = baggies[0].replaceFirst("badges=", "");
         }
         System.out.println("baggies: " + Arrays.toString(baggies));
         boolean newCatch = false;
-        for (String s: baggies) {
-            if(s.equalsIgnoreCase("broadcaster")) {
+        for (String s : baggies) {
+            if (s.equalsIgnoreCase("broadcaster")) {
                 newCatch = true;
             }
-            if(s.equalsIgnoreCase("global_mod")) {
+            if (s.equalsIgnoreCase("global_mod")) {
                 newCatch = true;
             }
-            if(s.equalsIgnoreCase("moderator")) {
+            if (s.equalsIgnoreCase("moderator")) {
                 newCatch = true;
             }
-            if(s.equalsIgnoreCase("staff")) {
+            if (s.equalsIgnoreCase("staff")) {
                 newCatch = true;
             }
-            if(s.equalsIgnoreCase("admin")) {
+            if (s.equalsIgnoreCase("admin")) {
                 newCatch = true;
             }
-            if(name.equalsIgnoreCase("tattyplay")) {
+            if (name.equalsIgnoreCase("tattyplay")) {
                 newCatch = true;
             }
         }
-        if(newCatch) {
+        if (newCatch) {
             /*
             String string = Strings.MSG_TEMPLATE;
             string = string.replaceAll("%channel%", args[3]);

@@ -52,7 +52,7 @@ public class Tab {
 
         mainPanel.setLayout(null);
 
-        panel.setLayout(new BorderLayout(5,5));
+        panel.setLayout(new BorderLayout(5, 5));
         panel.add(mainPanel, BorderLayout.CENTER);
         panel.add(changesPanel, BorderLayout.SOUTH);
 
@@ -61,7 +61,7 @@ public class Tab {
         buttonApply = new JButton(applyText);
         buttonReset = new JButton(resetText);
 
-        Dimension defaultSize = new Dimension(90,22);
+        Dimension defaultSize = new Dimension(90, 22);
 
         buttonApply.setPreferredSize(defaultSize);
         buttonCancel.setPreferredSize(defaultSize);

@@ -64,7 +64,6 @@ public class Strings {
     public static final String URL_PATH_SEPARATOR = "\\/+";
 
 
-
     public static final String CONFIG_OLD_PENGUIN_LOCATION = "penguinLocation";
     public static final String CONFIG_OLD_MIN_TIME = "minTime";
     public static final String CONFIG_OLD_MAX_TIME = "maxTime";

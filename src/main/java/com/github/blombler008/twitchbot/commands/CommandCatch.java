@@ -31,17 +31,17 @@ import com.github.blombler008.twitchbot.threads.TwitchIRCListener;
 import java.io.IOException;
 import java.util.Date;
 
-public class CommandCatch extends Command{
+public class CommandCatch extends Command {
 
-    public CommandCatch() {
-        super("catch");
-    }
     int afterCatchTime = Integer.parseInt(TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_MISSED_TIME));
     boolean afterCatchEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_MISSED_ENABLE));
     boolean afterCatchChatCommandEnable = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_WINNER_COMMAND_ENABLE));
     boolean repeat = Boolean.parseBoolean(TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_WINNER_REPEAT_ENABLE));
-    private long last;
     StringBuilder stringBuilder = new StringBuilder();
+    private long last;
+    public CommandCatch() {
+        super("catch");
+    }
 
     @Override
     public String
@@ -54,9 +54,9 @@ public class CommandCatch extends Command{
         string = string.replaceAll("%channel%", got[3]);
 
         String byTimeoutUser = null;
-        if(Timeout.byTimeout()) {
-            if(Timeout.getWinner().equals(name)) {
-                if(repeat) {
+        if (Timeout.byTimeout()) {
+            if (Timeout.getWinner().equals(name)) {
+                if (repeat) {
                     byTimeoutUser = Timeout.setWinner(name);
                 } else {
                     String mss = TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_WINNER_REPEAT_MESSAGE);
@@ -73,7 +73,7 @@ public class CommandCatch extends Command{
             last = new Date().getTime();
             instance.send(string.replaceAll("%message%", stringBuilder.toString()));
 
-            if(afterCatchChatCommandEnable) {
+            if (afterCatchChatCommandEnable) {
                 String m = TwitchBot.getConfig().getProperty(Strings.CONFIG_CATCH_WINNER_COMMAND);
                 instance.send(string.replaceAll("%message%", m.replaceAll("%name%", Timeout.getWinner())));
             }

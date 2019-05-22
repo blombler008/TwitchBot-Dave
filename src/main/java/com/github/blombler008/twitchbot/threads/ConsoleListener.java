@@ -49,7 +49,7 @@ public class ConsoleListener extends Thread {
                 String line;
                 while (s.hasNextLine()) {
                     line = s.nextLine();
-                    if(progress(line)) {
+                    if (progress(line)) {
                         continue;
                     }
                 }
@@ -63,15 +63,14 @@ public class ConsoleListener extends Thread {
 
     public boolean progress(String str) throws IOException {
         logger.writeSeparate("Console Send> " + str, false);
-        if(str.equalsIgnoreCase("q") ||
+        if (str.equalsIgnoreCase("q") ||
                 str.equalsIgnoreCase("exit") ||
                 str.equalsIgnoreCase("stop") ||
-                str.equalsIgnoreCase("quit"))
-        {
+                str.equalsIgnoreCase("quit")) {
             System.exit(0);
             return true;
         }
-        if(str.equalsIgnoreCase("newCatch") ){
+        if (str.equalsIgnoreCase("newCatch")) {
             Timeout.newTimeout();
             return true;
         }

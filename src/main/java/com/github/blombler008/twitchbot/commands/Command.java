@@ -30,7 +30,7 @@ import java.io.IOException;
 public abstract class Command {
     private String commandName;
 
-    public Command(String name){
+    public Command(String name) {
         this.commandName = name;
     }
 
@@ -38,5 +38,5 @@ public abstract class Command {
         return commandName;
     }
 
-    public abstract String run(String[]args, TwitchIRCListener instance) throws IOException;
+    public abstract String run(String[] args, TwitchIRCListener instance) throws IOException;
 }

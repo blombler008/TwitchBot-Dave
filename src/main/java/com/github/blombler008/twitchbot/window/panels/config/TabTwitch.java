@@ -41,7 +41,7 @@ public class TabTwitch {
     private String generalTabText = "General";
     private String catchTabText = "Catch";
 
-    public TabTwitch () {
+    public TabTwitch() {
         panel = new JPanel();
 
         tab = new JTabbedPane(JTabbedPane.LEFT);
@@ -49,7 +49,7 @@ public class TabTwitch {
         // Tabs //
         tabGeneral = new TabGeneral();
         tabCatch = new TabCatch();
-        
+
         // panel setings //
         panel.setLayout(new BorderLayout(10, 10));
 

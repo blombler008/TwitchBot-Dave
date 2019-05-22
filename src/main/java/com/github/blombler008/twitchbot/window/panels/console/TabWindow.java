@@ -40,7 +40,7 @@ public class TabWindow {
         log.setEditable(false);
     }
 
-    public JPanel get(){
+    public JPanel get() {
         return panel;
     }
 

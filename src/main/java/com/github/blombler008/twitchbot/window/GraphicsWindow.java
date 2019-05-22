@@ -42,7 +42,7 @@ public class GraphicsWindow {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("Dave's - TwitchBot Manager");
         frame.setMinimumSize(new Dimension(800, 270));
-                try {
+        try {
             this.frame.setIconImage(ImageIO.read(instance.getClass().getResource("/favicon.png")));
         } catch (IOException e) {
             e.printStackTrace();
@@ -56,7 +56,7 @@ public class GraphicsWindow {
                 UIManager.setLookAndFeel(s);
             }
             frame.initialize();
-            if(frame.isInitialized()) {
+            if (frame.isInitialized()) {
                 frame.setVisible(true);
                 frame.getConfigPanel().getTabWindow().resetAll();
             }
@@ -69,17 +69,16 @@ public class GraphicsWindow {
     }
 
 
-
     public String setLookAndFeel() {
         try {
             UIManager.LookAndFeelInfo[] infos = UIManager.getInstalledLookAndFeels();
-            for(UIManager.LookAndFeelInfo info: infos ) {
-                if(info.getClassName().equals("com.sun.java.swing.plaf.windows.WindowsLookAndFeel")) {
+            for (UIManager.LookAndFeelInfo info : infos) {
+                if (info.getClassName().equals("com.sun.java.swing.plaf.windows.WindowsLookAndFeel")) {
                     return "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
                 }
             }
             return null;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

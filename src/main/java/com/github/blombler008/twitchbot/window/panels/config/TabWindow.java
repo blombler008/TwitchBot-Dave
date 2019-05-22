@@ -28,12 +28,11 @@ import com.github.blombler008.twitchbot.window.panels.ConfigPanel;
 import com.github.blombler008.twitchbot.window.panels.Tab;
 
 import javax.swing.*;
-
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import static javax.swing.WindowConstants.*;
-import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class TabWindow extends Tab {
 
@@ -302,38 +301,38 @@ public class TabWindow extends Tab {
         public void mousePressed(MouseEvent e) {
 
             // Size //
-            if(e.getSource().equals(resetButtonSize)) {
+            if (e.getSource().equals(resetButtonSize)) {
                 resetSize();
                 updateSize(frame.getSize());
             }
 
             // Position //
-            if(e.getSource().equals(resetButtonPosition)) {
+            if (e.getSource().equals(resetButtonPosition)) {
                 resetPosition();
             }
-            if(e.getSource().equals(centerButtonPosition)) {
+            if (e.getSource().equals(centerButtonPosition)) {
                 frame.center();
                 updatePosition(frame.getLocation());
             }
 
             // Combo Box //
-            if(e.getSource().equals(resetButtonDefaultExitMethod)) {
+            if (e.getSource().equals(resetButtonDefaultExitMethod)) {
                 resetComboBox();
                 updateComboBox();
             }
 
             // Title //
-            if(e.getSource().equals(resetButtonTitle)) {
+            if (e.getSource().equals(resetButtonTitle)) {
                 frame.setTitle(frame.getDefaultTitle());
                 updateTitle();
             }
 
             // reset all //
-            if(e.getSource().equals(getButtonReset())) {
+            if (e.getSource().equals(getButtonReset())) {
                 resetAll();
             }
 
-            if(e.getSource().equals(getButtonApply())) {
+            if (e.getSource().equals(getButtonApply())) {
                 saveAll();
             }
         }

@@ -37,10 +37,10 @@ public class TwitchIRCListener extends Thread {
 
     private static String prefixB = "> ";
     private static String prefixA = "< ";
+    private final PrintLogger logger;
     private InputStream in;
     private OutputStreamWriter outWriter;
     private List<Command> commands = new ArrayList<>();
-    private final PrintLogger logger;
 
     public TwitchIRCListener(OutputStream out, InputStream in, PrintLogger logger) {
         this.setName("Twitch-Socket-Listener");
@@ -56,18 +56,18 @@ public class TwitchIRCListener extends Thread {
             try {
                 Scanner s = new Scanner(in);
                 String line;
-                String [] got;
+                String[] got;
 
-                while(s.hasNextLine()) {
+                while (s.hasNextLine()) {
                     line = s.nextLine();
                     System.out.println(prefixB + line);
                     got = line.split("\\s+");
-                    if(got.length >= 1) {
-                        if(got.length == 2 && got[0].equalsIgnoreCase("ping")) {
+                    if (got.length >= 1) {
+                        if (got.length == 2 && got[0].equalsIgnoreCase("ping")) {
                             send(Strings.PONG_TEMPLATE);
                             System.out.println(prefixA + "pong sent!");
                         }
-                        if(got.length >= 3 && got[1].equalsIgnoreCase("376")) {
+                        if (got.length >= 3 && got[1].equalsIgnoreCase("376")) {
                             send(Strings.CAP_CHAT_COMMANDS);
                             send(Strings.CAP_MEMBERSHIP);
                             send(Strings.CAP_COMMANDS);
@@ -89,17 +89,17 @@ public class TwitchIRCListener extends Thread {
                             send(string);
                             */
                         }
-                        if(got.length >= 5 && got[2].equalsIgnoreCase("PRIVMSG")) {
+                        if (got.length >= 5 && got[2].equalsIgnoreCase("PRIVMSG")) {
 
                             got[4] = got[4].replaceFirst(":", "");
 
-                            if(got[4].startsWith("!")) {
+                            if (got[4].startsWith("!")) {
                                 got[4] = got[4].replaceFirst("\\!", "");
-                                for(Command cmd: commands) {
-                                    if(got[4].equalsIgnoreCase(cmd.getCommandName())) {
+                                for (Command cmd : commands) {
+                                    if (got[4].equalsIgnoreCase(cmd.getCommandName())) {
                                         String outCome = cmd.run(got, this);
 
-                                        if(outCome != null) {
+                                        if (outCome != null) {
                                             String string = Strings.MSG_TEMPLATE;
                                             string = string.replaceAll("%channel%", got[3]);
                                             string = string.replaceAll("%message%", outCome);
@@ -122,6 +122,7 @@ public class TwitchIRCListener extends Thread {
         }
 
     }
+
     public void send(String message) throws IOException {
 
         logger.writeSeparate("Send Twitch> " + message, false);
@@ -140,7 +141,7 @@ public class TwitchIRCListener extends Thread {
             BufferedReader bf = new BufferedReader(new FileReader(passFile));
 
             String ls;
-            while((ls = bf.readLine()) != null) {
+            while ((ls = bf.readLine()) != null) {
                 password.append(ls);
             }
             bf.close();

@@ -40,6 +40,8 @@ import java.util.List;
 
 public class WebListener extends Thread {
 
+    public static List<String> sites = new ArrayList<>();
+    public final PrintLogger logger;
     private String prefix;
     private OutputStreamWriter webOutWriter;
     private InputStream webIn;
@@ -47,8 +49,6 @@ public class WebListener extends Thread {
     private String preLine;
     private Timeout timeout;
     private Socket client;
-    public static List<String> sites = new ArrayList<>();
-    public final PrintLogger logger;
 
 
     public WebListener(String prefix, Socket client, String name, PrintLogger logger) throws IOException {
@@ -74,46 +74,46 @@ public class WebListener extends Thread {
         BufferedReader bfs = new BufferedReader(new InputStreamReader(webIn));
         while (!breakOut) {
             try {
-                if(isInterrupted()) {
+                if (isInterrupted()) {
                     break;
                 }
                 String line = bfs.readLine();
 
                 logger.writeSeparate("Send Web> " + line, false);
-                String [] got;
-                while(line != null)  {
+                String[] got;
+                while (line != null) {
                     got = line.split("\\s+");
-                    if(got.length > 2 && got[0].equalsIgnoreCase("get")) {
+                    if (got.length > 2 && got[0].equalsIgnoreCase("get")) {
                         StringBuilder output = new StringBuilder();
 
                         String s1 = got[1].replaceFirst(Strings.URL_PATH_SEPARATOR, "");
-                        String [] paths = s1.split(Strings.URL_PATH_SEPARATOR);
+                        String[] paths = s1.split(Strings.URL_PATH_SEPARATOR);
                         File index = null;
 
                         output.append(Strings.HTML_HTTP_11_200_OK);
                         output.append(Strings.HTML_CONNECTION_CLOSE);
 
-                        if(sideExists(s1)) {
-                            if(paths[0].equalsIgnoreCase("json")) {
+                        if (sideExists(s1)) {
+                            if (paths[0].equalsIgnoreCase("json")) {
                                 index = handleJSON(paths);
                             }
 
-                            if(s1.equalsIgnoreCase("favicon.ico")) {
+                            if (s1.equalsIgnoreCase("favicon.ico")) {
                                 handleFavicon();
                                 continue;
                             }
 
-                            if(s1.equalsIgnoreCase("")) {
+                            if (s1.equalsIgnoreCase("")) {
                                 handleRoot();
                                 continue;
                             }
 
-                            if(paths[0].equalsIgnoreCase("getPenguin")) {
+                            if (paths[0].equalsIgnoreCase("getPenguin")) {
                                 String penguinLocation = TwitchBot.getConfig().getProperty(Strings.CONFIG_REWARD_LOCATION);
                                 File penguin = new File(penguinLocation);
-                                if(penguin.getName().endsWith(".gif")) {
+                                if (penguin.getName().endsWith(".gif")) {
                                     handleGIF(penguin);
-                                }else {
+                                } else {
                                     handlePNG(penguin);
                                 }
                                 continue;
@@ -160,7 +160,7 @@ public class WebListener extends Thread {
                                             output.append(Strings.HTML_CONTENT_TEXT_HTML);
                                             break;
                                     }
-                                }else {
+                                } else {
 
                                     output.append(Strings.HTML_HTTP_11_200_OK);
                                     output.append(Strings.HTML_CONNECTION_CLOSE);
@@ -176,7 +176,7 @@ public class WebListener extends Thread {
                         BufferedReader bf = new BufferedReader(new FileReader(index));
                         String vLine;
 
-                        while((vLine = bf.readLine()) != null) {
+                        while ((vLine = bf.readLine()) != null) {
                             stringBuilder.append(vLine);
                             stringBuilder.append("\n");
                         }
@@ -194,12 +194,12 @@ public class WebListener extends Thread {
                         System.out.println(prefix + preLine + got[1] + " ,file send :" + index);
 
                     }
-                    if(line.equalsIgnoreCase("")) {
+                    if (line.equalsIgnoreCase("")) {
                         getClient().close();
                         this.interrupt();
                     }
                     line = bfs.readLine();
-                    if(line == null) {
+                    if (line == null) {
                         getClient().close();
                         this.interrupt();
                     }
@@ -247,9 +247,9 @@ public class WebListener extends Thread {
 
 
     private boolean sideExists(String s1) {
-        for(String s: sites) {
-            if(s.equalsIgnoreCase(s1))
-                 return true;
+        for (String s : sites) {
+            if (s.equalsIgnoreCase(s1))
+                return true;
         }
         return false;
     }
@@ -294,15 +294,16 @@ public class WebListener extends Thread {
         StringBuilder stringBuilder = new StringBuilder();
         File json;
 
-        if(paths.length == 1) {
+        if (paths.length == 1) {
             json = new File("json", "index.json");
         } else if (paths.length > 1) {
             StringBuilder s = new StringBuilder();
-            for(int i=1; i<paths.length; i++) {
+            for (int i = 1; i < paths.length; i++) {
                 s.append(paths[i]);
-                if(i != paths.length-1) s.append("/");
+                if (i != paths.length - 1)
+                    s.append("/");
             }
-            json = new File("json", s.toString() );
+            json = new File("json", s.toString());
         } else {
             json = new File("html/404index.html");
         }
@@ -322,7 +323,7 @@ public class WebListener extends Thread {
         BufferedReader bf = new BufferedReader(new FileReader(index));
         String vLine = "";
 
-        while((vLine = bf.readLine()) != null) {
+        while ((vLine = bf.readLine()) != null) {
             stringBuilder.append(vLine);
             stringBuilder.append("\n");
         }

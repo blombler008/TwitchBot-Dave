@@ -58,7 +58,7 @@ public class TabWeb {
         panel.add(inputPanel, BorderLayout.SOUTH);
     }
 
-    public JPanel get(){
+    public JPanel get() {
         return panel;
     }
 

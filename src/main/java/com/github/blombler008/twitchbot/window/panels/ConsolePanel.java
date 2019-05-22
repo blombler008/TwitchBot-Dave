@@ -54,7 +54,7 @@ public class ConsolePanel {
     private String tabTimerText = "Timer";
     private String tabWebText = "Web";
 
-    public ConsolePanel () {
+    public ConsolePanel() {
 
         panel = new JPanel(); // console view panel
         tab = new JTabbedPane(JTabbedPane.TOP); // console view tab -> console view panel

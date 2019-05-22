@@ -60,29 +60,28 @@ public class TabGeneral extends Tab {
         textFieldNickname = new JTextField();
 
         // Setting components //
-            // Labels //
+        // Labels //
         labelPassword.setHorizontalAlignment(SwingConstants.RIGHT);
         labelChannel.setHorizontalAlignment(SwingConstants.RIGHT);
         labelNickname.setHorizontalAlignment(SwingConstants.RIGHT);
 
-            // Text fields //
+        // Text fields //
         passwordField.setColumns(10);
         textFieldChannel.setColumns(10);
         textFieldNickname.setColumns(10);
 
         // Setting components Bounds //
-            // Button //
+        // Button //
 
-            // Labels //
+        // Labels //
         labelPassword.setBounds(10, 13, 118, 22);
         labelChannel.setBounds(10, 46, 118, 22);
         labelNickname.setBounds(10, 79, 118, 22);
 
-            // Text Fields //
+        // Text Fields //
         passwordField.setBounds(138, 13, 262, 22);
         textFieldChannel.setBounds(138, 46, 262, 22);
         textFieldNickname.setBounds(138, 79, 262, 22);
-
 
 
         // Adding Components to panel //

@@ -60,7 +60,7 @@ public class TabTimer {
 
     }
 
-    public JPanel get(){
+    public JPanel get() {
         return panel;
     }
 

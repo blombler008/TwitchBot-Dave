@@ -30,13 +30,11 @@ import com.github.blombler008.twitchbot.window.panels.config.TabWeb;
 import com.github.blombler008.twitchbot.window.panels.config.TabWindow;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 public class ConfigPanel {
-
 
 
     private String tabWindowText = "Window";
@@ -78,12 +76,12 @@ public class ConfigPanel {
         frame.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentMoved(ComponentEvent e) {
-               tabWindow.updatePosition(((GUIGraphicsWindow)e.getSource()).getLocationOnScreen());
+                tabWindow.updatePosition(((GUIGraphicsWindow) e.getSource()).getLocationOnScreen());
             }
 
             @Override
             public void componentResized(ComponentEvent e) {
-                tabWindow.updateSize(((GUIGraphicsWindow)e.getSource()).getSize());
+                tabWindow.updateSize(((GUIGraphicsWindow) e.getSource()).getSize());
             }
         });
 
@@ -132,7 +130,7 @@ public class ConfigPanel {
         return panel;
     }
 
-    public static class Entry{
+    public static class Entry {
         int method;
         String label;
 

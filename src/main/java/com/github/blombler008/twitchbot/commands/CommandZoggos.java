@@ -25,7 +25,6 @@ package com.github.blombler008.twitchbot.commands;/*
 
 import com.github.blombler008.twitchbot.threads.TwitchIRCListener;
 
-import java.io.IOException;
 import java.util.Random;
 
 public class CommandZoggos extends Command {
@@ -37,7 +36,7 @@ public class CommandZoggos extends Command {
     @Override
     public String run(String[] args, TwitchIRCListener instance) {
         StringBuilder stringBuilder = new StringBuilder();
-        String [] subGot = args[0].split(";");
+        String[] subGot = args[0].split(";");
         String name = subGot[3].split("=")[1];
         stringBuilder.append(name);
         stringBuilder.append(" ");

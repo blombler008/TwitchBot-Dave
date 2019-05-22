@@ -37,7 +37,7 @@ public class Timeout {
     private static long sleep;
     private static Random random = new Random();
 
-    static{
+    static {
         low = Integer.parseInt(TwitchBot.getConfig().getProperty(Strings.CONFIG_TIMER_MIN));
         high = Integer.parseInt(TwitchBot.getConfig().getProperty(Strings.CONFIG_TIMER_MAX));
         winner = TwitchBot.getCatchWinner();
@@ -52,7 +52,7 @@ public class Timeout {
             boolean breakOut = false;
 
 
-            while(!breakOut) {
+            while (!breakOut) {
                 try {
 
                     sleep = Long.parseLong(String.valueOf(random.nextInt(high - low) + low));
@@ -68,10 +68,10 @@ public class Timeout {
                     breakOut = true;
                 }
             }
-        },"Timer");
+        }, "Timer");
         thread.start();
     }
-    
+
     public static void newTimeout() {
         katch = true;
         autoTimeout = new Date().getTime();
@@ -84,7 +84,7 @@ public class Timeout {
     }
 
     public static String setWinner(String name) {
-        if(katch) {
+        if (katch) {
             long now = new Date().getTime();
             katch = false;
             long diff = now - autoTimeout;

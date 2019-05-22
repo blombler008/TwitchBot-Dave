@@ -60,7 +60,7 @@ public class TabTwitch {
 
     }
 
-    public JPanel get(){
+    public JPanel get() {
         return panel;
     }
 
