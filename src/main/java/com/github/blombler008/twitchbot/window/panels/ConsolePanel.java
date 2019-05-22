@@ -23,10 +23,8 @@ package com.github.blombler008.twitchbot.window.panels;/*
  * SOFTWARE.
  */
 
-import com.github.blombler008.twitchbot.window.panels.console.TabTimer;
-import com.github.blombler008.twitchbot.window.panels.console.TabTwitch;
-import com.github.blombler008.twitchbot.window.panels.console.TabWeb;
-import com.github.blombler008.twitchbot.window.panels.console.TabWindow;
+import com.github.blombler008.twitchbot.window.GUIGraphicsWindow;
+import com.github.blombler008.twitchbot.window.panels.console.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,11 +33,13 @@ public class ConsolePanel {
 
     private JPanel panel;
 
+    private JPanel allPanel;
     private JPanel timerPanel;
     private JPanel twitchPanel;
     private JPanel webPanel;
     private JPanel windowPanel;
 
+    private TabAll tabAll;
     private TabTimer tabTimer;
     private TabTwitch tabTwitch;
     private TabWeb tabWeb;
@@ -49,12 +49,13 @@ public class ConsolePanel {
 
     private String sendText = "Send";
 
+    private String tabAllText = "All";
     private String tabWindowText = "Application";
     private String tabTwitchText = "Twitch";
     private String tabTimerText = "Timer";
     private String tabWebText = "Web";
 
-    public ConsolePanel() {
+    public ConsolePanel(GUIGraphicsWindow window) {
 
         panel = new JPanel(); // console view panel
         tab = new JTabbedPane(JTabbedPane.TOP); // console view tab -> console view panel
@@ -63,24 +64,28 @@ public class ConsolePanel {
         panel.setLayout(new BorderLayout(5, 5));
 
         // Tabs //
-        tabTimer = new TabTimer();
-        tabTwitch = new TabTwitch();
-        tabWeb = new TabWeb();
-        tabWindow = new TabWindow();
+        tabAll = new TabAll();
+        tabTimer = new TabTimer(window);
+        tabTwitch = new TabTwitch(window);
+        tabWeb = new TabWeb(window);
+        tabWindow = new TabWindow(window);
 
         // Tab configs //
         tabTimer.setSendButtonText(sendText);
         tabTwitch.setSendButtonText(sendText);
         tabWeb.setSendButtonText(sendText);
+        tabAll.setSendButtonText(sendText);
 
         // Tab panels //
         timerPanel = tabTimer.get();
         twitchPanel = tabTwitch.get();
         windowPanel = tabWindow.get();
         webPanel = tabWeb.get();
+        allPanel = tabAll.get();
 
         // Adding all log panels to the tab View //
-        tab.addTab(tabWindowText, null, windowPanel, null); // Selected Tab
+        tab.addTab(tabAllText, null, allPanel, null); // Selected Tab
+        tab.addTab(tabWindowText, null, windowPanel, null);
         tab.addTab(tabWebText, null, webPanel, null);
         tab.addTab(tabTwitchText, null, twitchPanel, null);
         tab.addTab(tabTimerText, null, timerPanel, null);
@@ -147,5 +152,13 @@ public class ConsolePanel {
 
     public JPanel get() {
         return panel;
+    }
+
+    public TabAll getTabAll() {
+        return tabAll;
+    }
+
+    public void setTabAll(TabAll tabAll) {
+        this.tabAll = tabAll;
     }
 }

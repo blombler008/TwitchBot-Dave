@@ -68,6 +68,9 @@ public class GraphicsWindow {
         }
     }
 
+    public GUIGraphicsWindow getFrame() {
+        return frame;
+    }
 
     public String setLookAndFeel() {
         try {

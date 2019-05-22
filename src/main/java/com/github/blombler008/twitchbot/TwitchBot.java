@@ -52,8 +52,10 @@ public class TwitchBot {
     private static boolean mergeOld = false;
     private static boolean nothing = true;
     private static boolean testVersion = false;
+    private static boolean isNewFrame = false;
     private static PrintLogger logger;
     private static ConsoleListener consoleManager;
+    private static GraphicsWindow graphicsWindow;
     private List<WebListener> threadTracker;
     private ClientTrackerThread clientTracker;
     private ServerSocket webServerSocket;
@@ -104,7 +106,7 @@ public class TwitchBot {
 
                         }
                         if(testVersion){
-                            GraphicsWindow graphicsWindow = new GraphicsWindow(instance);
+                            graphicsWindow = new GraphicsWindow(instance);
                             graphicsWindow.start();
                         }
 
@@ -124,6 +126,12 @@ public class TwitchBot {
     public static Properties getConfig() {
         return config;
     }
+
+    public static GraphicsWindow getGraphicsWindow() {
+        return graphicsWindow;
+    }
+
+
 
     public static String[] updateCatch(String aTrue, String name, long diff) {
         try {
@@ -209,6 +217,15 @@ public class TwitchBot {
     public static TwitchIRCListener getTwitchIRCListener() {
         return instance.twitchIRCListener;
     }
+
+    public static boolean isNewFrame() {
+        return isNewFrame;
+    }
+
+    public static PrintLogger getPrintStream() {
+        return logger;
+    }
+
 
     private void startNewConsole() {
         frame.setVisible(true);
@@ -302,6 +319,7 @@ public class TwitchBot {
                         if (command.equalsIgnoreCase("testVersion")) {
                             nothing = false;
                             testVersion = true;
+                            isNewFrame = true;
                         }
                     }
                 }

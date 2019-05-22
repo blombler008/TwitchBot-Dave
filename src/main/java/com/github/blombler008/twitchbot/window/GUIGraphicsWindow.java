@@ -23,6 +23,7 @@ package com.github.blombler008.twitchbot.window;/*
  * SOFTWARE.
  */
 
+import com.github.blombler008.twitchbot.TwitchBot;
 import com.github.blombler008.twitchbot.window.panels.ConfigPanel;
 import com.github.blombler008.twitchbot.window.panels.ConsolePanel;
 
@@ -83,7 +84,7 @@ public class GUIGraphicsWindow extends JFrame {
 
 
         // Console panel //
-        pConsolePanel = new ConsolePanel();
+        pConsolePanel = new ConsolePanel(this);
         consolePanel = pConsolePanel.get();
 
         // Config panel //
@@ -162,7 +163,7 @@ public class GUIGraphicsWindow extends JFrame {
 
         // Key Listener //
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
-            System.out.println(e.paramString());
+            TwitchBot.getPrintStream().logWindow(e.paramString());
             if (e.getID() == KeyEvent.KEY_RELEASED) {
 
                 if (e.isControlDown()) {

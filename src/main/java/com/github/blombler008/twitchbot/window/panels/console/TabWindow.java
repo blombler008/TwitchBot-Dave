@@ -23,21 +23,41 @@ package com.github.blombler008.twitchbot.window.panels.console;/*
  * SOFTWARE.
  */
 
+import com.github.blombler008.twitchbot.GuiFrame;
+import com.github.blombler008.twitchbot.TwitchBot;
+import com.github.blombler008.twitchbot.window.GUIGraphicsWindow;
+
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 
 public class TabWindow {
 
+    private GUIGraphicsWindow window;
+
     private JPanel panel;
-    private JTextPane log;
+    private JTextArea log;
 
-    public TabWindow() {
+    public TabWindow(GUIGraphicsWindow window) {
 
+        this.window = window;
         panel = new JPanel();
         panel.setLayout(new BorderLayout(5, 5));
 
-        log = new JTextPane();
+        log = new JTextArea();
         log.setEditable(false);
+        JScrollPane sp = new JScrollPane(log);
+        DefaultCaret caret = (DefaultCaret)log.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
+        panel.add(sp);
+    }
+
+
+    public void log(String s) {
+        window.getConsolePanel().getTabAll().log(s);
+        if(!s.endsWith(System.lineSeparator())) log.append(s + System.lineSeparator());
+        else log.append(s);
     }
 
     public JPanel get() {

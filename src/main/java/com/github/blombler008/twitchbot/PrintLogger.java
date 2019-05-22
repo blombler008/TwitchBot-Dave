@@ -62,6 +62,30 @@ public class PrintLogger extends PrintStream {
         super(file, csn);
     }
 
+    public void logTimer(String s) {
+        TwitchBot.getGraphicsWindow().getFrame().getConsolePanel().getTabTimer().log(s);
+        lg.println(s);
+        out.println(s);
+    }
+
+    public void logTwitch(String s) {
+        TwitchBot.getGraphicsWindow().getFrame().getConsolePanel().getTabTwitch().log(s);
+        lg.println(s);
+        out.println(s);
+    }
+
+    public void logWeb(String s) {
+        TwitchBot.getGraphicsWindow().getFrame().getConsolePanel().getTabWeb().log(s);
+        lg.println(s);
+        out.println(s);
+    }
+
+    public void logWindow(String s) {
+        TwitchBot.getGraphicsWindow().getFrame().getConsolePanel().getTabWindow().log(s);
+        lg.println(s);
+        out.println(s);
+    }
+
     @Override
     public void flush() {
         lg.flush();
@@ -79,6 +103,7 @@ public class PrintLogger extends PrintStream {
         lg.write(b);
         out.write(b);
         jTextArea.append(String.valueOf((char) b));
+        if(TwitchBot.isNewFrame()) TwitchBot.getGraphicsWindow().getFrame().getConsolePanel().getTabAll().log(String.valueOf((char) b));
     }
 
     @Override
@@ -87,6 +112,7 @@ public class PrintLogger extends PrintStream {
         out.write(buf, off, len);
         try {
             jTextArea.append(new String(buf, off, len, "UTF-8"));
+            if(TwitchBot.isNewFrame())TwitchBot.getGraphicsWindow().getFrame().getConsolePanel().getTabAll().log(new String(buf, off, len, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -97,6 +123,7 @@ public class PrintLogger extends PrintStream {
         lg.write(b);
         out.write(b);
         jTextArea.append(new String(b, "UTF-8"));
+        if(TwitchBot.isNewFrame())TwitchBot.getGraphicsWindow().getFrame().getConsolePanel().getTabAll().log(new String(b, "UTF-8"));
     }
 
     public void writeSeparate(int str, boolean console) {

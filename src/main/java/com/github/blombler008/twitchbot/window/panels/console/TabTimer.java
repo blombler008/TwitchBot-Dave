@@ -23,24 +23,34 @@ package com.github.blombler008.twitchbot.window.panels.console;/*
  * SOFTWARE.
  */
 
+import com.github.blombler008.twitchbot.TwitchBot;
+import com.github.blombler008.twitchbot.window.GUIGraphicsWindow;
+
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 
 public class TabTimer {
 
+    private GUIGraphicsWindow window;
     private JTextField inputField;
     private JButton sendButton;
     private JPanel panel;
     private JPanel inputPanel;
-    private JTextPane log;
+    private JTextArea log;
 
-    public TabTimer() {
+    public TabTimer(GUIGraphicsWindow window) {
+
+        this.window = window;
 
         panel = new JPanel();
         panel.setLayout(new BorderLayout(5, 5));
 
-        log = new JTextPane();
+        log = new JTextArea();
         log.setEditable(false);
+        JScrollPane sp = new JScrollPane(log);
+        DefaultCaret caret = (DefaultCaret)log.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         inputPanel = new JPanel();
         inputPanel.setLayout(new BorderLayout(5, 5));
@@ -54,10 +64,16 @@ public class TabTimer {
         inputPanel.add(inputField);
         inputPanel.add(sendButton, BorderLayout.EAST);
 
-        panel.add(log);
+        panel.add(sp);
         panel.add(inputPanel, BorderLayout.SOUTH);
 
 
+    }
+
+    public void log(String s) {
+        window.getConsolePanel().getTabAll().log(s);
+        if(!s.endsWith(System.lineSeparator())) log.append(s + System.lineSeparator());
+        else log.append(s);
     }
 
     public JPanel get() {

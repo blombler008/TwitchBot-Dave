@@ -23,24 +23,19 @@ package com.github.blombler008.twitchbot.window.panels.console;/*
  * SOFTWARE.
  */
 
-import com.github.blombler008.twitchbot.window.GUIGraphicsWindow;
-
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 
-public class TabTwitch {
+public class TabAll {
 
-    private GUIGraphicsWindow window;
     private JTextField inputField;
     private JButton sendButton;
     private JPanel panel;
     private JPanel inputPanel;
     private JTextArea log;
 
-    public TabTwitch(GUIGraphicsWindow window) {
-
-        this.window = window;
+    public TabAll() {
 
         panel = new JPanel();
         panel.setLayout(new BorderLayout(5, 5));
@@ -70,10 +65,10 @@ public class TabTwitch {
     }
 
     public void log(String s) {
-        window.getConsolePanel().getTabAll().log(s);
         if(!s.endsWith(System.lineSeparator())) log.append(s + System.lineSeparator());
         else log.append(s);
     }
+
 
     public JPanel get() {
         return panel;
@@ -82,4 +77,5 @@ public class TabTwitch {
     public void setSendButtonText(String text) {
         sendButton.setText(text);
     }
+
 }
