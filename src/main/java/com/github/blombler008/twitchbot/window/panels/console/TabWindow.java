@@ -31,7 +31,7 @@ import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 
-public class TabWindow {
+public class TabWindow extends Tab {
 
     private GUIGraphicsWindow window;
 
@@ -39,25 +39,20 @@ public class TabWindow {
     private JTextArea log;
 
     public TabWindow(GUIGraphicsWindow window) {
-
+        super();
         this.window = window;
         panel = new JPanel();
         panel.setLayout(new BorderLayout(5, 5));
 
-        log = new JTextArea();
-        log.setEditable(false);
-        JScrollPane sp = new JScrollPane(log);
-        DefaultCaret caret = (DefaultCaret)log.getCaret();
-        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        log = getLog();
 
-        panel.add(sp);
+        panel.add(getSP());
     }
 
 
     public void log(String s) {
         window.getConsolePanel().getTabAll().log(s);
-        if(!s.endsWith(System.lineSeparator())) log.append(s + System.lineSeparator());
-        else log.append(s);
+        super.log(s);
     }
 
     public JPanel get() {

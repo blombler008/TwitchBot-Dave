@@ -29,7 +29,7 @@ import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 
-public class TabTwitch {
+public class TabTwitch extends Tab {
 
     private GUIGraphicsWindow window;
     private JTextField inputField;
@@ -40,16 +40,13 @@ public class TabTwitch {
 
     public TabTwitch(GUIGraphicsWindow window) {
 
+        super();
         this.window = window;
 
         panel = new JPanel();
         panel.setLayout(new BorderLayout(5, 5));
 
-        log = new JTextArea();
-        log.setEditable(false);
-        JScrollPane sp = new JScrollPane(log);
-        DefaultCaret caret = (DefaultCaret)log.getCaret();
-        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        log = getLog();
 
         inputPanel = new JPanel();
         inputPanel.setLayout(new BorderLayout(5, 5));
@@ -63,7 +60,8 @@ public class TabTwitch {
         inputPanel.add(inputField);
         inputPanel.add(sendButton, BorderLayout.EAST);
 
-        panel.add(sp);
+
+        panel.add(getSP());
         panel.add(inputPanel, BorderLayout.SOUTH);
 
 
@@ -71,8 +69,7 @@ public class TabTwitch {
 
     public void log(String s) {
         window.getConsolePanel().getTabAll().log(s);
-        if(!s.endsWith(System.lineSeparator())) log.append(s + System.lineSeparator());
-        else log.append(s);
+        super.log(s);
     }
 
     public JPanel get() {

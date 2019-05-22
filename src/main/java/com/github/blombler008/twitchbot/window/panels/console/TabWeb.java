@@ -29,7 +29,7 @@ import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 
-public class TabWeb {
+public class TabWeb extends Tab {
     private GUIGraphicsWindow window;
     private JTextField inputField;
     private JButton sendButton;
@@ -39,16 +39,13 @@ public class TabWeb {
 
     public TabWeb(GUIGraphicsWindow window) {
 
+        super();
         this.window = window;
 
         panel = new JPanel();
         panel.setLayout(new BorderLayout(5, 5));
 
-        log = new JTextArea();
-        log.setEditable(false);
-        JScrollPane sp = new JScrollPane(log);
-        DefaultCaret caret = (DefaultCaret)log.getCaret();
-        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        log = getLog();
 
         inputPanel = new JPanel();
         inputPanel.setLayout(new BorderLayout(5, 5));
@@ -62,14 +59,13 @@ public class TabWeb {
         inputPanel.add(inputField);
         inputPanel.add(sendButton, BorderLayout.EAST);
 
-        panel.add(sp);
+        panel.add(getSP());
         panel.add(inputPanel, BorderLayout.SOUTH);
     }
 
     public void log(String s) {
         window.getConsolePanel().getTabAll().log(s);
-        if(!s.endsWith(System.lineSeparator())) log.append(s + System.lineSeparator());
-        else log.append(s);
+        super.log(s);
     }
 
     public JPanel get() {
