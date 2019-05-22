@@ -51,6 +51,7 @@ public class TwitchBot {
     private static boolean noGraph = false;
     private static boolean mergeOld = false;
     private static boolean nothing = true;
+    private static boolean testVersion = false;
     private static PrintLogger logger;
     private static ConsoleListener consoleManager;
     private List<WebListener> threadTracker;
@@ -101,7 +102,8 @@ public class TwitchBot {
                                 }
                             }
 
-                        } else {
+                        }
+                        if(testVersion){
                             GraphicsWindow graphicsWindow = new GraphicsWindow(instance);
                             graphicsWindow.start();
                         }
@@ -299,6 +301,7 @@ public class TwitchBot {
                         }
                         if (command.equalsIgnoreCase("testVersion")) {
                             nothing = false;
+                            testVersion = true;
                         }
                     }
                 }
