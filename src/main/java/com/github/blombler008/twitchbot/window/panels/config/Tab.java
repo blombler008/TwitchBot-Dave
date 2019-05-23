@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.window.panels;/*
+package com.github.blombler008.twitchbot.window.panels.config;/*
  *
  * MIT License
  *

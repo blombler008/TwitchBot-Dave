@@ -39,11 +39,11 @@ public class ConsolePanel {
     private JPanel webPanel;
     private JPanel windowPanel;
 
-    private TabAll tabAll;
-    private TabTimer tabTimer;
-    private TabTwitch tabTwitch;
-    private TabWeb tabWeb;
-    private TabWindow tabWindow;
+    private Tab tabAll;
+    private Tab tabTimer;
+    private Tab tabTwitch;
+    private Tab tabWeb;
+    private Tab tabWindow;
 
     private JTabbedPane tab;
 
@@ -64,17 +64,18 @@ public class ConsolePanel {
         panel.setLayout(new BorderLayout(5, 5));
 
         // Tabs //
-        tabAll = new TabAll();
-        tabTimer = new TabTimer(window);
-        tabTwitch = new TabTwitch(window);
-        tabWeb = new TabWeb(window);
-        tabWindow = new TabWindow(window);
+        tabAll = new Tab(window);
+        tabTimer = new Tab(window);
+        tabTwitch = new Tab(window);
+        tabWeb = new Tab(window);
+        tabWindow = new Tab(window);
 
-        // Tab configs //
-        tabTimer.setSendButtonText(sendText);
-        tabTwitch.setSendButtonText(sendText);
-        tabWeb.setSendButtonText(sendText);
-        tabAll.setSendButtonText(sendText);
+        // Tab Configuration //
+        tabTimer.setSuper(tabAll, true);
+        tabTwitch.setSuper(tabAll, true);
+        tabWeb.setSuper(tabAll, true);
+        tabWindow.setSuper(tabAll, true);
+        tabWindow.get().remove(tabWindow.getInputPanel());
 
         // Tab panels //
         timerPanel = tabTimer.get();
@@ -110,19 +111,19 @@ public class ConsolePanel {
         return windowPanel;
     }
 
-    public TabTimer getTabTimer() {
+    public Tab getTabTimer() {
         return tabTimer;
     }
 
-    public TabTwitch getTabTwitch() {
+    public Tab getTabTwitch() {
         return tabTwitch;
     }
 
-    public TabWeb getTabWeb() {
+    public Tab getTabWeb() {
         return tabWeb;
     }
 
-    public TabWindow getTabWindow() {
+    public Tab getTabWindow() {
         return tabWindow;
     }
 
@@ -154,11 +155,11 @@ public class ConsolePanel {
         return panel;
     }
 
-    public TabAll getTabAll() {
+    public Tab getTabAll() {
         return tabAll;
     }
 
-    public void setTabAll(TabAll tabAll) {
-        this.tabAll = tabAll;
+    public void log(String s) {
+        tabAll.log(s);
     }
 }

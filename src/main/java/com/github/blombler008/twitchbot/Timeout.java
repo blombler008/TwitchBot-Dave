@@ -23,8 +23,11 @@ package com.github.blombler008.twitchbot;/*
  * SOFTWARE.
  */
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
+import java.util.TimeZone;
 
 public class Timeout {
     private static boolean katch = false;
@@ -48,27 +51,7 @@ public class Timeout {
     }
 
     public static void startTimer() {
-        thread = new Thread(() -> {
-            boolean breakOut = false;
-
-
-            while (!breakOut) {
-                try {
-
-                    sleep = Long.parseLong(String.valueOf(random.nextInt(high - low) + low));
-                    System.out.println("Timer> Sleeping for " + sleep);
-                    Thread.sleep(sleep);
-
-                    if (!katch) {
-                        newTimeout();
-                    }
-
-                } catch (Exception ignore) {
-                    ignore.printStackTrace();
-                    breakOut = true;
-                }
-            }
-        }, "Timer");
+        thread = new Thread(new ThreadClass(), "Timer");
         thread.start();
     }
 
@@ -76,7 +59,7 @@ public class Timeout {
         katch = true;
         autoTimeout = new Date().getTime();
         TwitchBot.updateCatch("true", null, -1);
-        System.out.println("Timer> New Catch");
+        TwitchBot.getPrintStream().logTimer("Timer> New Catch");
     }
 
     public static String getWinner() {
@@ -94,9 +77,34 @@ public class Timeout {
             winner = name;
             TwitchBot.updateCatch("false", name, diff);
             System.out.println(message.toString());
+            thread.interrupt();
+            startTimer();
             return message.toString();
         } else {
             return null;
         }
     }
+
+    static class ThreadClass implements Runnable {
+
+        @Override
+        public void run() {
+            DateFormat formatter = new SimpleDateFormat("HH:mm:ss.SSS");
+            formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+            sleep = Long.parseLong(String.valueOf(random.nextInt(high - low) + low));
+            TwitchBot.getPrintStream().logTimer("Timer> Sleeping for " + formatter.format(new Date(sleep)));
+
+            long old = System.currentTimeMillis();
+            long newSlept = old + sleep;
+
+            while (newSlept >= System.currentTimeMillis()) {
+                Thread.yield();
+            }
+            if (!katch) {
+                newTimeout();
+            }
+        }
+    }
+
 }

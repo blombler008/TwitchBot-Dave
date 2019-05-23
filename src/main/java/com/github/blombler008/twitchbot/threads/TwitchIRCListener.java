@@ -60,12 +60,12 @@ public class TwitchIRCListener extends Thread {
 
                 while (s.hasNextLine()) {
                     line = s.nextLine();
-                    System.out.println(prefixB + line);
+                    TwitchBot.getPrintStream().logTwitch(prefixB + line);
                     got = line.split("\\s+");
                     if (got.length >= 1) {
                         if (got.length == 2 && got[0].equalsIgnoreCase("ping")) {
                             send(Strings.PONG_TEMPLATE);
-                            System.out.println(prefixA + "pong sent!");
+                            TwitchBot.getPrintStream().logTwitch(prefixA + "pong sent!");
                         }
                         if (got.length >= 3 && got[1].equalsIgnoreCase("376")) {
                             send(Strings.CAP_CHAT_COMMANDS);

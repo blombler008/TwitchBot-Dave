@@ -23,7 +23,7 @@ package com.github.blombler008.twitchbot.window.panels.config.twitch;/*
  * SOFTWARE.
  */
 
-import com.github.blombler008.twitchbot.window.panels.Tab;
+import com.github.blombler008.twitchbot.window.panels.config.Tab;
 
 import javax.swing.*;
 

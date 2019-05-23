@@ -84,6 +84,7 @@ public class TwitchBot {
             if (instance.checkArgs(args)) {
                 if (instance.parseConfig(Strings.CONFIG_FILE)) {
                     if (instance.checkConfig(Strings.CONFIG_FILE)) {
+
                         if (instance.checkOldConfig(Strings.CONFIG_FILE) && mergeOld) {
                             instance.checkConfig(Strings.CONFIG_FILE);
                             return;
@@ -91,31 +92,37 @@ public class TwitchBot {
                         if (nothing || noGraph) {
                             if (nothing)
                                 instance.startNewConsole();
-                            if (instance.startTwitchIRC()) {
-                                WebListener.sites.add("");
-                                WebListener.sites.add("json");
-                                WebListener.sites.add("favicon.ico");
-                                WebListener.sites.add("getPenguin");
 
-                                if (instance.startWebListener()) {
-                                    if (instance.startTracker()) {
-                                        Timeout.startTimer();
-                                    }
-                                }
-                            }
+                            startBot();
+
 
                         }
                         if(testVersion){
                             graphicsWindow = new GraphicsWindow(instance);
                             graphicsWindow.start();
                         }
-
                     }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
+        }
+    }
+
+    public static void startBot() {
+
+        if (instance.startTwitchIRC()) {
+            WebListener.sites.add("");
+            WebListener.sites.add("json");
+            WebListener.sites.add("favicon.ico");
+            WebListener.sites.add("getPenguin");
+
+            if (instance.startWebListener()) {
+                if (instance.startTracker()) {
+                    Timeout.startTimer();
+                }
+            }
         }
     }
 
@@ -143,7 +150,7 @@ public class TwitchBot {
             while ((line = reader.readLine()) != null) {
                 builder.append(line);
             }
-            System.out.println(builder);
+            TwitchBot.getPrintStream().logTimer(builder.toString());
             JSONObject jsonObj = new JSONObject(builder.toString());
             jsonObj.put("catch", aTrue);
             String lastTime = "0";
@@ -186,7 +193,7 @@ public class TwitchBot {
             while ((line = reader.readLine()) != null) {
                 builder.append(line);
             }
-            System.out.println(builder);
+            TwitchBot.getPrintStream().logTimer(builder.toString());
             JSONObject jsonObj = new JSONObject(builder.toString());
 
             if (!jsonObj.has("lastWinner")) {

@@ -60,7 +60,7 @@ public class WebListener extends Thread {
         this.webOut = client.getOutputStream();
         this.webOutWriter = new OutputStreamWriter(client.getOutputStream());
         this.preLine = (client.getInetAddress()).getHostAddress() + " on " + client.getPort() + " requested ";
-        System.out.println(prefix + " Socket: " + client.getInetAddress() + ":" + client.getPort() + " created!");
+        TwitchBot.getPrintStream().logWeb(prefix + " Socket: " + client.getInetAddress() + ":" + client.getPort() + " created!");
     }
 
     public void interrupt() {
@@ -191,7 +191,7 @@ public class WebListener extends Thread {
                         webOutWriter.write(output.toString());
                         webOutWriter.flush();
 
-                        System.out.println(prefix + preLine + got[1] + " ,file send :" + index);
+                        TwitchBot.getPrintStream().logWeb(prefix + preLine + got[1] + " ,file send :" + index);
 
                     }
                     if (line.equalsIgnoreCase("")) {
@@ -342,7 +342,7 @@ public class WebListener extends Thread {
         webOutWriter.flush();
 
         String send = Arrays.toString(output.toString().split("\r\n"));
-        System.out.println(prefix + preLine + "/ ,file send :" + index);
+        TwitchBot.getPrintStream().logWeb(prefix + preLine + "/ ,file send :" + index);
     }
 
     public Socket getClient() {

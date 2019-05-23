@@ -170,6 +170,9 @@ public class GUIGraphicsWindow extends JFrame {
 
                     if (!e.isShiftDown()) {
                         if (!e.isAltDown()) {
+                            if (e.getKeyCode() == KeyEvent.VK_F) {
+                                TwitchBot.startBot();
+                            }
                             if (e.getKeyCode() == KeyEvent.VK_Q) {
                                 System.exit(0);
                             }
@@ -230,14 +233,10 @@ public class GUIGraphicsWindow extends JFrame {
         }
 
         if (isStatusPanelSelected.get()) {
-            //setContentPane(statusPanel);
-            //contentPane.add(statusPanel);
+//            contentPane.add(statusPanel);
         }
         setContentPane(contentPane);
-        // statusPanel.setVisible(isStatusPanelSelected.get());
-        // statusPanel.setFocusable(isStatusPanelSelected.get());
     }
-
     public boolean isInitialized() {
         while (!finishedInitializing) {
 
@@ -259,5 +258,9 @@ public class GUIGraphicsWindow extends JFrame {
 
     public String getDefaultTitle() {
         return defaultTitle;
+    }
+
+    public void log(String s) {
+        getConsolePanel().log(s);
     }
 }

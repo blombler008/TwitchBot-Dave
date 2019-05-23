@@ -25,7 +25,6 @@ package com.github.blombler008.twitchbot.window.panels.config;/*
 
 import com.github.blombler008.twitchbot.window.GUIGraphicsWindow;
 import com.github.blombler008.twitchbot.window.panels.ConfigPanel;
-import com.github.blombler008.twitchbot.window.panels.Tab;
 
 import javax.swing.*;
 import java.awt.*;

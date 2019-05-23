@@ -23,39 +23,98 @@ package com.github.blombler008.twitchbot.window.panels.console;/*
  * SOFTWARE.
  */
 
+import com.github.blombler008.twitchbot.window.GUIGraphicsWindow;
+
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class Tab {
 
-    private JTextArea jtextArea;
+    private JButton sendButton;
+    private JTextField inputField;
+    private JPanel inputPanel;
+    private JPanel panel;
+    private GUIGraphicsWindow window;
+    private JTextArea log;
     private JScrollPane sp;
 
-    public Tab() {
-        jtextArea = new JTextArea();
+    private String sendButtonText = "Send";
+    private Tab superTab;
+    private boolean superTabEnabled;
 
-        sp = new JScrollPane(jtextArea);
-        DefaultCaret caret = (DefaultCaret)jtextArea.getCaret();
+
+    public Tab(GUIGraphicsWindow window) {
+
+        this.window = window;
+
+        panel = new JPanel();
+        inputPanel = new JPanel();
+
+        log = new JTextArea();
+        sp = new JScrollPane(log);
+        inputField = new JTextField();
+        sendButton = new JButton(sendButtonText);
+
+        panel.setLayout(new BorderLayout(5, 5));
+
+        inputPanel.setLayout(new BorderLayout(5, 5));
+
+        inputField.setColumns(10);
+
+        sendButton.setPreferredSize(new Dimension(70, 23));
+
+        inputPanel.add(inputField);
+        inputPanel.add(sendButton, BorderLayout.EAST);
+
+        panel.add(getSP());
+        panel.add(inputPanel, BorderLayout.SOUTH);
+
+
+        DefaultCaret caret = (DefaultCaret) log.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
-        jtextArea.setEditable(false);
-        jtextArea.addMouseListener(new PopClickListener());
+        log.setEditable(false);
+        log.addMouseListener(new PopClickListener());
 
     }
 
+    public void setSuper(Tab superTab, boolean enable) {
+        this.superTab = superTab;   
+        superTabEnabled = enable;
+    }
+    
     public JScrollPane getSP() {
         return sp;
     }
 
     public JTextArea getLog() {
-        return jtextArea;
+        return log;
     }
+
     public void log(String s) {
-        if(!s.endsWith(System.lineSeparator())) jtextArea.append(s + System.lineSeparator());
-        else jtextArea.append(s);
+        s = s.replaceAll("\\n", "");
+        s = s.replaceAll("\\r", "");
+        if(s.length() != 0) {
+            if(superTabEnabled) superTab.log(s);
+            log.append(s);
+            log.append("\n");
+        }
+    }
+
+    public GUIGraphicsWindow getWindow() {
+        return window;
+    }
+
+    public JPanel get() {
+        return panel;
+    }
+
+    public JPanel getInputPanel() {
+        return inputPanel;
     }
 
     class PopUpDemo extends JPopupMenu {
@@ -65,11 +124,13 @@ public class Tab {
 
         public PopUpDemo() {
 
+
+
             anCopyItem = new JMenuItem("Copy");
             anCutItem = new JMenuItem("Cut");
 
             add(anCopyItem);
-            add(anCutItem);
+            //add(anCutItem);
 
             anCopyItem.addMouseListener(new MouseKeyClickListener());
             anCutItem.addMouseListener(new MouseKeyClickListener());
@@ -91,10 +152,10 @@ public class Tab {
             @Override
             public void mouseReleased(MouseEvent e) {
                 if(e.getSource().equals(anCopyItem)) {
-                    jtextArea.copy();
+                    log.copy();
                 }
                 if(e.getSource().equals(anCutItem)) {
-                    jtextArea.cut();
+                    log.cut();
                 }
             }
 
