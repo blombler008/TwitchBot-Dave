@@ -60,7 +60,6 @@ public class Tab {
         sendButton = new JButton(sendButtonText);
 
         panel.setLayout(new BorderLayout(5, 5));
-
         inputPanel.setLayout(new BorderLayout(5, 5));
 
         inputField.setColumns(10);

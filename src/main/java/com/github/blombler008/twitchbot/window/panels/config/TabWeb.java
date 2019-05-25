@@ -23,12 +23,14 @@ package com.github.blombler008.twitchbot.window.panels.config;/*
  * SOFTWARE.
  */
 
+import com.github.blombler008.twitchbot.window.GUIGraphicsWindow;
+
 import javax.swing.*;
 
-public class TabWeb {
+public class TabWeb extends Tab {
     private JPanel panel;
 
-    public TabWeb() {
+    public TabWeb(GUIGraphicsWindow frame) {
 
     }
 

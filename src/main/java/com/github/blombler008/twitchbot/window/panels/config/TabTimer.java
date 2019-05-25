@@ -23,13 +23,15 @@ package com.github.blombler008.twitchbot.window.panels.config;/*
  * SOFTWARE.
  */
 
+import com.github.blombler008.twitchbot.window.GUIGraphicsWindow;
+
 import javax.swing.*;
 
-public class TabTimer {
+public class TabTimer extends Tab {
 
     private JPanel panel;
 
-    public TabTimer() {
+    public TabTimer(GUIGraphicsWindow frame) {
 
     }
 

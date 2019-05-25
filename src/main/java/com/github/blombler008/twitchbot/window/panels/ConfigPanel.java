@@ -24,10 +24,7 @@ package com.github.blombler008.twitchbot.window.panels;/*
  */
 
 import com.github.blombler008.twitchbot.window.GUIGraphicsWindow;
-import com.github.blombler008.twitchbot.window.panels.config.TabTimer;
-import com.github.blombler008.twitchbot.window.panels.config.TabTwitch;
-import com.github.blombler008.twitchbot.window.panels.config.TabWeb;
-import com.github.blombler008.twitchbot.window.panels.config.TabWindow;
+import com.github.blombler008.twitchbot.window.panels.config.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,10 +48,10 @@ public class ConfigPanel {
 
     private JPanel panel;
 
-    private TabWindow tabWindow;
-    private TabWeb tabWeb;
-    private TabTwitch tabTwitch;
-    private TabTimer tabTimer;
+    private Tab tabWindow;
+    private Tab tabWeb;
+    private Tab tabTwitch;
+    private Tab tabTimer;
 
     public ConfigPanel(GUIGraphicsWindow frame) {
 
@@ -66,9 +63,9 @@ public class ConfigPanel {
 
         // Tabs //
         tabWindow = new TabWindow(frame);
-        tabWeb = new TabWeb();
-        tabTimer = new TabTimer();
-        tabTwitch = new TabTwitch();
+        tabWeb = new TabWeb(frame);
+        tabTimer = new TabTimer(frame);
+        tabTwitch = new TabTwitch(frame);
 
         // Tab configs //
 
@@ -76,21 +73,21 @@ public class ConfigPanel {
         frame.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentMoved(ComponentEvent e) {
-                tabWindow.updatePosition(((GUIGraphicsWindow) e.getSource()).getLocationOnScreen());
+                ((TabWindow)tabWindow).updatePosition(((GUIGraphicsWindow) e.getSource()).getLocationOnScreen());
             }
 
             @Override
             public void componentResized(ComponentEvent e) {
-                tabWindow.updateSize(((GUIGraphicsWindow) e.getSource()).getSize());
+                ((TabWindow)tabWindow).updateSize(((GUIGraphicsWindow) e.getSource()).getSize());
             }
         });
 
 
         // Tab Panels //
         windowPanel = tabWindow.getPanel();
-        webPanel = tabWeb.get();
-        timerPanel = tabTimer.get();
-        twitchPanel = tabTwitch.get();
+        webPanel = tabWeb.getPanel();
+        timerPanel = tabTimer.getPanel();
+        twitchPanel = tabTwitch.getPanel();
 
 /*
         webPanel.setLayout(null);
@@ -111,19 +108,19 @@ public class ConfigPanel {
     }
 
     public TabWindow getTabWindow() {
-        return tabWindow;
+        return (TabWindow) tabWindow;
     }
 
     public TabWeb getTabWeb() {
-        return tabWeb;
+        return (TabWeb) tabWeb;
     }
 
     public TabTwitch getTabTwitch() {
-        return tabTwitch;
+        return (TabTwitch) tabTwitch;
     }
 
     public TabTimer getTabTimer() {
-        return tabTimer;
+        return (TabTimer) tabTimer;
     }
 
     public JPanel get() {

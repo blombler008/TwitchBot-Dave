@@ -34,6 +34,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GUIGraphicsWindow extends JFrame {
@@ -50,6 +52,7 @@ public class GUIGraphicsWindow extends JFrame {
     private final Point defaultLocation = new Point(50, 50);
     private final String defaultTitle = "Dave's - TwitchBot Manager";
     private JMenuBar menuBar;
+    private JMenuItem applicationStartBotMenuItem;
     private JMenuItem applicationExitMenuItem;
     private JMenu applicationMenu;
     private JMenu viewMenu;
@@ -65,6 +68,7 @@ public class GUIGraphicsWindow extends JFrame {
     private String exitText = "Exit (CTRL + Q)";
     private String configText = "Config (CTRL + W)";
     private String consoleText = "Console (CTRL + S)";
+    private String startBotText = "Start Bot (CTRL + F)";
     private boolean finishedInitializing = false;
 
     public void initialize() {
@@ -81,6 +85,7 @@ public class GUIGraphicsWindow extends JFrame {
         viewRadioConfig = new JRadioButtonMenuItem(configText); // config radio button -> view menu
 
         applicationExitMenuItem = new JMenuItem(exitText); // exit button -> application menu
+        applicationStartBotMenuItem = new JMenuItem(startBotText); // startbot button -> application menu
 
 
         // Console panel //
@@ -99,6 +104,13 @@ public class GUIGraphicsWindow extends JFrame {
                 System.exit(0);
             }
         });
+        applicationStartBotMenuItem.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                TwitchBot.startBot();
+            }
+        });
+
 
         viewRadioConfig.addActionListener(e -> {
             if (viewRadioConfig.isSelected()) {
@@ -130,7 +142,6 @@ public class GUIGraphicsWindow extends JFrame {
         // Changes //
         // Radio view buttons //
         viewRadioConsole.setSelected(true);
-
         // Root pane //
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setLayout(new BorderLayout(0, 0));
@@ -140,6 +151,7 @@ public class GUIGraphicsWindow extends JFrame {
         menuBar.add(viewMenu);
 
         applicationMenu.add(applicationExitMenuItem);
+        applicationMenu.add(applicationStartBotMenuItem);
 
         viewMenu.add(viewRadioConfig);
         viewMenu.add(viewRadioConsole);
@@ -235,6 +247,23 @@ public class GUIGraphicsWindow extends JFrame {
         if (isStatusPanelSelected.get()) {
 //            contentPane.add(statusPanel);
         }
+//        List<String> colorKeys = new ArrayList<>();
+//        Set<Map.Entry<Object, Object>> entries = UIManager.getLookAndFeelDefaults().entrySet();
+//        for (Map.Entry entry : entries)
+//        {
+//            if (entry.getValue() instanceof Color)
+//            {
+//                colorKeys.add((String) entry.getKey());
+//            }
+//        }
+//
+//        // sort the color keys
+//        Collections.sort(colorKeys);
+//        // print the color keys
+//        for (String colorKey : colorKeys)
+//        {
+//           System.out.println(colorKey + "=" + UIManager.get(colorKey));
+//        }
         setContentPane(contentPane);
     }
     public boolean isInitialized() {

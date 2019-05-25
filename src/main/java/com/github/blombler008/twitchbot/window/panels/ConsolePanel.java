@@ -91,6 +91,8 @@ public class ConsolePanel {
         tab.addTab(tabTwitchText, null, twitchPanel, null);
         tab.addTab(tabTimerText, null, timerPanel, null);
 
+        tab.setBackground(Color.BLACK);
+
         // Adding tab View to the console view panel //
         panel.add(tab);
     }

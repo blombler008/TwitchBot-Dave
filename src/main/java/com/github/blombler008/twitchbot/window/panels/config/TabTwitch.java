@@ -23,13 +23,14 @@ package com.github.blombler008.twitchbot.window.panels.config;/*
  * SOFTWARE.
  */
 
+import com.github.blombler008.twitchbot.window.GUIGraphicsWindow;
 import com.github.blombler008.twitchbot.window.panels.config.twitch.TabCatch;
 import com.github.blombler008.twitchbot.window.panels.config.twitch.TabGeneral;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class TabTwitch {
+public class TabTwitch extends Tab {
 
     private TabCatch tabCatch;
     private TabGeneral tabGeneral;
@@ -41,7 +42,7 @@ public class TabTwitch {
     private String generalTabText = "General";
     private String catchTabText = "Catch";
 
-    public TabTwitch() {
+    public TabTwitch(GUIGraphicsWindow frame) {
         panel = new JPanel();
 
         tab = new JTabbedPane(JTabbedPane.LEFT);

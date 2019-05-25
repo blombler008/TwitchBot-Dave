@@ -24,11 +24,14 @@ package com.github.blombler008.twitchbot.window;/*
  */
 
 import com.github.blombler008.twitchbot.TwitchBot;
+import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
 public class GraphicsWindow {
 

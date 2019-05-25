@@ -294,6 +294,15 @@ public class TabWindow extends Tab {
         frame.setDefaultCloseOperation(comboBoxDefaultExitMethod.getSelectedIndex());
     }
 
+    public void cancelAll() {
+        titleTextField.setText(frame.getTitle());
+        positionTextFieldX.setText(frame.getLocation().x+"");
+        positionTextFieldY.setText(frame.getLocation().y+"");
+        sizeTextFieldX.setText(frame.getSize().width+"");
+        sizeTextFieldY.setText(frame.getSize().height+"");
+        comboBoxDefaultExitMethod.setSelectedIndex(frame.getDefaultCloseOperation());
+    }
+
     private class MouseAdapterHandler extends MouseAdapter {
 
         @Override
@@ -334,7 +343,13 @@ public class TabWindow extends Tab {
             if (e.getSource().equals(getButtonApply())) {
                 saveAll();
             }
+
+            if (e.getSource().equals(getButtonCancel())) {
+                cancelAll();
+            }
         }
+
+
 
 
     }
