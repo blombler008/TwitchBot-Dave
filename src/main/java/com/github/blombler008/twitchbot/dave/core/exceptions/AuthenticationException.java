@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.commands;/*
+package com.github.blombler008.twitchbot.dave.core.exceptions;/*
  *
  * MIT License
  *
@@ -23,20 +23,23 @@ package com.github.blombler008.twitchbot.commands;/*
  * SOFTWARE.
  */
 
-import com.github.blombler008.twitchbot.threads.TwitchIRCListener;
+public class AuthenticationException extends RuntimeException {
 
-import java.io.IOException;
-
-public abstract class Command {
-    private String commandName;
-
-    public Command(String name) {
-        this.commandName = name;
+    public AuthenticationException() {
+        super();
     }
 
-    public String getCommandName() {
-        return commandName;
+    public AuthenticationException(String s) {
+        super(s);
     }
 
-    public abstract String run(String[] args, TwitchIRCListener instance) throws IOException;
+    public AuthenticationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public AuthenticationException(Throwable cause) {
+        super(cause);
+    }
+
+
 }

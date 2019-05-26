@@ -1,5 +1,4 @@
-package com.github.blombler008.twitchbot.window.panels.config;/*
- *
+/*
  * MIT License
  *
  * Copyright (c) 2019 blombler008
@@ -23,19 +22,23 @@ package com.github.blombler008.twitchbot.window.panels.config;/*
  * SOFTWARE.
  */
 
-import com.github.blombler008.twitchbot.window.GUIGraphicsWindow;
+package com.github.blombler008.twitchbot.dave.core.config;
 
-import javax.swing.*;
+public class ConfigFile extends YamlConfiguration{
 
-public class TabTimer extends Tab {
+    private YamlConfiguration configFile;
 
-    private JPanel panel;
-
-    public TabTimer(GUIGraphicsWindow frame) {
-
+    private ConfigFile(FileConfiguration file) {
+        super(file);
+        configFile = this;
     }
 
-    public JPanel get() {
-        return panel;
+    public static ConfigFile newConfigFile(FileConfiguration file) {
+        return new ConfigFile(file);
     }
+
+    public FileConfiguration getConfigFile() {
+        return configFile.getFileConfiguration();
+    }
+
 }

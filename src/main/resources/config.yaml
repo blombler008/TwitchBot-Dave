@@ -1,0 +1,36 @@
+twitch:
+  oAuth: oAuth:abdefghijklmnopqrstuvwxyz1234567890
+  externalOAuth: true
+  nickname: BinaryBot
+  channel: BinaryDave
+
+web:
+  port: 8087
+
+game:
+  catch:
+    enable: true
+    no: There is currently no catch on going!
+    timer:
+      #5min
+      min: 300000
+      #10min
+      max: 600000
+    winner:
+      message: %name% won the catch!
+      command:
+        message: !addpoints %name% 1337
+        enable: true
+      repeat:
+        message: You allready won last time. I'll let someone else win this time!
+        enable: true
+      reward:
+        location:
+    missed:
+      time: 10000
+      message: Sorry you just missed it. %name% were faster then you!
+      enable: true
+
+  dice:
+    enable: true
+

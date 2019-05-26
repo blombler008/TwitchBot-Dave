@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.commands;/*
+package com.github.blombler008.twitchbot.dave.core;/*
  *
  * MIT License
  *
@@ -23,23 +23,51 @@ package com.github.blombler008.twitchbot.commands;/*
  * SOFTWARE.
  */
 
+import com.github.blombler008.twitchbot.dave.core.sockets.SocketReader;
+import com.github.blombler008.twitchbot.dave.core.sockets.SocketWriter;
 
-import com.github.blombler008.twitchbot.threads.TwitchIRCListener;
+import java.net.Socket;
 
-import java.util.Random;
+public class Bot {
 
-public class CommandDice extends Command {
-    public CommandDice() {
-        super("dice");
+    private ImplBot instance;
+
+    private String oAuth;
+    private String nickname;
+    private String channel;
+
+    private SocketWriter writer;
+    private SocketReader reader;
+
+    private Bot(){}
+
+    public Bot(ImplBot bot) {
+        if(bot != null) {
+            this.oAuth = bot.getPassword();
+            this.nickname = bot.getNickname();
+            this.channel = bot.getChannel();
+        } else {
+            throw new NullPointerException("Bot is no logged in");
+        }
     }
 
-    @Override
-    public String run(String[] args, TwitchIRCListener instance) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("You rolled a ");
-        sb.append(new Random().nextInt(Integer.MAX_VALUE));
-        sb.append("!");
-        return sb.toString();
+    public boolean initializeSockets() {
+
+        try {
+            Socket s =  new Socket();
+
+            reader = new SocketReader();
+            writer = new SocketWriter();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return false;
     }
 
+    public boolean login() {
+
+        return false;
+    }
 }

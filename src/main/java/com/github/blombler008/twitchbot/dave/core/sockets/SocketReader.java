@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.threads;/*
+package com.github.blombler008.twitchbot.dave.core.sockets;/*
  *
  * MIT License
  *
@@ -23,43 +23,5 @@ package com.github.blombler008.twitchbot.threads;/*
  * SOFTWARE.
  */
 
-import com.github.blombler008.twitchbot.PrintLogger;
-import com.github.blombler008.twitchbot.TwitchBot;
-
-import java.net.Socket;
-
-public class ClientTrackerThread extends Thread {
-
-    private final PrintLogger logger;
-
-    public ClientTrackerThread(PrintLogger logger) {
-        this.setName("ClientTracker-Thread");
-        this.logger = logger;
-    }
-
-    @Override
-    public void run() {
-
-        boolean isBreaking = false;
-
-        String name;
-        String prefix;
-        Socket client;
-        while (!isBreaking) {
-            try {
-                client = TwitchBot.getWebServerSocket().accept();
-                if (client != null) {
-                    name = "Web-Listener";
-                    prefix = "Web> ";
-
-                    WebListener webListener = new WebListener(prefix, client, name, logger);
-                    webListener.start();
-                    Thread.sleep(100);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                isBreaking = true;
-            }
-        }
-    }
+public class SocketReader {
 }

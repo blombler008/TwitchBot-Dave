@@ -1,5 +1,4 @@
-package com.github.blombler008.twitchbot.window.panels.config.twitch;/*
- *
+/*
  * MIT License
  *
  * Copyright (c) 2019 blombler008
@@ -23,15 +22,25 @@ package com.github.blombler008.twitchbot.window.panels.config.twitch;/*
  * SOFTWARE.
  */
 
-import com.github.blombler008.twitchbot.window.panels.config.Tab;
+package com.github.blombler008.twitchbot.dave.core;
 
-import javax.swing.*;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
 
-public class TabCatch extends Tab {
+public class Validator {
 
-    private JPanel panel;
-
-    public TabCatch() {
-
+    public static boolean isNotNull(Object obj) {
+        return (obj != null);
     }
+
+    public static boolean isValidPath(String path) {
+        try {
+            Paths.get(path);
+        } catch (InvalidPathException | NullPointerException ex) {
+            throw ex;
+        }
+        return true;
+    }
+
 }

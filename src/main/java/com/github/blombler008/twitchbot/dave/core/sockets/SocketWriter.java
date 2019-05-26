@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.commands;/*
+package com.github.blombler008.twitchbot.dave.core.sockets;/*
  *
  * MIT License
  *
@@ -23,26 +23,5 @@ package com.github.blombler008.twitchbot.commands;/*
  * SOFTWARE.
  */
 
-import com.github.blombler008.twitchbot.threads.TwitchIRCListener;
-
-import java.util.Random;
-
-public class CommandZoggos extends Command {
-
-    public CommandZoggos() {
-        super("zoggos");
-    }
-
-    @Override
-    public String run(String[] args, TwitchIRCListener instance) {
-        StringBuilder stringBuilder = new StringBuilder();
-        String[] subGot = args[0].split(";");
-        String name = subGot[3].split("=")[1];
-        stringBuilder.append(name);
-        stringBuilder.append(" ");
-        stringBuilder.append("has ");
-        stringBuilder.append(new Random().nextInt(Integer.MAX_VALUE));
-        stringBuilder.append(" binary11Zoggos");
-        return stringBuilder.toString();
-    }
+public class SocketWriter {
 }
