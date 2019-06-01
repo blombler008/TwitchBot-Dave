@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.dave.core.sockets;/*
+package com.github.blombler008.twitchbot.dave.application.configs;/*
  *
  * MIT License
  *
@@ -23,26 +23,33 @@ package com.github.blombler008.twitchbot.dave.core.sockets;/*
  * SOFTWARE.
  */
 
-import java.io.PrintWriter;
+import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
 
-public class SocketWriter extends SocketThread{
+import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 
-    private PrintWriter writer;
+public class DiceConfig {
 
-    public SocketWriter(SocketIO socketIO, String name) {
-        this.setName(name);
-        writer = new PrintWriter(socketIO.getSocketOutput());
-        start();
+    private int maxBound;
+    private boolean enabled;
+    private YamlConfiguration config;
+
+
+    private DiceConfig(YamlConfiguration config) {
+        this.config = config;
     }
 
-    @Override
-    protected void runSocketAction(Callback c) {
-        c.callback(this);
+    public boolean gen() {
+        try {
+            enabled = config.getBoolean(CONFIG_DICE_ENABLE);
+            maxBound = config.getInteger(CONFIG_DICE_MAX_BOUND);
+            return true;
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
-    public void send(String string) {
-        // System.out.print("SEND > " + string + System.lineSeparator());
-        writer.println(string);
-        writer.flush();
+    public int getMaxBound() {
+        return maxBound;
     }
 }

@@ -27,11 +27,13 @@ package com.github.blombler008.twitchbot.dave.core.config;
 import com.github.blombler008.twitchbot.dave.core.StringUtils;
 
 import java.io.*;
+import java.net.URL;
 import java.util.Scanner;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class FileConfiguration {
 
+    private boolean existsBefore = true;
     private InputStream inputStream;
     private File file;
     private boolean locked = false;
@@ -47,6 +49,7 @@ public class FileConfiguration {
                         file.delete();
                     }
                     file.createNewFile();
+                    existsBefore = false;
                 }
                 return;
             }
@@ -69,7 +72,8 @@ public class FileConfiguration {
     @Override
     public String toString() {
         return "FileConfiguration{" +
-                "file=" + file +
+                "existsBefore=" + existsBefore +
+                ", file=" + file +
                 ", locked=" + locked +
                 '}';
     }
@@ -101,7 +105,11 @@ public class FileConfiguration {
             try {
                 BufferedWriter bf = new BufferedWriter(new FileWriter(file));
 
-                InputStream stream = ClassLoader.getSystemResourceAsStream(file.getName());
+                String namme = file.getName();
+                URL x0 = this.getClass().getResource("/");
+                System.out.println(x0);
+
+                InputStream stream = ClassLoader.getSystemResourceAsStream(namme);
 
                 if(stream != null) {
                     Scanner scanner = new Scanner(stream);
@@ -139,5 +147,9 @@ public class FileConfiguration {
 
     public boolean isLocked() {
         return locked;
+    }
+
+    public boolean isExistsBefore() {
+        return existsBefore;
     }
 }

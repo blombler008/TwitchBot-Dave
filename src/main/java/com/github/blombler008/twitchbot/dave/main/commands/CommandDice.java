@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.dave.core.sockets;/*
+package com.github.blombler008.twitchbot.dave.main.commands;/*
  *
  * MIT License
  *
@@ -23,26 +23,28 @@ package com.github.blombler008.twitchbot.dave.core.sockets;/*
  * SOFTWARE.
  */
 
-import java.io.PrintWriter;
+import com.github.blombler008.twitchbot.dave.application.UserInfo;
+import com.github.blombler008.twitchbot.dave.application.commands.Command;
+import com.github.blombler008.twitchbot.dave.application.configs.DiceConfig;
+import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 
-public class SocketWriter extends SocketThread{
+import java.util.Random;
 
-    private PrintWriter writer;
+public class CommandDice extends Command {
 
-    public SocketWriter(SocketIO socketIO, String name) {
-        this.setName(name);
-        writer = new PrintWriter(socketIO.getSocketOutput());
-        start();
+    private DiceConfig config;
+
+    public CommandDice(TwitchIRCListener twitch, DiceConfig config) {
+        super(twitch);
     }
 
     @Override
-    protected void runSocketAction(Callback c) {
-        c.callback(this);
+    public void run(String[] message, UserInfo info, String channel, String fullMessage) throws RuntimeException {
+        getTwitch().sendMessage("@" + info.getDisplayName() + " rolled a " + Math.abs(new Random().nextInt(config.getMaxBound())));
     }
 
-    public void send(String string) {
-        // System.out.print("SEND > " + string + System.lineSeparator());
-        writer.println(string);
-        writer.flush();
+    @Override
+    public String toString() {
+        return getClass().getName();
     }
 }

@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.dave.core.sockets;/*
+package com.github.blombler008.twitchbot.dave.application.commands;/*
  *
  * MIT License
  *
@@ -23,26 +23,36 @@ package com.github.blombler008.twitchbot.dave.core.sockets;/*
  * SOFTWARE.
  */
 
-import java.io.PrintWriter;
+import com.github.blombler008.twitchbot.dave.application.UserInfo;
 
-public class SocketWriter extends SocketThread{
+public class CommandType {
 
-    private PrintWriter writer;
+    public static String TYPE_NOTICE = "NOTICE";
+    public static String TYPE_WHISPER = "WHISPER";
+    public static String TYPE_PRIVMSG = "PRIVMSG";
+    private String type;
+    private String name;
+    private Command cmd;
 
-    public SocketWriter(SocketIO socketIO, String name) {
-        this.setName(name);
-        writer = new PrintWriter(socketIO.getSocketOutput());
-        start();
+    public CommandType(String type, String name, Command cmd) {
+        this.name = name;
+        this.cmd = cmd;
+
+        if(type.equalsIgnoreCase(TYPE_NOTICE)) this.type = TYPE_NOTICE;
+        else if(type.equalsIgnoreCase(TYPE_WHISPER)) this.type = TYPE_WHISPER;
+        else if(type.equalsIgnoreCase(TYPE_PRIVMSG)) this.type = TYPE_PRIVMSG;
+        else throw new RuntimeException("Invalid type: " + type);
     }
 
-    @Override
-    protected void runSocketAction(Callback c) {
-        c.callback(this);
+    public String getType() {
+        return type;
     }
 
-    public void send(String string) {
-        // System.out.print("SEND > " + string + System.lineSeparator());
-        writer.println(string);
-        writer.flush();
+    public String getName() {
+        return name;
+    }
+
+    public void execute(String[] message, UserInfo userInfo, String channel, String messageString) {
+        cmd.run(message, userInfo, channel, messageString);
     }
 }

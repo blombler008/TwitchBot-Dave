@@ -32,7 +32,7 @@ public class Strings {
     public static final String MSG_WHISPLER_TEMPLATE = "PRIVMSG %channel% :/w %name% %message%";
 
     public static final String IRC_NICK_TEMPLATE = "NICK %name%";
-    public static final String IRC_PASS_TEMPLATE = "PASS %oauth%";
+    public static final String IRC_PASS_TEMPLATE = "PASS %oAuth%";
     public static final String IRC_JOIN_TEMPLATE = "JOIN %channel%";
     public static final String IRC_PART_TEMPLATE = "PART %channel%";
 
@@ -61,15 +61,16 @@ public class Strings {
     public static final String HTML_CONTENT_LENGTH = "Content-Length: ";
 
     public static final String HTML_END_OF_HEADERS = "\r\n\r\n";
+
     public static final String URL_PATH_SEPARATOR = "\\/+";
+    public static final String STRING_REGEX_SEPARATOR = "\\s+";
 
+    public static final String BOT_NULL_OBJECT = "Bot is not created";
 
-    public static final String CONFIG_FILE_OLD = "config.properties";
     public static final String CONFIG_FILE = "config.yaml";
     public static final String CONFIG_DEFAULT_PATH = "TwitchBot-Dave";
 
     // WEB /////////////////////////////////////////////////////////////////////////////
-    public static final String OLD_CONFIG_PORT = "port"; // OLD
     public static final String CONFIG_PORT = "web.port";
 
     // TWITCH //////////////////////////////////////////////////////////////////////////
@@ -77,43 +78,32 @@ public class Strings {
     public static final String CONFIG_TWITCH_NICKNAME = "twitch.nickname";
     public static final String CONFIG_TWITCH_EXTERNAL_OAUTH = "twitch.externalOAuth";
     public static final String CONFIG_TWITCH_OAUTH = "twitch.OAuth";
+    public static final String CONFIG_TWITCH_PREFIX = "twitch.prefix";
 
     // DICE /////////////////////////////////////////////////////////////////////////////
-    public static final String OLD_CONFIG_DICE_ENABLE = "dice.enable";// OLD
     public static final String CONFIG_DICE_ENABLE = "game.dice.enable";
+    public static final String CONFIG_DICE_MAX_BOUND = "game.dice.max";
 
     // CATCH ////////////////////////////////////////////////////////////////////////////
-    public static final String OLD_CONFIG_CATCH_ENABLE = "catch.enable";// OLD
-    public static final String OLD_CONFIG_CATCH_NO = "catch.no";// OLD
-
-    public static final String OLD_CONFIG_TIMER_MIN = "timer.min";// OLD
-    public static final String OLD_CONFIG_TIMER_MAX = "timer.max";// OLD
-
-    public static final String OLD_CONFIG_CATCH_MISSED_TIME = "catch.missed.time";// OLD
-    public static final String OLD_CONFIG_CATCH_MISSED_ENABLE = "catch.missed.enable";// OLD
-    public static final String OLD_CONFIG_CATCH_MISSED_MESSAGE = "catch.missed.message";// OLD
-    public static final String OLD_CONFIG_REWARD_LOCATION = "reward.location";// OLD
-
-    public static final String OLD_CONFIG_CATCH_WINNER_MESSAGE = "catch.winner.message";// OLD
-    public static final String OLD_CONFIG_CATCH_WINNER_COMMAND = "catch.winner.command";// OLD
-    public static final String OLD_CONFIG_CATCH_WINNER_COMMAND_ENABLE = "catch.winner.command.enable";// OLD
-    public static final String OLD_CONFIG_CATCH_WINNER_REPEAT_ENABLE = "catch.winner.repeat.enable";// OLD
-    public static final String OLD_CONFIG_CATCH_WINNER_REPEAT_MESSAGE = "catch.winner.repeat.message";// OLD
-
-    public static final String CONFIG_CATCH_ENABLE = "game.catch.enable";
-    public static final String CONFIG_CATCH_NO = "game.catch.no";
+    public static final String CONFIG_CATCH_ENABLE  = "game.catch.enable";
+    public static final String CONFIG_CATCH_NO      = "game.catch.no";
 
     public static final String CONFIG_CATCH_TIMER_MIN = "game.catch.timer.min";
     public static final String CONFIG_CATCH_TIMER_MAX = "game.catch.timer.max";
 
-    public static final String CONFIG_CATCH_MISSED_TIME = "game.catch.missed.time";
-    public static final String CONFIG_CATCH_MISSED_ENABLE = "game.catch.missed.enable";
-    public static final String CONFIG_CATCH_MISSED_MESSAGE = "game.catch.missed.message";
-    public static final String CONFIG_CATCH_WINNER_REWARD_LOCATION = "game.catch.winner.reward.location";
+    public static final String CONFIG_CATCH_MISSED_TIME     = "game.catch.missed.time";
+    public static final String CONFIG_CATCH_MISSED_ENABLE   = "game.catch.missed.enable";
+    public static final String CONFIG_CATCH_MISSED_MESSAGE  = "game.catch.missed.message";
 
-    public static final String CONFIG_CATCH_WINNER_COMMAND = "game.catch.winner.command.message";
-    public static final String CONFIG_CATCH_WINNER_MESSAGE = "game.catch.winner.message";
-    public static final String CONFIG_CATCH_WINNER_COMMAND_ENABLE = "game.catch.winner.command.enable";
-    public static final String CONFIG_CATCH_WINNER_REPEAT_ENABLE = "game.catch.winner.repeat.enable";
-    public static final String CONFIG_CATCH_WINNER_REPEAT_MESSAGE = "game.catch.winner.repeat.message";
+
+    public static final String CONFIG_CATCH_WINNER_REWARD           = "game.catch.winner.reward.message";
+    public static final String CONFIG_CATCH_WINNER_REWARD_ENABLE    = "game.catch.winner.reward.enable";
+
+    public static final String CONFIG_CATCH_WINNER_MESSAGE          = "game.catch.winner.message";
+
+    public static final String CONFIG_CATCH_WINNER_REPEAT_ENABLE    = "game.catch.winner.repeat.enable";
+    public static final String CONFIG_CATCH_WINNER_REPEAT_MESSAGE   = "game.catch.winner.repeat.message";
+
+    public static final String CONFIG_CATCH_IMAGE_LOCATION  = "game.catch.image.location";
+
 }

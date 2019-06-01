@@ -28,7 +28,6 @@ import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 import com.github.blombler008.twitchbot.dave.core.Validator;
 
 import java.io.File;
-import java.io.IOException;
 
 @SuppressWarnings({"FieldCanBeLocal", "ResultOfMethodCallIgnored"})
 public class ConfigManager {
@@ -59,12 +58,7 @@ public class ConfigManager {
 
     public YamlConfiguration getConfig() {
         FileConfiguration fileConfig = new FileConfiguration(config);
-        if (!this.config.exists()) {
-
-            try {
-                config.createNewFile();
-            } catch (IOException ignore) {}
-
+        if (!fileConfig.isExistsBefore()) {
             fileConfig.copy();
         }
         return new YamlConfiguration(fileConfig);

@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.dave.application;/*
+package com.github.blombler008.twitchbot.dave.main;/*
  *
  * MIT License
  *
@@ -22,18 +22,17 @@ package com.github.blombler008.twitchbot.dave.application;/*
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+import com.github.blombler008.twitchbot.dave.application.configs.TwitchConfig;
+import com.github.blombler008.twitchbot.dave.application.commands.CommandType;
+import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 import com.github.blombler008.twitchbot.dave.core.Bot;
 import com.github.blombler008.twitchbot.dave.core.ImplBot;
 import com.github.blombler008.twitchbot.dave.core.config.ConfigManager;
 import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
 import com.github.blombler008.twitchbot.dave.core.exceptions.AuthenticationException;
+import com.github.blombler008.twitchbot.dave.main.commands.CommandDice;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-
 
 public class Load {
 
@@ -42,65 +41,56 @@ public class Load {
     private Bot bot;
     private ConfigManager configManager;
     private YamlConfiguration config;
+    private TwitchIRCListener twitch;
+    private TwitchConfig twitchConfig;
 
     public Load(String[] args) {
         this.instance = this;
         this.args = args;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Load load = new Load(args);
-        load.configManager = new ConfigManager(args);
-        load.finishConfigModel();
+        load.setConfigModel();
         load.createSocket();
+        load.join();
+        load.registerCommands();
     }
 
-    public void finishConfigModel() {
+    private void registerCommands() {
+        CommandType diceType = new CommandType(CommandType.TYPE_PRIVMSG, "dice", new CommandDice(twitch));
+
+        twitch.addCommand(diceType);
+    }
+
+    public void setConfigModel() {
+        configManager = new ConfigManager(args);
         config = configManager.getConfig();
-        String channel = config.getString("twitch.channel");
-        String nickname = config.getString("twitch.nickname");
-        String oAuth;
-        if(!config.getBoolean("twitch.externalOAuth")) {
-            oAuth = config.getString("twitch.oAuth");
-        } else {
-            try {
-                StringBuilder password = new StringBuilder();
-                File passFile = new File("password.txt");
-                BufferedReader bf = new BufferedReader(new FileReader(passFile));
-
-                String ls;
-                while ((ls = bf.readLine()) != null) {
-                    password.append(ls);
-                }
-                bf.close();
-
-                oAuth = password.toString();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
-//            String string = Strings.IRC_PASS_TEMPLATE;
-//            string = string.replaceAll("%oauth%", );
-//
-//            string = Strings.IRC_NICK_TEMPLATE;
-//            string = string.replaceAll("%name%", "dave-bot");
-        }
-        bot = createBot(channel, nickname, oAuth);
-
-
+        twitchConfig = new TwitchConfig(config);
+        if(twitchConfig.gen())
+            bot = createBot(twitchConfig.getChannel(), twitchConfig.getNickname(), twitchConfig.getPassword());
     }
 
-    public void createSocket() {
-        if(bot.initializeSockets()) {
+    public void join() {
+        twitch.joinChannel(twitchConfig.getChannel());
+//        twitch.joinChannel("binarydave");
+//        twitch.sendMessage(new Random().nextInt(100) + " - Bitte mir random stuff senden per Whisper(/w blombler008 <msg>) ... Danke ♥ ... empfehlung tattyplay ♥");
+    }
+
+    public void createSocket() throws IOException {
+        if(bot.initializeSockets("Twitch-Reader", "Twitch-Writer")) {
+            twitch = new TwitchIRCListener(bot);
+            twitch.setPrefix(twitchConfig.getPrefix());
             if(!bot.login()) {
                 throw new AuthenticationException("Bot login Failed!");
+            } else {
+               twitch.set();
             }
         }
     }
 
     public Bot createBot(String channel, String nickname, String oAuth) {
         ImplBot.Builder builder = new ImplBot.Builder();
-        builder.setChannel(channel);
         builder.setNickname(nickname);
         builder.setPassword(oAuth);
         return builder.build();

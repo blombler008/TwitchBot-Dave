@@ -23,21 +23,24 @@ package com.github.blombler008.twitchbot.dave.core;/*
  * SOFTWARE.
  */
 
+import com.github.blombler008.twitchbot.dave.core.sockets.SocketIO;
 import com.github.blombler008.twitchbot.dave.core.sockets.SocketReader;
 import com.github.blombler008.twitchbot.dave.core.sockets.SocketWriter;
+
+import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 
 import java.net.Socket;
 
 public class Bot {
 
-    private ImplBot instance;
 
     private String oAuth;
     private String nickname;
-    private String channel;
 
     private SocketWriter writer;
     private SocketReader reader;
+    private SocketIO socketIO;
+    private boolean loggedIn;
 
     private Bot(){}
 
@@ -45,19 +48,20 @@ public class Bot {
         if(bot != null) {
             this.oAuth = bot.getPassword();
             this.nickname = bot.getNickname();
-            this.channel = bot.getChannel();
         } else {
-            throw new NullPointerException("Bot is no logged in");
+            throw new NullPointerException(BOT_NULL_OBJECT);
         }
     }
 
-    public boolean initializeSockets() {
+    public boolean initializeSockets(String readerName, String writerName) {
 
         try {
-            Socket s =  new Socket();
+            socketIO =  new SocketIO(new Socket(TWITCH_SERVER, Integer.parseInt(TWITCH_PORT)));
 
-            reader = new SocketReader();
-            writer = new SocketWriter();
+            reader = new SocketReader(socketIO, readerName);
+            writer = new SocketWriter(socketIO, writerName);
+
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -68,6 +72,30 @@ public class Bot {
 
     public boolean login() {
 
+        try {
+            writer.send(TwitchMessageAdapter.pass(oAuth));
+            writer.send(TwitchMessageAdapter.nick(nickname));
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return false;
+    }
+
+    public SocketReader getReader() {
+        return reader;
+    }
+
+    public SocketWriter getWriter() {
+        return writer;
+    }
+
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    public void setLoggedin(boolean loggedIn) {
+        this.loggedIn = loggedIn;
     }
 }

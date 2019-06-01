@@ -3,17 +3,14 @@ twitch:
 
   # if this is enabled put the Oauth token into a text file called: 'password.txt'
   externalOAuth: true
-
   # If external oAuth is enables this can be left as it is.
   oAuth: oAuth:abdefghijklmnopqrstuvwxyz1234567890
 
   # The bots nickname ~ useless cause this name is not shown
-  nickname: BinaryBot
+  nickname: B1naryB0t
 
   # The bots channel ~ the bot is joining this channel and listen to the messages written on this ch for commands, games, etc.
-  channel: BinaryDave
-
-  # The bots channel ~ the bot is joining this channel and listen to the messages written on this ch for commands, games, etc.
+  channel: binarydave
   prefix: '!'
 
 # Web configuration
@@ -30,7 +27,7 @@ game:
     enable: true
 
     # no: the Message given if there is currently no catch game on going.
-    no: 'There is currently no catch on going!'
+    no: There is currently no catch on going!
 
     # When the timer cooldown expires a new catch game is started.
     # Between the min and max value will the cooldown be set.
@@ -44,13 +41,11 @@ game:
     winner:
       # The massage the user(winner) will get.
       message: '%name% won the catch!'
-
       # The rewards the user(winner) will get.
       reward:
         # NOTE: the message is shown to the chat for 3rd-party bot use!
         message: '!addpoints %name% 1337'
         enable: true
-
       # If the this is enabled the first user typing !catch will be ignored and responded with the message below
       repeat:
         message: 'You already won last time. I will let someone else win this time!'
@@ -59,7 +54,7 @@ game:
     # The image shown on the web plane for the users.
     # This image is only shown during an on going catch game.
     image:
-        location: 'html/catch-game.png'
+        location: html/catch-game.png
 
     # When another user typed !catch right after the first one(winner) this message is being shown to the user/chat;
     missed:
@@ -67,10 +62,8 @@ game:
       # This is just the time users have to type catch after the first one(winner).
       # If the catch is over about 10 Seconds(the time below) ago !catch will show the 'no' again
       time: 10000
-
       # The message shown to the users who just passed the catch
       message: 'Sorry you just missed it. %name% were faster then you!'
-
       # Enables the missed message
       enable: true
 
@@ -78,8 +71,4 @@ game:
   dice:
     # Enables the Dice game
     enable: true
-
-    # Sets the max bound rate of the dice (eg. 6 means the max number which can be rolled is a 6)
-    # NOTE: put nothing in that is grater than (2^31)-1
-    max: 6
 

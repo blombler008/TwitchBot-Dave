@@ -24,6 +24,10 @@
 
 package com.github.blombler008.twitchbot.dave.core;
 
+import com.sun.corba.se.impl.encoding.CodeSetConversion;
+import com.sun.xml.internal.ws.commons.xmlutil.Converter;
+
+import javax.xml.bind.DatatypeConverter;
 import java.util.Map;
 
 public class StringUtils {
@@ -104,4 +108,14 @@ public class StringUtils {
         String[] values = map.values().toArray(new String[]{});
         return replaceStringWith(string, keys, values);
     }
+
+    public static boolean isNumber(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException ignore) {
+            return false;
+        }
+    }
+
 }

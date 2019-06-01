@@ -23,26 +23,43 @@ package com.github.blombler008.twitchbot.dave.core.sockets;/*
  * SOFTWARE.
  */
 
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.Socket;
 
-public class SocketWriter extends SocketThread{
+public class SocketIO {
 
-    private PrintWriter writer;
+    private final Socket socket;
+    private final InputStream inputStream;
+    private final OutputStream outputStream;
 
-    public SocketWriter(SocketIO socketIO, String name) {
-        this.setName(name);
-        writer = new PrintWriter(socketIO.getSocketOutput());
-        start();
+
+    private SocketIO(){
+        inputStream = null;
+        socket = null;
+        outputStream = null;
     }
 
-    @Override
-    protected void runSocketAction(Callback c) {
-        c.callback(this);
+    public SocketIO(Socket socket) throws IOException {
+        this.socket = socket;
+        this.inputStream = socket.getInputStream();
+        this.outputStream = socket.getOutputStream();
     }
 
-    public void send(String string) {
-        // System.out.print("SEND > " + string + System.lineSeparator());
-        writer.println(string);
-        writer.flush();
+    public PrintWriter getSocketOutputWriter() {
+        return new PrintWriter(outputStream);
     }
+
+    public BufferedReader getSocketInputReader() {
+        return new BufferedReader(new InputStreamReader(inputStream));
+    }
+
+    public InputStream getSocketInput() {
+        return inputStream;
+    }
+
+    public OutputStream getSocketOutput() {
+        return outputStream;
+    }
+
 }
+

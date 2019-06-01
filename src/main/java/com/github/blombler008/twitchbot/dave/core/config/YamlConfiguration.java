@@ -25,7 +25,6 @@
 package com.github.blombler008.twitchbot.dave.core.config;
 
 import com.esotericsoftware.yamlbeans.YamlConfig;
-import com.esotericsoftware.yamlbeans.YamlConfig.WriteClassName;
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 import com.esotericsoftware.yamlbeans.YamlWriter;
@@ -50,7 +49,7 @@ public class YamlConfiguration {
         config.writeConfig.setWriteRootElementTags(false);
         config.writeConfig.setWriteRootTags(false);
         config.writeConfig.setCanonical(false);
-        config.writeConfig.setWriteClassname(WriteClassName.NEVER);
+        config.writeConfig.setWriteClassname(YamlConfig.WriteClassName.NEVER);
         config.setAllowDuplicates(false);
     }
 
@@ -63,8 +62,10 @@ public class YamlConfiguration {
         this.fileConfiguration = fileConfiguration;
         try {
             reader = new YamlReader(fileConfiguration.getReader(), config);
-            root = getMapFromObject(reader.read(HashMap.class));
-        } catch (IOException ignore) {
+            Map<?,?> x = reader.read(HashMap.class);
+            root = getMapFromObject(x);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

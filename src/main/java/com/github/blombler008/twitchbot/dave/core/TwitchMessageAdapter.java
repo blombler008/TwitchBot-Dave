@@ -23,71 +23,28 @@ package com.github.blombler008.twitchbot.dave.core;/*
  * SOFTWARE.
  */
 
-public class ImplBot {
+import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 
-    private String nickname;
-    private String oAuth;
+public class TwitchMessageAdapter {
 
-    private ImplBot() {}
-
-
-    private void setNickname(String nickname) {
-        this.nickname = nickname;
+    public static String pass(String oAuth) {
+        return IRC_PASS_TEMPLATE.replaceAll("%oAuth%", oAuth);
     }
 
-    private void setPassword(String oAuth) {
-        this.oAuth = oAuth;
+    public static String nick(String nickname) {
+        return IRC_NICK_TEMPLATE.replaceAll("%name%", nickname);
     }
 
 
-    public String getNickname() {
-        return nickname;
+    public static String join(String channel) {
+        return IRC_JOIN_TEMPLATE.replaceAll("%channel%", channel);
     }
 
-    public String getPassword() {
-        return oAuth;
+    public static String sendMessage(String channel, String message) {
+        return MSG_TEMPLATE.replaceAll("%channel%", channel).replaceAll("%message%", message);
     }
 
-
-
-    public ImplBot login() {
-        boolean fail = false;
-
-        if(getPassword() == null) {
-            fail = true;
-        }
-
-        if(getNickname() == null) {
-            fail = true;
-        }
-
-        if(fail) {
-            return null;
-        }
-        return this;
+    public static String sendWhisperMessage(String channel, String message, String user) {
+        return MSG_WHISPLER_TEMPLATE.replaceAll("%channel%", channel).replaceAll("%message%", message).replaceAll("%name%", user);
     }
-
-    public static class Builder {
-
-        private ImplBot instance;
-
-        public Builder() {
-            instance = new ImplBot();
-        }
-
-        public Builder setPassword(String oAuth) {
-            instance.setPassword(oAuth);
-            return this;
-        }
-
-        public Builder setNickname(String nickname) {
-            instance.setNickname(nickname);
-            return this;
-        }
-
-        public Bot build() {
-            return new Bot(instance.login());
-        }
-    }
-
 }

@@ -23,5 +23,30 @@ package com.github.blombler008.twitchbot.dave.core.sockets;/*
  * SOFTWARE.
  */
 
-public class SocketReader {
+import java.io.BufferedReader;
+import java.io.IOException;
+
+public class SocketReader extends SocketThread {
+
+    public String line;
+
+    private BufferedReader reader;
+
+    public SocketReader(SocketIO socketIO, String name) {
+        this.setName(name);
+
+        reader = new BufferedReader(socketIO.getSocketInputReader());
+
+        line = null;
+
+        start();
+    }
+
+    @Override
+    protected void runSocketAction(Callback c) throws IOException {
+        if(line != null) {
+            c.callback(this);
+        }
+        line = reader.readLine();
+    }
 }

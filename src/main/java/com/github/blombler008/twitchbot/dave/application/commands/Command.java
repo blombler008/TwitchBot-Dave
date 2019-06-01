@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.dave.core.sockets;/*
+package com.github.blombler008.twitchbot.dave.application.commands;/*
  *
  * MIT License
  *
@@ -23,26 +23,23 @@ package com.github.blombler008.twitchbot.dave.core.sockets;/*
  * SOFTWARE.
  */
 
-import java.io.PrintWriter;
+import com.github.blombler008.twitchbot.dave.application.UserInfo;
+import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 
-public class SocketWriter extends SocketThread{
+public abstract class Command {
 
-    private PrintWriter writer;
+    private final TwitchIRCListener twitch;
 
-    public SocketWriter(SocketIO socketIO, String name) {
-        this.setName(name);
-        writer = new PrintWriter(socketIO.getSocketOutput());
-        start();
+    public Command(TwitchIRCListener twitch) {
+        this.twitch = twitch;
     }
+
+    public TwitchIRCListener getTwitch() {
+        return twitch;
+    }
+
+    public abstract void run(String [] message, UserInfo info, String channel, String msgString) throws RuntimeException;
 
     @Override
-    protected void runSocketAction(Callback c) {
-        c.callback(this);
-    }
-
-    public void send(String string) {
-        // System.out.print("SEND > " + string + System.lineSeparator());
-        writer.println(string);
-        writer.flush();
-    }
+    public abstract String toString();
 }

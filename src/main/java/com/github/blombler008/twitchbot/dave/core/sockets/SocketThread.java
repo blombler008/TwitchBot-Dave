@@ -23,26 +23,32 @@ package com.github.blombler008.twitchbot.dave.core.sockets;/*
  * SOFTWARE.
  */
 
-import java.io.PrintWriter;
+import jdk.nashorn.internal.codegen.CompilerConstants;
 
-public class SocketWriter extends SocketThread{
+public abstract class SocketThread extends Thread {
 
-    private PrintWriter writer;
+    private Callback c = thread -> {};
 
-    public SocketWriter(SocketIO socketIO, String name) {
-        this.setName(name);
-        writer = new PrintWriter(socketIO.getSocketOutput());
-        start();
+    public void setCallback(Callback c) {
+        this.c = c;
     }
 
     @Override
-    protected void runSocketAction(Callback c) {
-        c.callback(this);
+    public void run() {
+        while(true) {
+            try {
+                Thread.yield();
+                runSocketAction(c);
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
+            }
+        }
     }
 
-    public void send(String string) {
-        // System.out.print("SEND > " + string + System.lineSeparator());
-        writer.println(string);
-        writer.flush();
+    protected abstract void runSocketAction(Callback c) throws Exception;
+
+    public interface Callback {
+        void callback(SocketThread thread);
     }
 }

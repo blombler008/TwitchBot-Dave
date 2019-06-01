@@ -88,7 +88,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.github.blombler008.twitchbot.dave.application.Load</mainClass>
+                            <mainClass>com.github.blombler008.twitchbot.dave.main.Load</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
