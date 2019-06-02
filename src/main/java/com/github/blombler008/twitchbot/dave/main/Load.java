@@ -28,9 +28,8 @@ import com.github.blombler008.twitchbot.dave.application.commands.CommandType;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 import com.github.blombler008.twitchbot.dave.core.Bot;
 import com.github.blombler008.twitchbot.dave.core.ImplBot;
-import com.github.blombler008.twitchbot.dave.core.Strings;
-import com.github.blombler008.twitchbot.dave.core.TwitchMessageAdapter;
 import com.github.blombler008.twitchbot.dave.core.config.ConfigManager;
+import com.github.blombler008.twitchbot.dave.application.configs.WebConfig;
 import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
 import com.github.blombler008.twitchbot.dave.core.exceptions.AuthenticationException;
 import com.github.blombler008.twitchbot.dave.main.commands.CommandDice;
@@ -43,11 +42,13 @@ public class Load {
 
     private Load instance;
     private String[] args;
-    private Bot bot;
+    private Bot twitchBot;
     private ConfigManager configManager;
     private YamlConfiguration config;
     private TwitchIRCListener twitch;
     private TwitchConfig twitchConfig;
+    private WebConfig webConfig;
+    private Bot webBot;
 
     public Load(String[] args) {
         this.instance = this;
@@ -57,12 +58,21 @@ public class Load {
     public static void main(String[] args) throws IOException {
         Load load = new Load(args);
         load.setConfigModel();
-        load.createSocket();
+        load.createSocketTwitch();
+        load.createSocketWeb();
         load.join();
         load.registerCommands();
     }
 
-    private void registerCommands() {
+    public void createSocketWeb() {
+        if(webConfig.gen()) {
+            webBot = createBot(webConfig.getServer(), webConfig.getPort());
+            webBot.hostSockets("Web-Reader", "Web-Writer");
+        }
+
+    }
+
+    public void registerCommands() {
         DiceConfig configDice = new DiceConfig(config);
         CommandType diceType = new CommandType(CommandType.TYPE_PRIVMSG, "dice", new CommandDice(twitch, configDice));
 
@@ -73,9 +83,7 @@ public class Load {
         configManager = new ConfigManager(args);
         config = configManager.getConfig();
         twitchConfig = new TwitchConfig(config);
-        if(twitchConfig.gen()) {
-            bot = createBot(TWITCH_SERVER, Integer.parseInt(TWITCH_PORT));
-        }
+        webConfig = new WebConfig(config);
     }
 
     public void join() {
@@ -84,14 +92,19 @@ public class Load {
 //        twitch.sendMessage(new Random().nextInt(100) + " - Bitte mir random stuff senden per Whisper(/w blombler008 <msg>) ... Danke ♥ ... empfehlung tattyplay ♥");
     }
 
-    public void createSocket() throws IOException {
-        if(bot.initializeSockets("Twitch-Reader", "Twitch-Writer")) {
-            twitch = new TwitchIRCListener(bot);
-            twitch.setPrefix(twitchConfig.getPrefix());
-            if(!twitch.login(twitchConfig.getPassword(), twitchConfig.getNickname())) {
-                throw new AuthenticationException("Bot login Failed!");
-            } else {
-               twitch.set();
+    public void createSocketTwitch() throws IOException {
+
+        if(twitchConfig.gen()) {
+            twitchBot = createBot(TWITCH_SERVER, Integer.parseInt(TWITCH_PORT));
+
+            if(twitchBot.initializeSockets("Twitch-Reader", "Twitch-Writer")) {
+                twitch = new TwitchIRCListener(twitchBot);
+                twitch.setPrefix(twitchConfig.getPrefix());
+                if(!twitch.login(twitchConfig.getPassword(), twitchConfig.getNickname())) {
+                    throw new AuthenticationException("Bot login Failed!");
+                } else {
+                   twitch.set();
+                }
             }
         }
     }

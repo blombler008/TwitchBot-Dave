@@ -18,10 +18,13 @@ twitch:
 
 # Web configuration
 web:
-  # the web listening port
+  # The web listening port (Default: 8087)
   port: 8087
 
-# Games
+  # The server address where the files are located (Default: localhost)
+  server: localhost
+
+# Game configurations
 game:
   # Catch Game
   catch:

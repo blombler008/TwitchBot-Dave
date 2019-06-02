@@ -23,11 +23,16 @@ package com.github.blombler008.twitchbot.dave.core.sockets;/*
  * SOFTWARE.
  */
 
-import jdk.nashorn.internal.codegen.CompilerConstants;
+import java.net.Socket;
 
 public abstract class SocketThread extends Thread {
 
-    private Callback c = thread -> {};
+    private Socket socket;
+    private Callback c = (thread, line) -> {};
+
+    public SocketThread(Socket socket) {
+        this.socket = socket;
+    }
 
     public void setCallback(Callback c) {
         this.c = c;
@@ -35,12 +40,13 @@ public abstract class SocketThread extends Thread {
 
     @Override
     public void run() {
-        while(true) {
+        while(!this.isInterrupted()) {
             try {
                 Thread.yield();
-                runSocketAction(c);
+                if(!socket.isClosed()) runSocketAction(c);
             } catch (Exception e) {
                 e.printStackTrace();
+                this.interrupt();
                 break;
             }
         }
@@ -49,6 +55,6 @@ public abstract class SocketThread extends Thread {
     protected abstract void runSocketAction(Callback c) throws Exception;
 
     public interface Callback {
-        void callback(SocketThread thread);
+        void callback(SocketThread thread, String line) throws Exception;
     }
 }

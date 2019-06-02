@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.dave.core.sockets;/*
+package com.github.blombler008.twitchbot.dave.application.configs;/*
  *
  * MIT License
  *
@@ -23,40 +23,35 @@ package com.github.blombler008.twitchbot.dave.core.sockets;/*
  * SOFTWARE.
  */
 
-import java.io.BufferedReader;
-import java.net.Socket;
-import java.net.SocketException;
+import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
 
-public class SocketReader extends SocketThread {
+import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 
-    private String line;
-    private Socket socket;
-    private BufferedReader reader;
+public class WebConfig {
+    private YamlConfiguration config;
+    private int port;
+    private String server;
 
-    public SocketReader(SocketIO socketIO, String name) {
-        super(socketIO.getSocket());
-        this.socket = socketIO.getSocket();
-        this.setName(name);
-        reader = new BufferedReader(socketIO.getSocketInputReader());
-
-        line = null;
+    public WebConfig(YamlConfiguration config) {
+        this.config = config;
     }
 
-    @Override
-    protected void runSocketAction(Callback c) throws Exception {
-        if(socket.isClosed()) {
-            interrupt();
-            reader.close();
-            return;
-        }
-        if(line != null) {
-            c.callback(this, line);
-        }
+    public String getServer() {
+        return server;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public boolean gen() {
         try {
-            line = reader.readLine();
-        } catch (SocketException ignore) {
-            interrupt();
-            reader.close();
+            this.port = config.getInteger(CONFIG_WEB_PORT);
+            this.server = config.getString(CONFIG_WEB_SERVER);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

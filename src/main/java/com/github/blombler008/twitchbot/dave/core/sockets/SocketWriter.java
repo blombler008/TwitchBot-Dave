@@ -30,19 +30,24 @@ public class SocketWriter extends SocketThread{
     private PrintWriter writer;
 
     public SocketWriter(SocketIO socketIO, String name) {
+        super(socketIO.getSocket());
         this.setName(name);
         writer = new PrintWriter(socketIO.getSocketOutput());
         start();
     }
 
     @Override
-    protected void runSocketAction(Callback c) {
-        c.callback(this);
+    protected void runSocketAction(Callback c) throws Exception {
+        c.callback(this, null);
     }
 
     public void send(String string) {
         // System.out.print("SEND > " + string + System.lineSeparator());
         writer.println(string);
         writer.flush();
+    }
+
+    public PrintWriter getWriter() {
+        return writer;
     }
 }

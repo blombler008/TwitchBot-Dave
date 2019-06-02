@@ -32,7 +32,7 @@ public class SocketIO {
     private final InputStream inputStream;
     private final OutputStream outputStream;
 
-
+    @Deprecated
     private SocketIO(){
         inputStream = null;
         socket = null;
@@ -43,6 +43,10 @@ public class SocketIO {
         this.socket = socket;
         this.inputStream = socket.getInputStream();
         this.outputStream = socket.getOutputStream();
+    }
+
+    public static void executeAsLong(Runnable runnable, String namex) {
+        new Thread(runnable, namex).start();
     }
 
     public PrintWriter getSocketOutputWriter() {
@@ -61,5 +65,8 @@ public class SocketIO {
         return outputStream;
     }
 
+    public Socket getSocket() {
+        return socket;
+    }
 }
 

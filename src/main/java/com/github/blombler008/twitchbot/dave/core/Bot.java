@@ -29,6 +29,8 @@ import com.github.blombler008.twitchbot.dave.core.sockets.SocketWriter;
 
 import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Bot {
@@ -75,4 +77,32 @@ public class Bot {
     public SocketWriter getWriter() {
         return writer;
     }
+
+    public boolean hostSockets(String readerName, String writerName) {
+
+        try {
+            ServerSocket server = new ServerSocket(port);
+            SocketIO.executeAsLong(() -> {
+                WebServe web;
+                while(true) {
+                    try {
+                        Thread.yield();
+                        web = new WebServe(server.accept(), writerName, readerName);
+                        WebServe.add(web);
+
+                        web.set();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }, "WebSocketListener");
+
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

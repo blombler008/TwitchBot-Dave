@@ -24,7 +24,6 @@ package com.github.blombler008.twitchbot.dave.application.threads;/*
  */
 
 import com.github.blombler008.twitchbot.dave.application.UserInfo;
-import com.github.blombler008.twitchbot.dave.application.commands.Command;
 import com.github.blombler008.twitchbot.dave.application.commands.CommandType;
 import com.github.blombler008.twitchbot.dave.core.Bot;
 import com.github.blombler008.twitchbot.dave.core.StringUtils;
@@ -33,9 +32,7 @@ import com.github.blombler008.twitchbot.dave.core.sockets.SocketReader;
 import com.github.blombler008.twitchbot.dave.core.sockets.SocketWriter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 
@@ -60,11 +57,11 @@ public class TwitchIRCListener {
     }
 
     public void set() {
-        reader.setCallback(thread -> {
-            SocketReader reader = (SocketReader) thread;
+        reader.setCallback((thread, line) -> {
+//            SocketReader reader = (SocketReader) thread;
 //            System.out.println(reader.line);
 
-            String [] response = reader.line.split(STRING_REGEX_SEPARATOR);
+            String [] response = line.split(STRING_REGEX_SEPARATOR);
             if(StringUtils.isNumber(response[1])) {
                 String responseCode = response[1];
 
@@ -97,7 +94,7 @@ public class TwitchIRCListener {
                 if(!mode.equals("*")) {
 
                     if(mode.equalsIgnoreCase(CommandType.TYPE_NOTICE)) {
-                        System.out.println(reader.line);
+                        System.out.println(line);
                     }
                     if(mode.equalsIgnoreCase(CommandType.TYPE_WHISPER)) {
                         userInfo = new UserInfo(response[0], true);
@@ -122,6 +119,7 @@ public class TwitchIRCListener {
 
 
         });
+        reader.start();
     }
 
     public void addCommand(CommandType type) {

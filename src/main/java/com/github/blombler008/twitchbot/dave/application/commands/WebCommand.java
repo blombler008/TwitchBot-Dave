@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.dave.core.sockets;/*
+package com.github.blombler008.twitchbot.dave.application.commands;/*
  *
  * MIT License
  *
@@ -23,40 +23,5 @@ package com.github.blombler008.twitchbot.dave.core.sockets;/*
  * SOFTWARE.
  */
 
-import java.io.BufferedReader;
-import java.net.Socket;
-import java.net.SocketException;
-
-public class SocketReader extends SocketThread {
-
-    private String line;
-    private Socket socket;
-    private BufferedReader reader;
-
-    public SocketReader(SocketIO socketIO, String name) {
-        super(socketIO.getSocket());
-        this.socket = socketIO.getSocket();
-        this.setName(name);
-        reader = new BufferedReader(socketIO.getSocketInputReader());
-
-        line = null;
-    }
-
-    @Override
-    protected void runSocketAction(Callback c) throws Exception {
-        if(socket.isClosed()) {
-            interrupt();
-            reader.close();
-            return;
-        }
-        if(line != null) {
-            c.callback(this, line);
-        }
-        try {
-            line = reader.readLine();
-        } catch (SocketException ignore) {
-            interrupt();
-            reader.close();
-        }
-    }
+public class WebCommand {
 }

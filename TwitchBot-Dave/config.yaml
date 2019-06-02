@@ -12,11 +12,14 @@ twitch:
   # The bots channel ~ the bot is joining this channel and listen to the messages written on this ch for commands, games, etc.
   channel: binarydave
   prefix: '!'
+ 
 
 # Web configuration
 web:
   # the web listening port
   port: 8087
+  
+  server: localhost
 
 # Games
 game:

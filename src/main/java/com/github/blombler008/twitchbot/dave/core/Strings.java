@@ -71,7 +71,8 @@ public class Strings {
     public static final String CONFIG_DEFAULT_PATH = "TwitchBot-Dave";
 
     // WEB /////////////////////////////////////////////////////////////////////////////
-    public static final String CONFIG_PORT = "web.port";
+    public static final String CONFIG_WEB_SERVER = "web.server";
+    public static final String CONFIG_WEB_PORT = "web.port";
 
     // TWITCH //////////////////////////////////////////////////////////////////////////
     public static final String CONFIG_TWITCH_CHANNEL = "twitch.channel";
