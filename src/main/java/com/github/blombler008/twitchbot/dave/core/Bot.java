@@ -33,21 +33,19 @@ import java.net.Socket;
 
 public class Bot {
 
-
-    private String oAuth;
-    private String nickname;
+    private String server;
+    private int port;
 
     private SocketWriter writer;
     private SocketReader reader;
     private SocketIO socketIO;
-    private boolean loggedIn;
 
     private Bot(){}
 
     public Bot(ImplBot bot) {
         if(bot != null) {
-            this.oAuth = bot.getPassword();
-            this.nickname = bot.getNickname();
+            this.port = bot.getPort();
+            this.server = bot.getServer();
         } else {
             throw new NullPointerException(BOT_NULL_OBJECT);
         }
@@ -56,7 +54,7 @@ public class Bot {
     public boolean initializeSockets(String readerName, String writerName) {
 
         try {
-            socketIO =  new SocketIO(new Socket(TWITCH_SERVER, Integer.parseInt(TWITCH_PORT)));
+            socketIO =  new SocketIO(new Socket(server, port));
 
             reader = new SocketReader(socketIO, readerName);
             writer = new SocketWriter(socketIO, writerName);
@@ -70,32 +68,11 @@ public class Bot {
         return false;
     }
 
-    public boolean login() {
-
-        try {
-            writer.send(TwitchMessageAdapter.pass(oAuth));
-            writer.send(TwitchMessageAdapter.nick(nickname));
-
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public SocketReader getReader() {
         return reader;
     }
 
     public SocketWriter getWriter() {
         return writer;
-    }
-
-    public boolean isLoggedIn() {
-        return loggedIn;
-    }
-
-    public void setLoggedin(boolean loggedIn) {
-        this.loggedIn = loggedIn;
     }
 }

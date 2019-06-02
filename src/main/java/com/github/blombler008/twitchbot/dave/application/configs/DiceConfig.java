@@ -34,7 +34,7 @@ public class DiceConfig {
     private YamlConfiguration config;
 
 
-    private DiceConfig(YamlConfiguration config) {
+    public DiceConfig(YamlConfiguration config) {
         this.config = config;
     }
 

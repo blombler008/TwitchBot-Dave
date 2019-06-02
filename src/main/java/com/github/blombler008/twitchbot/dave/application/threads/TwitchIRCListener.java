@@ -69,7 +69,6 @@ public class TwitchIRCListener {
                 String responseCode = response[1];
 
                 if (Integer.parseInt(responseCode) == 376) {
-                    bot.setLoggedin(true);
                     System.out.println("Connected to Twitch IRC");
                     capReq();
                 }
@@ -150,6 +149,18 @@ public class TwitchIRCListener {
         writer.send(TwitchMessageAdapter.join(channel));
     }
 
+    public boolean login(String oAuth, String nickname) {
+
+        try {
+            writer.send(TwitchMessageAdapter.pass(oAuth));
+            writer.send(TwitchMessageAdapter.nick(nickname));
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public void sendMessage(String message) {
         writer.send(TwitchMessageAdapter.sendMessage(channel, message));

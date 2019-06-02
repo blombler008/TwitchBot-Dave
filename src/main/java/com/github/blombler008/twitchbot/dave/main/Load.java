@@ -22,17 +22,22 @@ package com.github.blombler008.twitchbot.dave.main;/*
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import com.github.blombler008.twitchbot.dave.application.configs.DiceConfig;
 import com.github.blombler008.twitchbot.dave.application.configs.TwitchConfig;
 import com.github.blombler008.twitchbot.dave.application.commands.CommandType;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 import com.github.blombler008.twitchbot.dave.core.Bot;
 import com.github.blombler008.twitchbot.dave.core.ImplBot;
+import com.github.blombler008.twitchbot.dave.core.Strings;
+import com.github.blombler008.twitchbot.dave.core.TwitchMessageAdapter;
 import com.github.blombler008.twitchbot.dave.core.config.ConfigManager;
 import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
 import com.github.blombler008.twitchbot.dave.core.exceptions.AuthenticationException;
 import com.github.blombler008.twitchbot.dave.main.commands.CommandDice;
 
 import java.io.IOException;
+
+import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 
 public class Load {
 
@@ -58,7 +63,8 @@ public class Load {
     }
 
     private void registerCommands() {
-        CommandType diceType = new CommandType(CommandType.TYPE_PRIVMSG, "dice", new CommandDice(twitch));
+        DiceConfig configDice = new DiceConfig(config);
+        CommandType diceType = new CommandType(CommandType.TYPE_PRIVMSG, "dice", new CommandDice(twitch, configDice));
 
         twitch.addCommand(diceType);
     }
@@ -67,8 +73,9 @@ public class Load {
         configManager = new ConfigManager(args);
         config = configManager.getConfig();
         twitchConfig = new TwitchConfig(config);
-        if(twitchConfig.gen())
-            bot = createBot(twitchConfig.getChannel(), twitchConfig.getNickname(), twitchConfig.getPassword());
+        if(twitchConfig.gen()) {
+            bot = createBot(TWITCH_SERVER, Integer.parseInt(TWITCH_PORT));
+        }
     }
 
     public void join() {
@@ -81,7 +88,7 @@ public class Load {
         if(bot.initializeSockets("Twitch-Reader", "Twitch-Writer")) {
             twitch = new TwitchIRCListener(bot);
             twitch.setPrefix(twitchConfig.getPrefix());
-            if(!bot.login()) {
+            if(!twitch.login(twitchConfig.getPassword(), twitchConfig.getNickname())) {
                 throw new AuthenticationException("Bot login Failed!");
             } else {
                twitch.set();
@@ -89,12 +96,11 @@ public class Load {
         }
     }
 
-    public Bot createBot(String channel, String nickname, String oAuth) {
+    public Bot createBot(String nickname, int port) {
         ImplBot.Builder builder = new ImplBot.Builder();
-        builder.setNickname(nickname);
-        builder.setPassword(oAuth);
+        builder.setServer(nickname);
+        builder.setPort(port);
         return builder.build();
     }
-
 
 }

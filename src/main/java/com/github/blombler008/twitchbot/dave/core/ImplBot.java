@@ -25,39 +25,41 @@ package com.github.blombler008.twitchbot.dave.core;/*
 
 public class ImplBot {
 
-    private String nickname;
-    private String oAuth;
+    private String server;
+    private Integer port;
 
     private ImplBot() {}
 
 
-    private void setNickname(String nickname) {
-        this.nickname = nickname;
+    private void setServer(String server) {
+        this.server = server;
     }
 
-    private void setPassword(String oAuth) {
-        this.oAuth = oAuth;
-    }
-
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public String getPassword() {
-        return oAuth;
+    private void setPort(int port) {
+        this.port = port;
     }
 
 
+    public Integer getPort() {
+        try {
+            return port;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String getServer() {
+        return server;
+    }
 
     public ImplBot login() {
         boolean fail = false;
 
-        if(getPassword() == null) {
+        if(getPort() == null) {
             fail = true;
         }
 
-        if(getNickname() == null) {
+        if(getServer() == null) {
             fail = true;
         }
 
@@ -75,13 +77,13 @@ public class ImplBot {
             instance = new ImplBot();
         }
 
-        public Builder setPassword(String oAuth) {
-            instance.setPassword(oAuth);
+        public Builder setServer(String server) {
+            instance.setServer(server);
             return this;
         }
 
-        public Builder setNickname(String nickname) {
-            instance.setNickname(nickname);
+        public Builder setPort(int port) {
+            instance.setPort(port);
             return this;
         }
 
