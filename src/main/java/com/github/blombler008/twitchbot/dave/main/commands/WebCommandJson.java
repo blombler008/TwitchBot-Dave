@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.dave.application.commands;/*
+package com.github.blombler008.twitchbot.dave.main.commands;/*
  *
  * MIT License
  *
@@ -23,36 +23,36 @@ package com.github.blombler008.twitchbot.dave.application.commands;/*
  * SOFTWARE.
  */
 
-import com.github.blombler008.twitchbot.dave.application.UserInfo;
+import com.github.blombler008.twitchbot.dave.application.commands.WebCommand;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 
 import java.io.OutputStream;
 
-public abstract class WebCommand extends Command {
+import static com.github.blombler008.twitchbot.dave.core.Strings.HTML_CONTENT_APPLICATION_JSON;
 
-    private String contentType;
+public class WebCommandJson extends WebCommand {
 
-    public WebCommand(TwitchIRCListener twitch) {
+    private final String url;
+
+    public WebCommandJson(TwitchIRCListener twitch, String url) {
         super(twitch);
+        this.url = url;
     }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType =  contentType;
-    }
-
-
-
 
     @Override
-    public void run(String[] message, UserInfo info, String channel, String msgString) throws RuntimeException {
-
+    public String run(OutputStream outputStream) {
+        String json = "{\"abd\":\"def\"}";
+        setContentType(HTML_CONTENT_APPLICATION_JSON);
+        return json;
     }
 
-    public abstract String run(OutputStream outputStream);
+    @Override
+    public String getURL() {
+        return url;
+    }
 
-    public abstract String getURL();
+    @Override
+    public String toString() {
+        return null;
+    }
 }

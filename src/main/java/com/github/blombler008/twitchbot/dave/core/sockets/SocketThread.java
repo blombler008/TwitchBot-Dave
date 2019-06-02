@@ -30,7 +30,7 @@ public abstract class SocketThread extends Thread {
     private Socket socket;
     private Callback c = (thread, line) -> {};
 
-    public SocketThread(Socket socket) {
+    SocketThread(Socket socket) {
         this.socket = socket;
     }
 

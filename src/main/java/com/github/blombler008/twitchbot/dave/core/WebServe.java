@@ -29,25 +29,27 @@ import com.github.blombler008.twitchbot.dave.core.sockets.SocketReader;
 import com.github.blombler008.twitchbot.dave.core.sockets.SocketThread;
 import com.github.blombler008.twitchbot.dave.core.sockets.SocketWriter;
 
-import java.awt.*;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 
 public class WebServe {
 
     private static final List<WebServe> webServeList = new ArrayList<>();
     private SocketWriter writer;
     private SocketReader reader;
-    private final List<WebCommand> commands;
+    private final static List<WebCommand> commands = new ArrayList<>();
     private final Socket socket;
     private final SocketIO socketIO;
     private SocketThread.Callback cc;
 
     public WebServe(Socket socket, String writerName, String readerName) throws IOException {
-        this.commands = new ArrayList<>();
         this.socket = socket;
         socketIO = new SocketIO(socket);
         writer = new SocketWriter(socketIO, writerName);
@@ -56,27 +58,58 @@ public class WebServe {
 
     public void set() {
         StringBuilder output = new StringBuilder();
+        AtomicReference<String> url = new AtomicReference<>();
+        AtomicReference<String> toSend = new AtomicReference<>();
         reader.setCallback((thread, line) -> {
-            String url = WebMessageAdapter.getRequestURL(line);
-            String toSend = "{}";
-            if(Validator.isNotNull(url)) System.out.println(url);
+            String s = WebMessageAdapter.getRequestURL(line);
+            if(s != null) {
+                url.set(s);
+            }
+            //toSend.set("{}");
+            //if(Validator.isNotNull(url.get())) System.out.println(url.get());
             if(WebMessageAdapter.isEndOfCall(line)) {
-                output.append(Strings.HTML_HTTP_11_200_OK);
-                output.append(Strings.HTML_CONNECTION_CLOSE);
-                output.append(Strings.HTML_CONTENT_APPLICATION_JSON);
-                output.append(Strings.HTML_CONTENT_LENGTH);
-                output.append(toSend.length());
-                output.append(Strings.HTML_END_OF_HEADERS);
-                output.append(toSend);
-                send(output.toString());
+                output.append(HTML_HTTP_11_200_OK);
+                output.append(HTML_CONNECTION_CLOSE);
 
-                reader.interrupt();
-                writer.interrupt();
-                socket.close();
-                remove();
+                for(WebCommand cmd: commands) {
+                    if(url.get().equals("/" + cmd.getURL())) {
+                        toSend.set(cmd.run(socketIO.getSocketOutput()));
+                        String type = cmd.getContentType();
+                        if(toSend.get() == null || cmd.getContentType() == null) {
+                            return;
+                        }
+
+                        output.append(cmd.getContentType());
+
+                    }
+                }
+                if(Validator.isNotNull(url.get())){
+                    try {
+                        output.append(HTML_CONTENT_LENGTH);
+                        output.append(toSend.get().length());
+                        output.append(HTML_END_OF_HEADERS);
+                        output.append(toSend.get());
+                        send(output.toString());
+
+                        reader.interrupt();
+                        writer.interrupt();
+                        socket.close();
+                        remove();
+                    } catch (Exception E) {
+                        System.out.println(url.get());
+                    }
+                }
             }
         });
         reader.start();
+    }
+
+    public static void addCommand(WebCommand cmd) {
+        commands.add(cmd);
+    }
+
+    public static void removeCommand(WebCommand cmd) {
+        commands.remove(cmd);
     }
 
     public void send(String str) throws IOException {

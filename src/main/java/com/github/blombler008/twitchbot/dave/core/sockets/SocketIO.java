@@ -32,21 +32,14 @@ public class SocketIO {
     private final InputStream inputStream;
     private final OutputStream outputStream;
 
-    @Deprecated
-    private SocketIO(){
-        inputStream = null;
-        socket = null;
-        outputStream = null;
-    }
-
     public SocketIO(Socket socket) throws IOException {
         this.socket = socket;
         this.inputStream = socket.getInputStream();
         this.outputStream = socket.getOutputStream();
     }
 
-    public static void executeAsLong(Runnable runnable, String namex) {
-        new Thread(runnable, namex).start();
+    public static void executeAsLong(Runnable runnable, String name) {
+        new Thread(runnable, name).start();
     }
 
     public PrintWriter getSocketOutputWriter() {

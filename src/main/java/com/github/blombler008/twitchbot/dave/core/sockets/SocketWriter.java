@@ -47,7 +47,4 @@ public class SocketWriter extends SocketThread{
         writer.flush();
     }
 
-    public PrintWriter getWriter() {
-        return writer;
-    }
 }
