@@ -41,10 +41,8 @@ public abstract class WebCommand extends Command {
     }
 
     public void setContentType(String contentType) {
-        this.contentType =  contentType;
+        this.contentType = contentType;
     }
-
-
 
 
     @Override

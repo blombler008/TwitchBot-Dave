@@ -22,16 +22,17 @@ package com.github.blombler008.twitchbot.dave.main;/*
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+import com.github.blombler008.twitchbot.dave.application.commands.CommandType;
 import com.github.blombler008.twitchbot.dave.application.commands.WebCommand;
 import com.github.blombler008.twitchbot.dave.application.configs.DiceConfig;
 import com.github.blombler008.twitchbot.dave.application.configs.TwitchConfig;
-import com.github.blombler008.twitchbot.dave.application.commands.CommandType;
+import com.github.blombler008.twitchbot.dave.application.configs.WebConfig;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 import com.github.blombler008.twitchbot.dave.core.Bot;
 import com.github.blombler008.twitchbot.dave.core.ImplBot;
 import com.github.blombler008.twitchbot.dave.core.WebServe;
 import com.github.blombler008.twitchbot.dave.core.config.ConfigManager;
-import com.github.blombler008.twitchbot.dave.application.configs.WebConfig;
 import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
 import com.github.blombler008.twitchbot.dave.core.exceptions.AuthenticationException;
 import com.github.blombler008.twitchbot.dave.main.commands.CommandDice;
@@ -40,7 +41,8 @@ import com.github.blombler008.twitchbot.dave.main.commands.WebCommandJson;
 
 import java.io.IOException;
 
-import static com.github.blombler008.twitchbot.dave.core.Strings.*;
+import static com.github.blombler008.twitchbot.dave.core.Strings.TWITCH_PORT;
+import static com.github.blombler008.twitchbot.dave.core.Strings.TWITCH_SERVER;
 
 public class Load {
 
@@ -69,7 +71,7 @@ public class Load {
     }
 
     public void createSocketWeb() {
-        if(webConfig.gen()) {
+        if (webConfig.gen()) {
             webBot = createBot(webConfig.getServer(), webConfig.getPort());
             webBot.hostSockets("Web-Reader", "Web-Writer");
         }
@@ -80,7 +82,7 @@ public class Load {
         configDice.gen();
 
         CommandType diceType = new CommandType(CommandType.TYPE_PRIVMSG, "dice", new CommandDice(twitch, configDice));
-        WebCommand json = new WebCommandJson(twitch,"json");
+        WebCommand json = new WebCommandJson(twitch, "json");
         WebCommand favicon = new WebCommandFavicon(twitch);
 
         WebServe.addCommand(json);
@@ -103,16 +105,16 @@ public class Load {
 
     public void createSocketTwitch() throws IOException {
 
-        if(twitchConfig.gen()) {
+        if (twitchConfig.gen()) {
             twitchBot = createBot(TWITCH_SERVER, Integer.parseInt(TWITCH_PORT));
 
-            if(twitchBot.initializeSockets("Twitch-Reader", "Twitch-Writer")) {
+            if (twitchBot.initializeSockets("Twitch-Reader", "Twitch-Writer")) {
                 twitch = new TwitchIRCListener(twitchBot);
                 twitch.setPrefix(twitchConfig.getPrefix());
-                if(!twitch.login(twitchConfig.getPassword(), twitchConfig.getNickname())) {
+                if (!twitch.login(twitchConfig.getPassword(), twitchConfig.getNickname())) {
                     throw new AuthenticationException("Bot login Failed!");
                 } else {
-                   twitch.set();
+                    twitch.set();
                 }
             }
         }

@@ -25,7 +25,7 @@ package com.github.blombler008.twitchbot.dave.core.sockets;/*
 
 import java.io.PrintWriter;
 
-public class SocketWriter extends SocketThread{
+public class SocketWriter extends SocketThread {
 
     private PrintWriter writer;
 

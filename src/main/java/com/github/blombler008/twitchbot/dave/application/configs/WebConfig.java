@@ -25,7 +25,8 @@ package com.github.blombler008.twitchbot.dave.application.configs;/*
 
 import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
 
-import static com.github.blombler008.twitchbot.dave.core.Strings.*;
+import static com.github.blombler008.twitchbot.dave.core.Strings.CONFIG_WEB_PORT;
+import static com.github.blombler008.twitchbot.dave.core.Strings.CONFIG_WEB_SERVER;
 
 public class WebConfig {
     private YamlConfiguration config;

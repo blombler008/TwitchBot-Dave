@@ -12,13 +12,13 @@ twitch:
   # The bots channel ~ the bot is joining this channel and listen to the messages written on this ch for commands, games, etc.
   channel: binarydave
   prefix: '!'
- 
+
 
 # Web configuration
 web:
   # the web listening port
   port: 8087
-  
+
   server: localhost
 
 # Games
@@ -57,7 +57,7 @@ game:
     # The image shown on the web plane for the users.
     # This image is only shown during an on going catch game.
     image:
-        location: html/catch-game.png
+      location: html/catch-game.png
 
     # When another user typed !catch right after the first one(winner) this message is being shown to the user/chat;
     missed:
@@ -74,6 +74,6 @@ game:
   dice:
     # Enables the Dice game
     enable: true
-    
+
     max: 6
 

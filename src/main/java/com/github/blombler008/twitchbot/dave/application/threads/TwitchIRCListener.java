@@ -61,8 +61,8 @@ public class TwitchIRCListener {
 //            SocketReader reader = (SocketReader) thread;
 //            System.out.println(reader.line);
 
-            String [] response = line.split(STRING_REGEX_SEPARATOR);
-            if(StringUtils.isNumber(response[1])) {
+            String[] response = line.split(STRING_REGEX_SEPARATOR);
+            if (StringUtils.isNumber(response[1])) {
                 String responseCode = response[1];
 
                 if (Integer.parseInt(responseCode) == 376) {
@@ -72,7 +72,7 @@ public class TwitchIRCListener {
                 return;
             }
 
-            if(response.length > 4) {
+            if (response.length > 4) {
                 String channel = response[3];
                 String mode = response[2];
 
@@ -84,29 +84,30 @@ public class TwitchIRCListener {
                 for (int i = 4; i < response.length; i++) {
                     msg.add(response[i]);
                     msgString.append(response[i]);
-                    if(i != response.length-1) msgString.append(" ");
+                    if (i != response.length - 1)
+                        msgString.append(" ");
                 }
 
                 String[] message = msg.toArray(new String[]{});
 
 
                 UserInfo userInfo = null;
-                if(!mode.equals("*")) {
+                if (!mode.equals("*")) {
 
-                    if(mode.equalsIgnoreCase(CommandType.TYPE_NOTICE)) {
+                    if (mode.equalsIgnoreCase(CommandType.TYPE_NOTICE)) {
                         System.out.println(line);
                     }
-                    if(mode.equalsIgnoreCase(CommandType.TYPE_WHISPER)) {
+                    if (mode.equalsIgnoreCase(CommandType.TYPE_WHISPER)) {
                         userInfo = new UserInfo(response[0], true);
                     }
 
-                    if(mode.equalsIgnoreCase(CommandType.TYPE_PRIVMSG)) {
+                    if (mode.equalsIgnoreCase(CommandType.TYPE_PRIVMSG)) {
                         userInfo = new UserInfo(response[0], false);
                     }
                 }
 
 
-                if(userInfo != null) {
+                if (userInfo != null) {
                     for (CommandType type : commands) {
                         if (msg.get(0).equalsIgnoreCase(prefix + type.getName())) {
                             type.execute(message, userInfo, channel, msgString.toString());
@@ -139,7 +140,7 @@ public class TwitchIRCListener {
     }
 
     public void joinChannel(String channel) {
-        if(!channel.startsWith("#"))
+        if (!channel.startsWith("#"))
             channel = '#' + channel;
 
         this.channel = channel;

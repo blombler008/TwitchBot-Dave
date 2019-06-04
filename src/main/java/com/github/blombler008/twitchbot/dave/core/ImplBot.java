@@ -28,17 +28,8 @@ public class ImplBot {
     private String server;
     private Integer port;
 
-    private ImplBot() {}
-
-
-    private void setServer(String server) {
-        this.server = server;
+    private ImplBot() {
     }
-
-    private void setPort(int port) {
-        this.port = port;
-    }
-
 
     public Integer getPort() {
         try {
@@ -48,22 +39,30 @@ public class ImplBot {
         }
     }
 
+    private void setPort(int port) {
+        this.port = port;
+    }
+
     public String getServer() {
         return server;
+    }
+
+    private void setServer(String server) {
+        this.server = server;
     }
 
     public ImplBot login() {
         boolean fail = false;
 
-        if(getPort() == null) {
+        if (getPort() == null) {
             fail = true;
         }
 
-        if(getServer() == null) {
+        if (getServer() == null) {
             fail = true;
         }
 
-        if(fail) {
+        if (fail) {
             return null;
         }
         return this;

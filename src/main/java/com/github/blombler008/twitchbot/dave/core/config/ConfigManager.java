@@ -24,10 +24,12 @@ package com.github.blombler008.twitchbot.dave.core.config;/*
  */
 
 import com.github.blombler008.twitchbot.dave.core.StringUtils;
-import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 import com.github.blombler008.twitchbot.dave.core.Validator;
 
 import java.io.File;
+
+import static com.github.blombler008.twitchbot.dave.core.Strings.CONFIG_DEFAULT_PATH;
+import static com.github.blombler008.twitchbot.dave.core.Strings.CONFIG_FILE;
 
 @SuppressWarnings({"FieldCanBeLocal", "ResultOfMethodCallIgnored"})
 public class ConfigManager {

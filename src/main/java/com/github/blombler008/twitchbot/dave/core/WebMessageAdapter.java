@@ -23,14 +23,12 @@ package com.github.blombler008.twitchbot.dave.core;/*
  * SOFTWARE.
  */
 
-import java.util.Arrays;
-
 import static com.github.blombler008.twitchbot.dave.core.Strings.STRING_REGEX_SEPARATOR;
 
 public class WebMessageAdapter {
     public static String getRequestURL(String line) {
-        if(line.startsWith("GET")) {
-            String [] req = line.split(STRING_REGEX_SEPARATOR);
+        if (line.startsWith("GET")) {
+            String[] req = line.split(STRING_REGEX_SEPARATOR);
             return req[1];
         }
         return null;

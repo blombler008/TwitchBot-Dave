@@ -24,7 +24,7 @@
 
 package com.github.blombler008.twitchbot.dave.core.config;
 
-public class ConfigFile extends YamlConfiguration{
+public class ConfigFile extends YamlConfiguration {
 
     private YamlConfiguration configFile;
 

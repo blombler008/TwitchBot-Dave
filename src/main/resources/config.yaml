@@ -62,7 +62,7 @@ game:
     # The image shown on the web plane for the users.
     # This image is only shown during an on going catch game.
     image:
-        location: 'html/catch-game.png'
+      location: 'html/catch-game.png'
 
     # When another user typed !catch right after the first one(winner) this message is being shown to the user/chat;
     missed:

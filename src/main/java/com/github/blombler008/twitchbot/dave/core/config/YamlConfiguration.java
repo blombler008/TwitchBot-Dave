@@ -39,8 +39,6 @@ import java.util.Map;
 
 public class YamlConfiguration {
 
-    private YamlConfiguration() {}
-
     private static YamlConfig config = new YamlConfig();
 
     static {
@@ -58,11 +56,14 @@ public class YamlConfiguration {
     private Map<String, Object> root;
     private YamlReader reader;
 
+    private YamlConfiguration() {
+    }
+
     public YamlConfiguration(FileConfiguration fileConfiguration) {
         this.fileConfiguration = fileConfiguration;
         try {
             reader = new YamlReader(fileConfiguration.getReader(), config);
-            Map<?,?> x = reader.read(HashMap.class);
+            Map<?, ?> x = reader.read(HashMap.class);
             root = getMapFromObject(x);
         } catch (IOException e) {
             e.printStackTrace();
@@ -74,9 +75,9 @@ public class YamlConfiguration {
     }
 
     public void copy() {
-        if (root.isEmpty()){
+        if (root.isEmpty()) {
             fileConfiguration.copy();
-            while(!fileConfiguration.finishedCopy()) {
+            while (!fileConfiguration.finishedCopy()) {
                 try {
                     Thread.sleep(0);
                 } catch (InterruptedException e) {
@@ -85,7 +86,7 @@ public class YamlConfiguration {
             }
             reloaded = false;
             reload();
-            while(!isReloaded()) {
+            while (!isReloaded()) {
                 try {
                     Thread.sleep(0);
                 } catch (InterruptedException e) {
@@ -257,7 +258,7 @@ public class YamlConfiguration {
     }
 
     public Boolean getBoolean(String key) {
-        if(getString(key) == null) {
+        if (getString(key) == null) {
             return null;
         }
         return Boolean.parseBoolean(getString(key));
@@ -266,8 +267,8 @@ public class YamlConfiguration {
     public void reload() {
         reloaded = false;
         try {
-            while(true) {
-                if(fileConfiguration.finishedCopy()) {
+            while (true) {
+                if (fileConfiguration.finishedCopy()) {
                     break;
                 }
             }

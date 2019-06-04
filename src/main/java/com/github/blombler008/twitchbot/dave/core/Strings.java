@@ -86,25 +86,25 @@ public class Strings {
     public static final String CONFIG_DICE_MAX_BOUND = "game.dice.max";
 
     // CATCH ////////////////////////////////////////////////////////////////////////////
-    public static final String CONFIG_CATCH_ENABLE  = "game.catch.enable";
-    public static final String CONFIG_CATCH_NO      = "game.catch.no";
+    public static final String CONFIG_CATCH_ENABLE = "game.catch.enable";
+    public static final String CONFIG_CATCH_NO = "game.catch.no";
 
     public static final String CONFIG_CATCH_TIMER_MIN = "game.catch.timer.min";
     public static final String CONFIG_CATCH_TIMER_MAX = "game.catch.timer.max";
 
-    public static final String CONFIG_CATCH_MISSED_TIME     = "game.catch.missed.time";
-    public static final String CONFIG_CATCH_MISSED_ENABLE   = "game.catch.missed.enable";
-    public static final String CONFIG_CATCH_MISSED_MESSAGE  = "game.catch.missed.message";
+    public static final String CONFIG_CATCH_MISSED_TIME = "game.catch.missed.time";
+    public static final String CONFIG_CATCH_MISSED_ENABLE = "game.catch.missed.enable";
+    public static final String CONFIG_CATCH_MISSED_MESSAGE = "game.catch.missed.message";
 
 
-    public static final String CONFIG_CATCH_WINNER_REWARD           = "game.catch.winner.reward.message";
-    public static final String CONFIG_CATCH_WINNER_REWARD_ENABLE    = "game.catch.winner.reward.enable";
+    public static final String CONFIG_CATCH_WINNER_REWARD = "game.catch.winner.reward.message";
+    public static final String CONFIG_CATCH_WINNER_REWARD_ENABLE = "game.catch.winner.reward.enable";
 
-    public static final String CONFIG_CATCH_WINNER_MESSAGE          = "game.catch.winner.message";
+    public static final String CONFIG_CATCH_WINNER_MESSAGE = "game.catch.winner.message";
 
-    public static final String CONFIG_CATCH_WINNER_REPEAT_ENABLE    = "game.catch.winner.repeat.enable";
-    public static final String CONFIG_CATCH_WINNER_REPEAT_MESSAGE   = "game.catch.winner.repeat.message";
+    public static final String CONFIG_CATCH_WINNER_REPEAT_ENABLE = "game.catch.winner.repeat.enable";
+    public static final String CONFIG_CATCH_WINNER_REPEAT_MESSAGE = "game.catch.winner.repeat.message";
 
-    public static final String CONFIG_CATCH_IMAGE_LOCATION  = "game.catch.image.location";
+    public static final String CONFIG_CATCH_IMAGE_LOCATION = "game.catch.image.location";
 
 }

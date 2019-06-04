@@ -38,7 +38,7 @@ public abstract class Command {
         return twitch;
     }
 
-    public abstract void run(String [] message, UserInfo info, String channel, String msgString) throws RuntimeException;
+    public abstract void run(String[] message, UserInfo info, String channel, String msgString) throws RuntimeException;
 
     @Override
     public abstract String toString();

@@ -44,12 +44,12 @@ public class SocketReader extends SocketThread {
 
     @Override
     protected void runSocketAction(Callback c) throws Exception {
-        if(socket.isClosed()) {
+        if (socket.isClosed()) {
             interrupt();
             reader.close();
             return;
         }
-        if(line != null) {
+        if (line != null) {
             c.callback(this, line);
         }
         try {

@@ -25,7 +25,8 @@ package com.github.blombler008.twitchbot.dave.application.configs;/*
 
 import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
 
-import static com.github.blombler008.twitchbot.dave.core.Strings.*;
+import static com.github.blombler008.twitchbot.dave.core.Strings.CONFIG_DICE_ENABLE;
+import static com.github.blombler008.twitchbot.dave.core.Strings.CONFIG_DICE_MAX_BOUND;
 
 public class DiceConfig {
 
@@ -43,7 +44,7 @@ public class DiceConfig {
             enabled = config.getBoolean(CONFIG_DICE_ENABLE);
             maxBound = config.getInteger(CONFIG_DICE_MAX_BOUND);
             return true;
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }

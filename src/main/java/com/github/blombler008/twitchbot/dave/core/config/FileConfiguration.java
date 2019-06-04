@@ -111,7 +111,7 @@ public class FileConfiguration {
 
                 InputStream stream = ClassLoader.getSystemResourceAsStream(namme);
 
-                if(stream != null) {
+                if (stream != null) {
                     Scanner scanner = new Scanner(stream);
 
                     while (scanner.hasNextLine()) {

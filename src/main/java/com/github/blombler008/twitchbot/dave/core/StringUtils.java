@@ -24,10 +24,6 @@
 
 package com.github.blombler008.twitchbot.dave.core;
 
-import com.sun.corba.se.impl.encoding.CodeSetConversion;
-import com.sun.xml.internal.ws.commons.xmlutil.Converter;
-
-import javax.xml.bind.DatatypeConverter;
 import java.util.Map;
 
 public class StringUtils {

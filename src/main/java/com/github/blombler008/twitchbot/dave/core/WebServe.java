@@ -41,11 +41,11 @@ import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 public class WebServe {
 
     private static final List<WebServe> webServeList = new ArrayList<>();
-    private SocketWriter writer;
-    private SocketReader reader;
     private final static List<WebCommand> commands = new ArrayList<>();
     private final Socket socket;
     private final SocketIO socketIO;
+    private SocketWriter writer;
+    private SocketReader reader;
     private SocketThread.Callback cc;
 
     public WebServe(Socket socket, String writerName, String readerName) throws IOException {
@@ -55,26 +55,38 @@ public class WebServe {
         reader = new SocketReader(socketIO, readerName);
     }
 
+    public static void addCommand(WebCommand cmd) {
+        commands.add(cmd);
+    }
+
+    public static void removeCommand(WebCommand cmd) {
+        commands.remove(cmd);
+    }
+
+    public static void add(WebServe webServe) {
+        webServeList.add(webServe);
+    }
+
     public void set() {
         StringBuilder output = new StringBuilder();
         AtomicReference<String> url = new AtomicReference<>();
         AtomicReference<String> toSend = new AtomicReference<>();
         reader.setCallback((thread, line) -> {
             String s = WebMessageAdapter.getRequestURL(line);
-            if(s != null) {
+            if (s != null) {
                 url.set(s);
             }
             //toSend.set("{}");
             //if(Validator.isNotNull(url.get())) System.out.println(url.get());
-            if(WebMessageAdapter.isEndOfCall(line)) {
+            if (WebMessageAdapter.isEndOfCall(line)) {
                 output.append(HTML_HTTP_11_200_OK);
                 output.append(HTML_CONNECTION_CLOSE);
 
-                for(WebCommand cmd: commands) {
-                    if(url.get().equals("/" + cmd.getURL())) {
+                for (WebCommand cmd : commands) {
+                    if (url.get().equals("/" + cmd.getURL())) {
                         toSend.set(cmd.run(socketIO.getSocketOutput()));
                         String type = cmd.getContentType();
-                        if(toSend.get() == null || cmd.getContentType() == null) {
+                        if (toSend.get() == null || cmd.getContentType() == null) {
                             return;
                         }
 
@@ -82,7 +94,7 @@ public class WebServe {
 
                     }
                 }
-                if(Validator.isNotNull(url.get())){
+                if (Validator.isNotNull(url.get())) {
                     try {
                         output.append(HTML_CONTENT_LENGTH);
                         output.append(toSend.get().length());
@@ -103,22 +115,10 @@ public class WebServe {
         reader.start();
     }
 
-    public static void addCommand(WebCommand cmd) {
-        commands.add(cmd);
-    }
-
-    public static void removeCommand(WebCommand cmd) {
-        commands.remove(cmd);
-    }
-
     public void send(String str) throws IOException {
         OutputStreamWriter pWriter = new OutputStreamWriter(socketIO.getSocketOutput());
         pWriter.write(str);
         pWriter.flush();
-    }
-
-    public static void add(WebServe webServe) {
-        webServeList.add(webServe);
     }
 
     public void remove() {

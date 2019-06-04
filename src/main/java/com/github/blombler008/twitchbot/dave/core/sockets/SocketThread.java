@@ -28,7 +28,8 @@ import java.net.Socket;
 public abstract class SocketThread extends Thread {
 
     private Socket socket;
-    private Callback c = (thread, line) -> {};
+    private Callback c = (thread, line) -> {
+    };
 
     SocketThread(Socket socket) {
         this.socket = socket;
@@ -40,10 +41,11 @@ public abstract class SocketThread extends Thread {
 
     @Override
     public void run() {
-        while(!this.isInterrupted()) {
+        while (!this.isInterrupted()) {
             try {
                 Thread.yield();
-                if(!socket.isClosed()) runSocketAction(c);
+                if (!socket.isClosed())
+                    runSocketAction(c);
             } catch (Exception e) {
                 e.printStackTrace();
                 this.interrupt();

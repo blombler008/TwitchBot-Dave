@@ -31,8 +31,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
-import static com.github.blombler008.twitchbot.dave.core.Strings.*;
-
 public class WebCommandFavicon extends WebCommand {
 
     public WebCommandFavicon(TwitchIRCListener twitch) {

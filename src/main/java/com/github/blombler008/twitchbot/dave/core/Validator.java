@@ -24,7 +24,6 @@
 
 package com.github.blombler008.twitchbot.dave.core;
 
-import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 

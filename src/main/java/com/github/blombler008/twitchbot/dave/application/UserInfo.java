@@ -25,8 +25,10 @@ package com.github.blombler008.twitchbot.dave.application;/*
 
 
 import java.awt.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UserInfo {
 
@@ -35,7 +37,7 @@ public class UserInfo {
     private boolean isWhisper = false;
 
     private Color color;
-    private Map<String,Integer> badges;
+    private Map<String, Integer> badges;
     private String uIdMessage;
     private String displayName;
     private String userType = "";
@@ -51,7 +53,7 @@ public class UserInfo {
     private boolean superUser = false;
 
     public UserInfo(String name) {
-        if(name.equalsIgnoreCase("tattyplay")) {
+        if (name.equalsIgnoreCase("tattyplay")) {
             superUser = true;
         }
     }
@@ -59,11 +61,11 @@ public class UserInfo {
     public UserInfo(String pref, boolean whisper) {
         this.isWhisper = whisper;
         fullInfo = Arrays.asList(pref.split(";"));
-        String [] b;
-        for(String s: fullInfo) {
-            b=s.split("=");
-            if(!isWhisper) {
-                if(b.length > 1) {
+        String[] b;
+        for (String s : fullInfo) {
+            b = s.split("=");
+            if (!isWhisper) {
+                if (b.length > 1) {
                     if (b[0].equalsIgnoreCase("badges")) {
                         badges = new HashMap<>();
                         String[] c = b[1].split(",");
@@ -96,19 +98,19 @@ public class UserInfo {
                     }
 
                     if (b[0].equalsIgnoreCase("mod")) {
-                        if(b[1].equals("1")) {
+                        if (b[1].equals("1")) {
                             isModerator = true;
                         }
                     }
 
                     if (b[0].equalsIgnoreCase("subscriber")) {
-                        if(b[1].equals("1")) {
+                        if (b[1].equals("1")) {
                             isSubscriber = true;
                         }
                     }
 
                     if (b[0].equalsIgnoreCase("turbo")) {
-                        if(b[1].equals("1")) {
+                        if (b[1].equals("1")) {
                             isTurboUser = true;
                         }
                     }
@@ -127,7 +129,7 @@ public class UserInfo {
                 }
 
             } else {
-                if(b.length > 1) {
+                if (b.length > 1) {
                     if (b[0].equalsIgnoreCase("badges")) {
                         badges = new HashMap<>();
                         String[] c = b[1].split(",");
@@ -166,17 +168,17 @@ public class UserInfo {
             }
 
 
-
         }
     }
 
 
-    public Map<String,Integer> getBadges() {
+    public Map<String, Integer> getBadges() {
         return badges;
     }
 
     public String getuIdMessage() {
-        if(isWhisper) throw new RuntimeException("This message is a whisper message");
+        if (isWhisper)
+            throw new RuntimeException("This message is a whisper message");
         return uIdMessage;
     }
 
@@ -193,12 +195,14 @@ public class UserInfo {
     }
 
     public boolean isModerator() {
-        if(isWhisper) throw new RuntimeException("This message is a whisper message");
+        if (isWhisper)
+            throw new RuntimeException("This message is a whisper message");
         return isModerator;
     }
 
     public boolean isSubscriber() {
-        if(isWhisper) throw new RuntimeException("This message is a whisper message");
+        if (isWhisper)
+            throw new RuntimeException("This message is a whisper message");
         return isSubscriber;
     }
 
@@ -207,17 +211,20 @@ public class UserInfo {
     }
 
     public boolean isBroadcaster() {
-        if(isWhisper) throw new RuntimeException("This message is a whisper message");
+        if (isWhisper)
+            throw new RuntimeException("This message is a whisper message");
         return isBroadcaster;
     }
 
     public int getSubMonth() {
-        if(isWhisper) throw new RuntimeException("This message is a whisper message");
+        if (isWhisper)
+            throw new RuntimeException("This message is a whisper message");
         return inSubMonth;
     }
 
     public int getRoomId() {
-        if(isWhisper) throw new RuntimeException("This message is a whisper message");
+        if (isWhisper)
+            throw new RuntimeException("This message is a whisper message");
         return roomId;
     }
 

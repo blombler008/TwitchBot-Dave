@@ -51,7 +51,7 @@ public class TwitchConfig {
             nickname = config.getString(CONFIG_TWITCH_NICKNAME);
             prefix = config.getString(CONFIG_TWITCH_PREFIX);
             externalOAuth = config.getBoolean(CONFIG_TWITCH_EXTERNAL_OAUTH);
-            if(!externalOAuth) {
+            if (!externalOAuth) {
                 password = config.getString(CONFIG_TWITCH_OAUTH);
             } else {
                 StringBuilder passwordBuilder = new StringBuilder();

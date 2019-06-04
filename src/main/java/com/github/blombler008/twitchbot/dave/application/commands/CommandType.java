@@ -27,9 +27,9 @@ import com.github.blombler008.twitchbot.dave.application.UserInfo;
 
 public class CommandType {
 
-    public static String TYPE_NOTICE = "NOTICE";
-    public static String TYPE_WHISPER = "WHISPER";
-    public static String TYPE_PRIVMSG = "PRIVMSG";
+    public static final String TYPE_NOTICE = "NOTICE";
+    public static final String TYPE_WHISPER = "WHISPER";
+    public static final String TYPE_PRIVMSG = "PRIVMSG";
     private String type;
     private String name;
     private Command cmd;
@@ -38,10 +38,20 @@ public class CommandType {
         this.name = name;
         this.cmd = cmd;
 
-        if(type.equalsIgnoreCase(TYPE_NOTICE)) this.type = TYPE_NOTICE;
-        else if(type.equalsIgnoreCase(TYPE_WHISPER)) this.type = TYPE_WHISPER;
-        else if(type.equalsIgnoreCase(TYPE_PRIVMSG)) this.type = TYPE_PRIVMSG;
-        else throw new RuntimeException("Invalid type: " + type);
+
+        switch (type) {
+            case TYPE_NOTICE:
+                this.type = TYPE_NOTICE;
+                break;
+            case TYPE_WHISPER:
+                this.type = TYPE_WHISPER;
+                break;
+            case TYPE_PRIVMSG:
+                this.type = TYPE_PRIVMSG;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + type);
+        }
     }
 
     public String getType() {

@@ -27,11 +27,11 @@ import com.github.blombler008.twitchbot.dave.core.sockets.SocketIO;
 import com.github.blombler008.twitchbot.dave.core.sockets.SocketReader;
 import com.github.blombler008.twitchbot.dave.core.sockets.SocketWriter;
 
-import static com.github.blombler008.twitchbot.dave.core.Strings.*;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import static com.github.blombler008.twitchbot.dave.core.Strings.BOT_NULL_OBJECT;
 
 public class Bot {
 
@@ -42,10 +42,11 @@ public class Bot {
     private SocketReader reader;
     private SocketIO socketIO;
 
-    private Bot(){}
+    private Bot() {
+    }
 
     public Bot(ImplBot bot) {
-        if(bot != null) {
+        if (bot != null) {
             this.port = bot.getPort();
             this.server = bot.getServer();
         } else {
@@ -56,7 +57,7 @@ public class Bot {
     public boolean initializeSockets(String readerName, String writerName) {
 
         try {
-            socketIO =  new SocketIO(new Socket(server, port));
+            socketIO = new SocketIO(new Socket(server, port));
 
             reader = new SocketReader(socketIO, readerName);
             writer = new SocketWriter(socketIO, writerName);
@@ -84,7 +85,7 @@ public class Bot {
             ServerSocket server = new ServerSocket(port);
             SocketIO.executeAsLong(() -> {
                 WebServe web;
-                while(true) {
+                while (true) {
                     try {
                         Thread.yield();
                         web = new WebServe(server.accept(), writerName, readerName);
