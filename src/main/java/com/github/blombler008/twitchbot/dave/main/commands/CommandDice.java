@@ -25,7 +25,7 @@ package com.github.blombler008.twitchbot.dave.main.commands;/*
 
 import com.github.blombler008.twitchbot.dave.application.UserInfo;
 import com.github.blombler008.twitchbot.dave.application.commands.Command;
-import com.github.blombler008.twitchbot.dave.application.configs.DiceConfig;
+import com.github.blombler008.twitchbot.dave.main.configs.DiceConfig;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 
 import java.util.Random;

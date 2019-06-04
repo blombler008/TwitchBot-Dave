@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.dave.application.configs;/*
+package com.github.blombler008.twitchbot.dave.main.configs;/*
  *
  * MIT License
  *
