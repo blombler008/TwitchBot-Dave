@@ -1,109 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link href="/favicon.ico"
+    <link href="./favicon.png"
           rel="icon"
           sizes="16x16"
           type="image/png"/>
-    <link href="/index.css"
+    <link href="./index.css"
           rel="stylesheet"
           type="text/css"/>
     <title>
         Example</title>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"> </script>
+	<script src="./index.js" ></script>
+	<script>
+	var tle2 = document.getElementById("tile2");
+	var tle4 = document.getElementById("tile4");
+	//setInterval(timed, 1000);
+	$(document).ready(function() {
+		loadlink();
+		setInterval(function(){
+			loadlink()
+		}, 5000);
+	});
+	function loadlink(){
+		$('#tile4').load('http://localhost:8087/json', function () {
+			console.log($('#tile4').attr('src'));
+			$( "#tile4" ).attr({
+				  src: "http://localhost:8087/json",
+				  style: "border:none;",
+				  id: "tile4"
+				  width: "100%"
+				  height: "100%"
+				});
+			 $(this).unwrap();
+		});
+	}
+	
+	function timed() {
+		fetch('http://localhost:8087/json')
+			.then(res => res.json())
+			.then((out) => {
+				tle2.innerHTML = JSON.stringify(out);
+				console.log('Output: ', JSON.stringify(out));
+			})
+			.catch(err => setTimeout(() => {
+				/*location.reload(true);*/
+			}, 1000));
+	}
+	
+</script>
 </head>
-<body>
-<img id="tile"
-     src="/catch"
-     style="opacity: 0;"/>
+<body width="100%" height="100%" style="margin:0;">
+<!--
 <p id="tile2">
     live
-    update
-    x</p>
-<p id="tile3">
-    x</p>
-<script src="/index.js"></script>
-<script>
-	
-	// Create the XHR object.
-function createCORSRequest(method, url) {
-  var xhr = new XMLHttpRequest();
-  if ("withCredentials" in xhr) {
-    // XHR for Chrome/Firefox/Opera/Safari.
-    xhr.open(method, url, true);
-  } else if (typeof XDomainRequest != "undefined") {
-    // XDomainRequest for IE.
-    xhr = new XDomainRequest();
-    xhr.open(method, url);
-  } else {
-    // CORS not supported.
-    xhr = null;
-  }
-  return xhr;
-}
+    update</p>
+-->	
+<iframe id="tile4" src="http://localhost:8087/json" style="border:none;" width="100%" height="100%" />
 
-// Helper method to parse the title tag from the response.
-function getTitle(text) {
-  return text.match('<title>(.*)?</title>')
-}
-
-// Make the actual CORS request.
-var JSONX;
-
-
-	function makeCorsRequest(urlX) {
-	  // This is a sample server that supports CORS.
-	  var url = urlX;
-
-	  var xhr = createCORSRequest('GET', url);
-	  if (!xhr) {
-		alert('CORS not supported');
-		return;
-	  }
-		var intern;
-	  // Response handlers.
-	  xhr.onload = function() {
-		var intern = xhr.responseText;
-		JSONX = JSON.parse(intern);
-		
-		console.log(JSONX);
-		document.getElementById("tile2").innerHTML = JSONX.abd;
-		document.getElementById("tile3").innerHTML = "test";
-		
-		setInterval(timeout, 1000);
-	  };
-
-	  xhr.onerror = function() {
-		setTimeout(timeout1, 1000);
-	  };
-
-	  xhr.send();
-	  return JSONX;
-	}
-
-	setInterval(timeout, 1000);
-	
-	makeCorsRequest("http://localhost:8087/json");
-	function timeout() {
-		makeCorsRequest("http://localhost:8087/json");
-		console.log(JSONX);
-		document.getElementById("tile3").innerHTML = JSONX.abd;
-		
-	}
-	function timeout1() {
-		location.reload(true);
-	}
-	
-	
-	
-	/*
-	fetch('http://localhost:8087/json')
-		.then(res => res.json())
-		.then((out) => {
-			console.log('Output: ',updateTile(JSON.stringify(out)));
-		})
-		.catch(err => location.reload(true));*/
-	
- 
-</script>
 </body>
 </html>

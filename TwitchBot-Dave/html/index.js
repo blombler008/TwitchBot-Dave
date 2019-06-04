@@ -1,6 +1,8 @@
 //function start() {
-	bcd();
-	setInterval(bcd, 1000);
+	/*$(document).ready(function() {
+		bcd();
+		setInterval(bcd, 1000);
+	});*/
 //}
 var jsonD;
 var el = document.getElementById('tile');

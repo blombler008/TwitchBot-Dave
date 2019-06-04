@@ -107,6 +107,7 @@ public class WebServe {
                         writer.interrupt();
                         socket.close();
                         remove();
+                        System.out.println(url.get() + " Closed from " + socket.getRemoteSocketAddress());
                     } catch (Exception E) {
                         System.out.println(url.get());
                     }
