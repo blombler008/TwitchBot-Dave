@@ -73,11 +73,12 @@ public class Load {
             webBot = createBot(webConfig.getServer(), webConfig.getPort());
             webBot.hostSockets("Web-Reader", "Web-Writer");
         }
-
     }
 
     public void registerCommands() {
         DiceConfig configDice = new DiceConfig(config);
+        configDice.gen();
+
         CommandType diceType = new CommandType(CommandType.TYPE_PRIVMSG, "dice", new CommandDice(twitch, configDice));
         WebCommand json = new WebCommandJson(twitch,"json");
         WebCommand favicon = new WebCommandFavicon(twitch);

@@ -30,7 +30,6 @@ import com.github.blombler008.twitchbot.dave.core.sockets.SocketThread;
 import com.github.blombler008.twitchbot.dave.core.sockets.SocketWriter;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;

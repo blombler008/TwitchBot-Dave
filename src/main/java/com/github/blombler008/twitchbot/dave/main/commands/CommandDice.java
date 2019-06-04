@@ -36,6 +36,7 @@ public class CommandDice extends Command {
 
     public CommandDice(TwitchIRCListener twitch, DiceConfig config) {
         super(twitch);
+        this.config = config;
     }
 
     @Override

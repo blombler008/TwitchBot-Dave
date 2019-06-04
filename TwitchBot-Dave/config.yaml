@@ -74,4 +74,6 @@ game:
   dice:
     # Enables the Dice game
     enable: true
+    
+    max: 6
 
