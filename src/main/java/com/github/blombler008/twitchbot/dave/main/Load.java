@@ -70,7 +70,7 @@ public class Load {
         this.args = args;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Load load = new Load(args);
         load.setConfigModel();
         load.createSocketTwitch();

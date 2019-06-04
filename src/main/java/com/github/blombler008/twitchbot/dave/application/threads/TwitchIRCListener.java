@@ -72,6 +72,12 @@ public class TwitchIRCListener {
                 return;
             }
 
+            if (line.equalsIgnoreCase(IRC_PING_TEMPLATE)) {
+                writer.send(IRC_PONG_TEMPLATE);
+                System.out.println("> " + IRC_PING_TEMPLATE);
+                System.out.println("< " + IRC_PONG_TEMPLATE);
+            }
+
             if (response.length > 4) {
                 String channel = response[3];
                 String mode = response[2];
