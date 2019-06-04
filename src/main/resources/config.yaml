@@ -38,9 +38,13 @@ game:
     # When the timer cooldown expires a new catch game is started.
     # Between the min and max value will the cooldown be set.
     timer:
+
       #5min
+      # NOTE: put nothing in that is grater than (2^31)-1.
       min: 300000
+
       #10min
+      # NOTE: put nothing in that is grater than (2^31)-1.
       max: 600000
 
     # When a catch is going on the first User typing !catch will be rewarded.
@@ -50,13 +54,32 @@ game:
 
       # The rewards the user(winner) will get.
       reward:
+
+        # Use '%name%' to display the name and %min_max% to generate a random number between the min value and the max value.
         # NOTE: the message is shown to the chat for 3rd-party bot use!
-        message: '!addpoints %name% 1337'
+        # NOTE: the value (itc. 20187) is a 'String' it can be as big as the bot can ACCEPT it. Otherwise your 3-rd Party bot will throw exceptions!
+        command: '!addpoints %name% %min_max%'
+        # command: '!addpoints %name% 20187'
+
+        # Enables the reward mechanism and sends the message above with the name of the user(winner).
         enable: true
 
-      # If the this is enabled the first user typing !catch will be ignored and responded with the message below
+        # This is the min value for the function '%min_max%' in the command entry of this tree.
+        # # NOTE: put nothing in that is grater than (2^31)-1.
+        min: 60
+
+        # This is the max value for the function '%min_max%' in the command entry of this tree.
+        # NOTE: put nothing in that is grater than (2^31)-1.
+        max: 1337
+
+      # If the this is enabled the first user typing !catch will be ignored and responded with the message below.
       repeat:
+
+        # If this mechanism is not enabled (eg. enable: false) this message is displayed to the user entered the command first.
+        # Use '%name%' to display the name of the user.
         message: 'You already won last time. I will let someone else win this time!'
+
+        # Enables the mechanism who lets the last user(winner) win again.
         enable: true
 
     # The image shown on the web plane for the users.
@@ -64,25 +87,25 @@ game:
     image:
       location: 'html/catch-game.png'
 
-    # When another user typed !catch right after the first one(winner) this message is being shown to the user/chat;
+    # When another user typed !catch right after the first one(winner) this message is being shown to the user/chat.
     missed:
       #10sec
       # This is just the time users have to type catch after the first one(winner).
-      # If the catch is over about 10 Seconds(the time below) ago !catch will show the 'no' again
+      # If the catch is over about 10 Seconds(the time below) ago !catch will show the 'no' again.
       time: 10000
 
-      # The message shown to the users who just passed the catch
+      # The message shown to the users who just passed the catch.
       message: 'Sorry you just missed it. %name% were faster then you!'
 
-      # Enables the missed message
+      # Enables the missed message.
       enable: true
 
   # Dice Game
   dice:
-    # Enables the Dice game
+    # Enables the Dice game.
     enable: true
 
-    # Sets the max bound rate of the dice (eg. 6 means the max number which can be rolled is a 6)
-    # NOTE: put nothing in that is grater than (2^31)-1
+    # Sets the max bound rate of the dice (eg. 6 means the max number which can be rolled is a 6).
+    # NOTE: put nothing in that is grater than (2^31)-1.
     max: 6
 

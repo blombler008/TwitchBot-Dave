@@ -98,11 +98,12 @@ public class Strings {
     public static final String CONFIG_CATCH_MISSED_ENABLE = "game.catch.missed.enable";
     public static final String CONFIG_CATCH_MISSED_MESSAGE = "game.catch.missed.message";
 
-
-    public static final String CONFIG_CATCH_WINNER_REWARD = "game.catch.winner.reward.message";
     public static final String CONFIG_CATCH_WINNER_REWARD_ENABLE = "game.catch.winner.reward.enable";
 
     public static final String CONFIG_CATCH_WINNER_MESSAGE = "game.catch.winner.message";
+    public static final String CONFIG_CATCH_WINNER_REWARD_COMMAND = "game.catch.winner.reward.command";
+    public static final String CONFIG_CATCH_WINNER_REWARD_MIN = "game.catch.winner.reward.min";
+    public static final String CONFIG_CATCH_WINNER_REWARD_MAX = "game.catch.winner.reward.max";
 
     public static final String CONFIG_CATCH_WINNER_REPEAT_ENABLE = "game.catch.winner.repeat.enable";
     public static final String CONFIG_CATCH_WINNER_REPEAT_MESSAGE = "game.catch.winner.repeat.message";

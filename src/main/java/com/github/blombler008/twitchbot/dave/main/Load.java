@@ -25,6 +25,7 @@ package com.github.blombler008.twitchbot.dave.main;/*
 
 import com.github.blombler008.twitchbot.dave.application.commands.CommandType;
 import com.github.blombler008.twitchbot.dave.application.commands.WebCommand;
+import com.github.blombler008.twitchbot.dave.main.configs.CatchConfig;
 import com.github.blombler008.twitchbot.dave.main.configs.DiceConfig;
 import com.github.blombler008.twitchbot.dave.main.configs.TwitchConfig;
 import com.github.blombler008.twitchbot.dave.main.configs.WebConfig;
@@ -40,6 +41,8 @@ import com.github.blombler008.twitchbot.dave.main.commands.WebCommandFavicon;
 import com.github.blombler008.twitchbot.dave.main.commands.WebCommandJson;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.github.blombler008.twitchbot.dave.core.Strings.TWITCH_PORT;
 import static com.github.blombler008.twitchbot.dave.core.Strings.TWITCH_SERVER;
@@ -56,11 +59,16 @@ public class Load {
     private WebConfig webConfig;
     private Bot webBot;
     private DiceConfig configDice;
+    private CatchConfig configCatch;
+    private List<WebCommand> webCommands;
+    private List<CommandType> twitchCommands;
 
     public Load(String[] args) {
         this.instance = this;
+        webCommands = new ArrayList<>();
+        twitchCommands = new ArrayList<>();
         this.args = args;
-    } 
+    }
 
     public static void main(String[] args) throws IOException {
         Load load = new Load(args);
@@ -68,9 +76,19 @@ public class Load {
         load.createSocketTwitch();
         load.createSocketWeb();
         load.join();
+        load.createConfigTwitch();
+        load.createConfigWeb();
         load.registerCommands();
     }
 
+    public void createConfigTwitch() {
+        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "dice", new CommandDice(twitch, configDice)));
+    }
+
+    public void createConfigWeb() {
+        webCommands.add(new WebCommandJson(twitch, configManager));
+        webCommands.add(new WebCommandFavicon(twitch, configManager));
+    }
     public void createSocketWeb() {
         if (webConfig.gen()) {
             webBot = createBot(webConfig.getServer(), webConfig.getPort());
@@ -79,23 +97,27 @@ public class Load {
     }
 
     public void registerCommands() {
-        if(configDice.gen()) {
-            CommandType diceType = new CommandType(CommandType.TYPE_PRIVMSG, "dice", new CommandDice(twitch, configDice));
-            WebCommand json = new WebCommandJson(twitch, configManager);
-            WebCommand favicon = new WebCommandFavicon(twitch, configManager);
-
-            WebServe.addCommand(json);
-            WebServe.addCommand(favicon);
-            twitch.addCommand(diceType);
+        for(WebCommand cmd: webCommands) {
+            WebServe.addCommand(cmd);
+        }
+        for(CommandType cmd: twitchCommands) {
+            twitch.addCommand(cmd);
         }
     }
 
     public void setConfigModel() {
         configManager = new ConfigManager(args);
+
         config = configManager.getConfig();
+
         twitchConfig = new TwitchConfig(config);
         webConfig = new WebConfig(config);
+
         configDice = new DiceConfig(config);
+        configCatch = new CatchConfig(config);
+
+        configDice.gen();
+        configCatch.gen();
     }
 
     public void join() {
