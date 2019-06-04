@@ -10,9 +10,9 @@
           type="text/css"/>
     <title>
         Example</title>
-	<script src="https://code.jquery.com/jquery-3.4.1.min.js"> </script>
-	<script src="./index.js" ></script>
-	<script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="./index.js"></script>
+    <script>
 	var tle2 = document.getElementById("tile2");
 	var tle4 = document.getElementById("tile4");
 	//setInterval(timed, 1000);
@@ -28,8 +28,8 @@
 			$( "#tile4" ).attr({
 				  src: "http://localhost:8087/json",
 				  style: "border:none;",
-				  id: "tile4"
-				  width: "100%"
+				  id: "tile4",
+				  width: "100%",
 				  height: "100%"
 				});
 			 $(this).unwrap();
@@ -48,15 +48,22 @@
 			}, 1000));
 	}
 	
-</script>
+
+    </script>
 </head>
-<body width="100%" height="100%" style="margin:0;">
+<body height="100%"
+      style="margin:0;"
+      width="100%">
 <!--
 <p id="tile2">
     live
     update</p>
--->	
-<iframe id="tile4" src="http://localhost:8087/json" style="border:none;" width="100%" height="100%" />
+-->
+<iframe height="100%"
+        id="tile4"
+        src="http://localhost:8087/json"
+        style="border:none;"
+        width="100%"/>
 
 </body>
 </html>

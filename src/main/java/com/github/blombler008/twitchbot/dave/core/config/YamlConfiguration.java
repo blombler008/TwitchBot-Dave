@@ -41,11 +41,6 @@ import java.util.Map;
 public class YamlConfiguration {
 
     private static YamlConfig config = new YamlConfig();
-    private boolean reloaded = true;
-    private FileConfiguration fileConfiguration;
-    private File workingDirectory;
-    private Map<String, Object> root;
-    private YamlReader reader;
 
     static {
         config.readConfig.setClassTags(false);
@@ -56,6 +51,12 @@ public class YamlConfiguration {
         config.writeConfig.setWriteClassname(YamlConfig.WriteClassName.NEVER);
         config.setAllowDuplicates(false);
     }
+
+    private boolean reloaded = true;
+    private FileConfiguration fileConfiguration;
+    private File workingDirectory;
+    private Map<String, Object> root;
+    private YamlReader reader;
 
 
     public YamlConfiguration(FileConfiguration fileConfiguration, File workingDirectory) {

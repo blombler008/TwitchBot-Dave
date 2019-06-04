@@ -32,8 +32,8 @@ import java.util.Random;
 
 public class CommandDice extends Command {
 
-    private DiceConfig config;
     private final String command = "dice";
+    private DiceConfig config;
 
 
     public CommandDice(TwitchIRCListener twitch, DiceConfig config) {

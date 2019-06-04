@@ -71,14 +71,17 @@ public class WebServe {
         StringBuilder output = new StringBuilder();
         AtomicReference<String> url = new AtomicReference<>();
         AtomicReference<String> toSend = new AtomicReference<>();
+
         reader.setCallback((thread, line) -> {
+
             String s = WebMessageAdapter.getRequestURL(line);
+
             if (s != null) {
                 url.set(s);
             }
-            //toSend.set("{}");
-            //if(Validator.isNotNull(url.get())) System.out.println(url.get());
+
             if (WebMessageAdapter.isEndOfCall(line)) {
+
                 output.append(HTML_HTTP_11_200_OK);
                 output.append(HTML_CONNECTION_CLOSE);
                 output.append(HTML_ACCESS_CONTROL_ALLOW_CREDENTIALS);
@@ -86,29 +89,32 @@ public class WebServe {
 
                 for (WebCommand cmd : commands) {
                     if (url.get().equals(cmd.getURL())) {
+
                         toSend.set(cmd.run(socketIO.getSocketOutput()));
-                        String type = cmd.getContentType();
-                        if (toSend.get() == null || cmd.getContentType() == null) {
-                        } else {
+
+                        if (Validator.isNotNull(toSend.get()) || Validator.isNotNull(cmd.getContentType())) {
                             output.append(cmd.getContentType());
                         }
                     }
                 }
+
                 if (Validator.isNotNull(url.get())) {
                     try {
-                        if(Validator.isNotNull(toSend.get())) {
+                        if (Validator.isNotNull(toSend.get())) {
+
                             output.append(HTML_CONTENT_LENGTH);
                             output.append(toSend.get().length());
                             output.append(HTML_END_OF_HEADERS);
                             output.append(toSend.get());
                             send(output.toString());
                         }
+
                         reader.interrupt();
                         writer.interrupt();
                         socket.close();
                         remove();
-                        System.out.println(url.get() + " Closed from " + socket.getRemoteSocketAddress());
-                    } catch (Exception E) {
+                        // System.out.println(url.get() + " Closed from " + socket.getRemoteSocketAddress());
+                    } catch (Exception e) {
                         System.out.println(url.get());
                     }
                 }
