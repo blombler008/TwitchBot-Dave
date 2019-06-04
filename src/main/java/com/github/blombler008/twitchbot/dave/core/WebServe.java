@@ -81,27 +81,28 @@ public class WebServe {
             if (WebMessageAdapter.isEndOfCall(line)) {
                 output.append(HTML_HTTP_11_200_OK);
                 output.append(HTML_CONNECTION_CLOSE);
+                output.append(HTML_ACCESS_CONTROL_ALLOW_CREDENTIALS);
+                output.append(HTML_ACCESS_CONTROL_ALLOW_ORIGIN);
 
                 for (WebCommand cmd : commands) {
-                    if (url.get().equals("/" + cmd.getURL())) {
+                    if (url.get().equals(cmd.getURL())) {
                         toSend.set(cmd.run(socketIO.getSocketOutput()));
                         String type = cmd.getContentType();
                         if (toSend.get() == null || cmd.getContentType() == null) {
-                            return;
+                        } else {
+                            output.append(cmd.getContentType());
                         }
-
-                        output.append(cmd.getContentType());
-
                     }
                 }
                 if (Validator.isNotNull(url.get())) {
                     try {
-                        output.append(HTML_CONTENT_LENGTH);
-                        output.append(toSend.get().length());
-                        output.append(HTML_END_OF_HEADERS);
-                        output.append(toSend.get());
-                        send(output.toString());
-
+                        if(Validator.isNotNull(toSend.get())) {
+                            output.append(HTML_CONTENT_LENGTH);
+                            output.append(toSend.get().length());
+                            output.append(HTML_END_OF_HEADERS);
+                            output.append(toSend.get());
+                            send(output.toString());
+                        }
                         reader.interrupt();
                         writer.interrupt();
                         socket.close();

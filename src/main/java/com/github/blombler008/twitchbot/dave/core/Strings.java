@@ -49,6 +49,8 @@ public class Strings {
     public static final String HTML_HTTP_11_200_OK = "HTTP/1.1 200 OK\r\n";
     public static final String HTML_HTTP_11_404_NOT_FOUND = "HTTP/1.1 404 Not Found\r\n";
     public static final String HTML_TRANSFER_ENCODING_BASE64 = "Transfer-Encoding: base64\r\n";
+    public static final String HTML_ACCESS_CONTROL_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials: true\r\n";
+    public static final String HTML_ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin: null\r\n";
     public static final String HTML_CONTENT_ENCODING_BASE64 = "Content-Encoding: base64\r\n";
     public static final String HTML_CONTENT_APPLICATION_JSON = "Content-Type: application/json\r\n";
     public static final String HTML_CONTENT_APPLICATION_PDF = "Content-Type: application/pdf\r\n";

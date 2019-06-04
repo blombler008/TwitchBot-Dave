@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.dave.core;/*
+package com.github.blombler008.twitchbot.dave.main.commands;/*
  *
  * MIT License
  *
@@ -23,18 +23,38 @@ package com.github.blombler008.twitchbot.dave.core;/*
  * SOFTWARE.
  */
 
-import static com.github.blombler008.twitchbot.dave.core.Strings.STRING_REGEX_SEPARATOR;
+import com.github.blombler008.twitchbot.dave.application.commands.WebCommand;
+import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
+import com.github.blombler008.twitchbot.dave.core.config.ConfigManager;
 
-public class WebMessageAdapter {
-    public static String getRequestURL(String line) {
-        if (line.startsWith("GET")) {
-            String[] req = line.split(STRING_REGEX_SEPARATOR);
-            return req[1];
-        }
+import java.io.File;
+import java.io.OutputStream;
+
+public class WebCommandRoot extends WebCommand {
+
+    private final String url = "/";
+    private final File configFolder;
+
+    public WebCommandRoot(TwitchIRCListener twitch, ConfigManager configManager) {
+        super(twitch);
+        this.configFolder = configManager.getFolder();
+    }
+
+    @Override
+    public String run(OutputStream outputStream) {
         return null;
     }
 
-    public static boolean isEndOfCall(String line) {
-        return line.equals("") || line == null;
+    @Override
+    public String getURL() {
+        return url;
+    }
+
+    @Override
+    public String toString() {
+        return "WebCommandRoot{" +
+                "url='" + url + '\'' +
+                ", configFolder=" + configFolder +
+                '}';
     }
 }

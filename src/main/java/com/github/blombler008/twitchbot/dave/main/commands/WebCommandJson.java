@@ -34,7 +34,7 @@ import static com.github.blombler008.twitchbot.dave.core.Strings.HTML_CONTENT_AP
 
 public class WebCommandJson extends WebCommand {
 
-    private final String url = "json";
+    private final String url = "/json";
     private File configFolder;
 
     public WebCommandJson(TwitchIRCListener twitch, ConfigManager configManager) {
@@ -56,6 +56,9 @@ public class WebCommandJson extends WebCommand {
 
     @Override
     public String toString() {
-        return null;
+        return "WebCommandJson{" +
+                "url='" + url + '\'' +
+                ", configFolder=" + configFolder +
+                '}';
     }
 }

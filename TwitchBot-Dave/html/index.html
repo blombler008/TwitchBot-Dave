@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link href="data:image/png;base64,%favicon%"
+    <link href="/favicon.ico"
           rel="icon"
           sizes="16x16"
           type="image/png"/>
-    <link href="index.css"
+    <link href="/index.css"
           rel="stylesheet"
           type="text/css"/>
     <title>
@@ -13,12 +13,97 @@
 </head>
 <body>
 <img id="tile"
-     src="/getPenguin"
+     src="/catch"
      style="opacity: 0;"/>
 <p id="tile2">
     live
     update
     x</p>
+<p id="tile3">
+    x</p>
 <script src="/index.js"></script>
+<script>
+	
+	// Create the XHR object.
+function createCORSRequest(method, url) {
+  var xhr = new XMLHttpRequest();
+  if ("withCredentials" in xhr) {
+    // XHR for Chrome/Firefox/Opera/Safari.
+    xhr.open(method, url, true);
+  } else if (typeof XDomainRequest != "undefined") {
+    // XDomainRequest for IE.
+    xhr = new XDomainRequest();
+    xhr.open(method, url);
+  } else {
+    // CORS not supported.
+    xhr = null;
+  }
+  return xhr;
+}
+
+// Helper method to parse the title tag from the response.
+function getTitle(text) {
+  return text.match('<title>(.*)?</title>')
+}
+
+// Make the actual CORS request.
+var JSONX;
+
+
+	function makeCorsRequest(urlX) {
+	  // This is a sample server that supports CORS.
+	  var url = urlX;
+
+	  var xhr = createCORSRequest('GET', url);
+	  if (!xhr) {
+		alert('CORS not supported');
+		return;
+	  }
+		var intern;
+	  // Response handlers.
+	  xhr.onload = function() {
+		var intern = xhr.responseText;
+		JSONX = JSON.parse(intern);
+		
+		console.log(JSONX);
+		document.getElementById("tile2").innerHTML = JSONX.abd;
+		document.getElementById("tile3").innerHTML = "test";
+		
+		setInterval(timeout, 1000);
+	  };
+
+	  xhr.onerror = function() {
+		setTimeout(timeout1, 1000);
+	  };
+
+	  xhr.send();
+	  return JSONX;
+	}
+
+	setInterval(timeout, 1000);
+	
+	makeCorsRequest("http://localhost:8087/json");
+	function timeout() {
+		makeCorsRequest("http://localhost:8087/json");
+		console.log(JSONX);
+		document.getElementById("tile3").innerHTML = JSONX.abd;
+		
+	}
+	function timeout1() {
+		location.reload(true);
+	}
+	
+	
+	
+	/*
+	fetch('http://localhost:8087/json')
+		.then(res => res.json())
+		.then((out) => {
+			console.log('Output: ',updateTile(JSON.stringify(out)));
+		})
+		.catch(err => location.reload(true));*/
+	
+ 
+</script>
 </body>
 </html>

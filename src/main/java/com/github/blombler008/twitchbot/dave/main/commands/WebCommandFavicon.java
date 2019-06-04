@@ -35,6 +35,7 @@ import java.io.*;
 public class WebCommandFavicon extends WebCommand {
 
     private File configFolder;
+    private final String url = "/favicon.ico";
 
     public WebCommandFavicon(TwitchIRCListener twitch, ConfigManager configManager) {
         super(twitch);
@@ -74,6 +75,9 @@ public class WebCommandFavicon extends WebCommand {
 
     @Override
     public String toString() {
-        return null;
+        return "WebCommandFavicon{" +
+                "configFolder=" + configFolder +
+                ", url='" + url + '\'' +
+                '}';
     }
 }

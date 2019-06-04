@@ -30,6 +30,7 @@ import com.esotericsoftware.yamlbeans.YamlReader;
 import com.esotericsoftware.yamlbeans.YamlWriter;
 import com.github.blombler008.twitchbot.dave.core.StringUtils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,6 +41,11 @@ import java.util.Map;
 public class YamlConfiguration {
 
     private static YamlConfig config = new YamlConfig();
+    private boolean reloaded = true;
+    private FileConfiguration fileConfiguration;
+    private File workingDirectory;
+    private Map<String, Object> root;
+    private YamlReader reader;
 
     static {
         config.readConfig.setClassTags(false);
@@ -51,16 +57,10 @@ public class YamlConfiguration {
         config.setAllowDuplicates(false);
     }
 
-    private boolean reloaded = true;
-    private FileConfiguration fileConfiguration;
-    private Map<String, Object> root;
-    private YamlReader reader;
 
-    private YamlConfiguration() {
-    }
-
-    public YamlConfiguration(FileConfiguration fileConfiguration) {
+    public YamlConfiguration(FileConfiguration fileConfiguration, File workingDirectory) {
         this.fileConfiguration = fileConfiguration;
+        this.workingDirectory = workingDirectory;
         try {
             reader = new YamlReader(fileConfiguration.getReader(), config);
             Map<?, ?> x = reader.read(HashMap.class);
@@ -284,5 +284,9 @@ public class YamlConfiguration {
 
     public boolean isReloaded() {
         return reloaded;
+    }
+
+    public File getWorkingDirectory() {
+        return workingDirectory;
     }
 }

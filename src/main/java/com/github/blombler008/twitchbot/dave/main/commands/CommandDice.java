@@ -33,6 +33,8 @@ import java.util.Random;
 public class CommandDice extends Command {
 
     private DiceConfig config;
+    private final String command = "dice";
+
 
     public CommandDice(TwitchIRCListener twitch, DiceConfig config) {
         super(twitch);
@@ -46,6 +48,9 @@ public class CommandDice extends Command {
 
     @Override
     public String toString() {
-        return getClass().getName();
+        return "CommandDice{" +
+                "config=" + config +
+                "command=" + command +
+                '}';
     }
 }

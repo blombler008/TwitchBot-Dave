@@ -63,7 +63,7 @@ public class ConfigManager {
         if (!fileConfig.isExistsBefore()) {
             fileConfig.copy();
         }
-        return new YamlConfiguration(fileConfig);
+        return new YamlConfiguration(fileConfig, workDirectory);
     }
 
     public File getFolder() {

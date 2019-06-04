@@ -24,17 +24,19 @@
 
 package com.github.blombler008.twitchbot.dave.core.config;
 
+import java.io.File;
+
 public class ConfigFile extends YamlConfiguration {
 
     private YamlConfiguration configFile;
 
-    private ConfigFile(FileConfiguration file) {
-        super(file);
+    private ConfigFile(FileConfiguration file, File workDirectory) {
+        super(file, workDirectory);
         configFile = this;
     }
 
-    public static ConfigFile newConfigFile(FileConfiguration file) {
-        return new ConfigFile(file);
+    public static ConfigFile newConfigFile(FileConfiguration file, File workDirectory) {
+        return new ConfigFile(file, workDirectory);
     }
 
     public FileConfiguration getConfigFile() {

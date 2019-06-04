@@ -55,7 +55,7 @@ public class TwitchConfig {
                 password = config.getString(CONFIG_TWITCH_OAUTH);
             } else {
                 StringBuilder passwordBuilder = new StringBuilder();
-                File passFile = new File("password.txt");
+                File passFile = new File(config.getWorkingDirectory(), "password.txt");
                 BufferedReader bf = new BufferedReader(new FileReader(passFile));
 
                 String ls;
