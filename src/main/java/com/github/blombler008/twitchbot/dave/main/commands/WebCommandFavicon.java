@@ -26,6 +26,7 @@ package com.github.blombler008.twitchbot.dave.main.commands;/*
 import com.github.blombler008.twitchbot.dave.application.commands.WebCommand;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 import com.github.blombler008.twitchbot.dave.core.Strings;
+import com.github.blombler008.twitchbot.dave.core.config.ConfigManager;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -33,8 +34,11 @@ import java.io.*;
 
 public class WebCommandFavicon extends WebCommand {
 
-    public WebCommandFavicon(TwitchIRCListener twitch) {
+    private File configFolder;
+
+    public WebCommandFavicon(TwitchIRCListener twitch, ConfigManager configManager) {
         super(twitch);
+        this.configFolder = configManager.getFolder();
     }
 
     @Override
@@ -43,7 +47,7 @@ public class WebCommandFavicon extends WebCommand {
             OutputStreamWriter writer = new OutputStreamWriter(outputStream);
 
             StringBuilder output = new StringBuilder();
-            BufferedImage image = ImageIO.read(new File("favicon.png"));
+            BufferedImage image = ImageIO.read(new File(configFolder, "favicon.png"));
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             ImageIO.write(image, "png", stream);
 

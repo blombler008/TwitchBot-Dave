@@ -25,18 +25,21 @@ package com.github.blombler008.twitchbot.dave.main.commands;/*
 
 import com.github.blombler008.twitchbot.dave.application.commands.WebCommand;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
+import com.github.blombler008.twitchbot.dave.core.config.ConfigManager;
 
+import java.io.File;
 import java.io.OutputStream;
 
 import static com.github.blombler008.twitchbot.dave.core.Strings.HTML_CONTENT_APPLICATION_JSON;
 
 public class WebCommandJson extends WebCommand {
 
-    private final String url;
+    private final String url = "json";
+    private File configFolder;
 
-    public WebCommandJson(TwitchIRCListener twitch, String url) {
+    public WebCommandJson(TwitchIRCListener twitch, ConfigManager configManager) {
         super(twitch);
-        this.url = url;
+        this.configFolder = configManager.getFolder();
     }
 
     @Override

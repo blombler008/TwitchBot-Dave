@@ -65,4 +65,8 @@ public class ConfigManager {
         }
         return new YamlConfiguration(fileConfig);
     }
+
+    public File getFolder() {
+        return workDirectory;
+    }
 }

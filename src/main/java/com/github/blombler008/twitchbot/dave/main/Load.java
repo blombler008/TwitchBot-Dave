@@ -82,8 +82,8 @@ public class Load {
         configDice.gen();
 
         CommandType diceType = new CommandType(CommandType.TYPE_PRIVMSG, "dice", new CommandDice(twitch, configDice));
-        WebCommand json = new WebCommandJson(twitch, "json");
-        WebCommand favicon = new WebCommandFavicon(twitch);
+        WebCommand json = new WebCommandJson(twitch, configManager);
+        WebCommand favicon = new WebCommandFavicon(twitch, configManager);
 
         WebServe.addCommand(json);
         WebServe.addCommand(favicon);
