@@ -25,6 +25,7 @@ package com.github.blombler008.twitchbot.dave.main.commands;/*
 
 import com.github.blombler008.twitchbot.dave.application.commands.WebCommand;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
+import com.github.blombler008.twitchbot.dave.core.Strings;
 import com.github.blombler008.twitchbot.dave.core.config.ConfigManager;
 
 import java.io.File;
@@ -42,7 +43,8 @@ public class WebCommandRoot extends WebCommand {
 
     @Override
     public String run(OutputStream outputStream) {
-        return null;
+        setContentType(Strings.HTML_CONTENT_TEXT_HTML);
+        return "LOL";
     }
 
     @Override

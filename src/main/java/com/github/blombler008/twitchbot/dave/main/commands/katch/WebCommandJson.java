@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.dave.application.commands;/*
+package com.github.blombler008.twitchbot.dave.main.commands.katch;/*
  *
  * MIT License
  *
@@ -23,24 +23,42 @@ package com.github.blombler008.twitchbot.dave.application.commands;/*
  * SOFTWARE.
  */
 
-import com.github.blombler008.twitchbot.dave.application.UserInfo;
+import com.github.blombler008.twitchbot.dave.application.commands.WebCommand;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
+import com.github.blombler008.twitchbot.dave.core.config.ConfigManager;
 
-public abstract class Command {
+import java.io.File;
+import java.io.OutputStream;
 
-    private final TwitchIRCListener twitch;
+import static com.github.blombler008.twitchbot.dave.core.Strings.HTML_CONTENT_APPLICATION_JSON;
 
-    public Command(TwitchIRCListener twitch) {
-        this.twitch = twitch;
+public class WebCommandJson extends WebCommand {
+
+    private final String url = "/json";
+    private File configFolder;
+
+    public WebCommandJson(TwitchIRCListener twitch, ConfigManager configManager) {
+        super(twitch);
+        this.configFolder = configManager.getFolder();
     }
-
-    public TwitchIRCListener getTwitch() {
-        return twitch;
-    }
-
-    public abstract void run(String[] message, UserInfo info, String channel, String msgString) throws RuntimeException;
 
     @Override
-    public abstract String toString();
+    public String run(OutputStream outputStream) {
+        String json = "{\"abd\":\"def\"}";
+        setContentType(HTML_CONTENT_APPLICATION_JSON);
+        return json;
+    }
 
+    @Override
+    public String getURL() {
+        return url;
+    }
+
+    @Override
+    public String toString() {
+        return "WebCommandJson{" +
+                "url='" + url + '\'' +
+                ", configFolder=" + configFolder +
+                '}';
+    }
 }

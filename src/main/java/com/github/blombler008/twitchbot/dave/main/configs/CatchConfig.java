@@ -62,8 +62,8 @@ public class CatchConfig {
         if(enable) {
             winnerMessage = config.getString(CONFIG_CATCH_WINNER_MESSAGE);
             blendImage = config.getString(CONFIG_CATCH_IMAGE_LOCATION);
-            timerMin = config.getInteger(CONFIG_CATCH_TIMER_MAX);
-            timerMax = config.getInteger(CONFIG_CATCH_TIMER_MIN);
+            timerMin = config.getInteger(CONFIG_CATCH_TIMER_MIN);
+            timerMax = config.getInteger(CONFIG_CATCH_TIMER_MAX);
             no = config.getString(CONFIG_CATCH_NO);
 
             missedEnable = config.getBoolean(CONFIG_CATCH_MISSED_ENABLE);
@@ -112,28 +112,28 @@ public class CatchConfig {
         return enable;
     }
 
-    public String getNo() {
-        return no;
+    public String getNo(String name) {
+        return no.replaceAll("%name%", name);
     }
 
     public String getBlendImage() {
         return blendImage;
     }
 
-    public String getMissedMessage() {
-        return missedMessage;
+    public String getMissedMessage(String name, String winner) {
+        return missedMessage.replaceAll("%name%", name).replaceAll("%winner%",winner);
     }
 
-    public String getWinnerMessage() {
-        return winnerMessage;
+    public String getWinnerMessage(String name) {
+        return winnerMessage.replaceAll("%name%", name);
     }
 
     public String getWinnerRewardCommand() {
         return winnerRewardCommand;
     }
 
-    public String getWinnerRepeatMessage() {
-        return winnerRepeatMessage;
+    public String getWinnerRepeatMessage(String name) {
+        return winnerRepeatMessage.replaceAll("%name%", name);
     }
 
     public boolean isMissedEnable() {

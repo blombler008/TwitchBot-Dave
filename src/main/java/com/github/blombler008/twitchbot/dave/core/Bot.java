@@ -54,6 +54,14 @@ public class Bot {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Bot{" +
+                "server='" + server + '\'' +
+                ", port=" + port +
+                '}';
+    }
+
     public boolean initializeSockets(String readerName, String writerName) {
 
         try {

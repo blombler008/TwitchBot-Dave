@@ -32,6 +32,7 @@ import com.github.blombler008.twitchbot.dave.core.sockets.SocketReader;
 import com.github.blombler008.twitchbot.dave.core.sockets.SocketWriter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.github.blombler008.twitchbot.dave.core.Strings.*;
@@ -133,7 +134,7 @@ public class TwitchIRCListener {
         commands.add(type);
     }
 
-    private void sendWhisperMessage(String message, String name) {
+    public void sendWhisperMessage(String message, String name) {
         writer.send(TwitchMessageAdapter.sendWhisperMessage(channel, message, name));
     }
 
@@ -152,6 +153,16 @@ public class TwitchIRCListener {
         this.channel = channel;
 
         writer.send(TwitchMessageAdapter.join(channel));
+    }
+
+    @Override
+    public String toString() {
+        return "TwitchIRCListener{" +
+                "bot=" + bot +
+                ", commands=" + Arrays.toString(commands.toArray()) +
+                ", channel='" + channel + '\'' +
+                ", prefix='" + prefix + '\'' +
+                '}';
     }
 
     public boolean login(String oAuth, String nickname) {

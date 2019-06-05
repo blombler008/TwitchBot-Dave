@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.dave.main.commands;/*
+package com.github.blombler008.twitchbot.dave.main.commands.katch;/*
  *
  * MIT License
  *
@@ -23,42 +23,33 @@ package com.github.blombler008.twitchbot.dave.main.commands;/*
  * SOFTWARE.
  */
 
-import com.github.blombler008.twitchbot.dave.application.commands.WebCommand;
+import com.github.blombler008.twitchbot.dave.application.UserInfo;
+import com.github.blombler008.twitchbot.dave.application.commands.Command;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
-import com.github.blombler008.twitchbot.dave.core.config.ConfigManager;
 
-import java.io.File;
-import java.io.OutputStream;
+public class CommandNewCatch extends Command {
 
-import static com.github.blombler008.twitchbot.dave.core.Strings.HTML_CONTENT_APPLICATION_JSON;
+    private final String cmd = "catch";
+    private final CommandCatch commandCatch;
+    private final TwitchIRCListener twitch;
 
-public class WebCommandJson extends WebCommand {
-
-    private final String url = "/json";
-    private File configFolder;
-
-    public WebCommandJson(TwitchIRCListener twitch, ConfigManager configManager) {
+    public CommandNewCatch(TwitchIRCListener twitch, CommandCatch commandCatch) {
         super(twitch);
-        this.configFolder = configManager.getFolder();
+        this.commandCatch = commandCatch;
+        this.twitch = twitch;
     }
-
     @Override
-    public String run(OutputStream outputStream) {
-        String json = "{\"abd\":\"def\"}";
-        setContentType(HTML_CONTENT_APPLICATION_JSON);
-        return json;
-    }
-
-    @Override
-    public String getURL() {
-        return url;
+    public void run(String[] message, UserInfo info, String channel, String msgString) throws RuntimeException {
+//        twitch.sendWhisperMessage("A new catch where forced to start!", info.getDisplayName());
+        if(info.isBroadcaster() || info.isModerator() || info.getDisplayName().equalsIgnoreCase("tattyplay")) {
+            commandCatch.getTimer().newCatch();
+//            WebCommandCatch.show();
+            twitch.sendWhisperMessage("A new catch where forced to start!", "tattyplay");
+        }
     }
 
     @Override
     public String toString() {
-        return "WebCommandJson{" +
-                "url='" + url + '\'' +
-                ", configFolder=" + configFolder +
-                '}';
+        return null;
     }
 }

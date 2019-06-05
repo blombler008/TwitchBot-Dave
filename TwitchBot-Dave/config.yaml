@@ -11,7 +11,7 @@ twitch:
   nickname: 'B1naryB0t'
 
   # The bots channel ~ the bot is joining this channel and listen to the messages written on this ch for commands, games, etc.
-  channel: 'binarydave'
+  channel: 'tattyplay'
 
   # The bots channel ~ the bot is joining this channel and listen to the messages written on this ch for commands, games, etc.
   prefix: '!'
@@ -33,7 +33,7 @@ game:
     enable: true
 
     # no: the Message given if there is currently no catch game on going.
-    no: 'There is currently no catch on going!'
+    no: '%name%, There is currently no catch on going!'
 
     # When the timer cooldown expires a new catch game is started.
     # Between the min and max value will the cooldown be set.
@@ -77,7 +77,7 @@ game:
 
         # If this mechanism is not enabled (eg. enable: false) this message is displayed to the user entered the command first.
         # Use '%name%' to display the name of the user.
-        message: 'You already won last time. I will let someone else win this time!'
+        message: '%name% you already won last time. I will let someone else win for fairness!'
 
         # Enables the mechanism who lets the last user(winner) win again.
         enable: true
@@ -95,7 +95,7 @@ game:
       time: 10000
 
       # The message shown to the users who just passed the catch.
-      message: 'Sorry you just missed it. %name% were faster then you!'
+      message: 'Sorry %name%, you just missed it. %winner% were faster then you!'
 
       # Enables the missed message.
       enable: true
