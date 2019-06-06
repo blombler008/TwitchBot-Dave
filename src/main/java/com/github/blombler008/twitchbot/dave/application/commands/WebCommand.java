@@ -26,6 +26,7 @@ package com.github.blombler008.twitchbot.dave.application.commands;/*
 import com.github.blombler008.twitchbot.dave.application.UserInfo;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 public abstract class WebCommand extends Command {
@@ -50,7 +51,7 @@ public abstract class WebCommand extends Command {
 
     }
 
-    public abstract String run(OutputStream outputStream);
+    public abstract String run(OutputStream outputStream) throws IOException;
 
     public abstract String getURL();
 }

@@ -64,6 +64,10 @@ public class CommandCatch extends Command {
                 }
                 if (timer.setWinner(winner)) {
                     twitch.sendMessage(config.getWinnerMessage(winner));
+                    JSONFile.hide();
+                    if(config.isWinnerRewardEnable()) {
+                        twitch.sendMessage(config.getWinnerRewardCommand(winner));
+                    }
                 } else {
                     if (config.isMissedEnable()) {
                         long lastWinnerTime = timer.getLastWinnerTime();

@@ -25,7 +25,7 @@ package com.github.blombler008.twitchbot.dave.main.configs;/*
 
 import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
 
-import java.util.IllegalFormatFlagsException;
+import java.util.Random;
 
 import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 
@@ -128,8 +128,9 @@ public class CatchConfig {
         return winnerMessage.replaceAll("%name%", name);
     }
 
-    public String getWinnerRewardCommand() {
-        return winnerRewardCommand;
+    public String getWinnerRewardCommand(String name) {
+        int minMax = new Random().nextInt(getWinnerRewardMax()- getWinnerRewardMin()) + getWinnerRewardMin();
+        return winnerRewardCommand.replaceAll("%name%", name).replaceAll("%min_max%", minMax + "");
     }
 
     public String getWinnerRepeatMessage(String name) {

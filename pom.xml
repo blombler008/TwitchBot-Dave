@@ -2,9 +2,9 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.blombler008</groupId>
+    <groupId>com.github.blombler008.twitchbot.dave</groupId>
     <artifactId>TwitchBot-Dave</artifactId>
-    <packaging>pom</packaging>
+
     <version>1.0-SNAPSHOT</version>
 
     <repositories>
@@ -13,12 +13,6 @@
             <url>https://jitpack.io</url>
         </repository>
     </repositories>
-
-    <properties>
-
-    </properties>
-
-
     <dependencies>
 
         <dependency>
@@ -48,34 +42,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.1</version>
-                <executions>
-                    <execution>
-                        <phase>prepare-package</phase>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
@@ -96,8 +62,7 @@
                     </descriptorRefs>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
-
-
 </project>

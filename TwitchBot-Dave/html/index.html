@@ -4,66 +4,81 @@
     <link href="./favicon.png"
           rel="icon"
           sizes="16x16"
-          type="image/png"/>
+          type="image/png"></link>
     <link href="./index.css"
           rel="stylesheet"
-          type="text/css"/>
+          type="text/css"></link>
     <title>
         Example</title>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="./index.js"></script>
-    <script>
-	var tle2 = document.getElementById("tile2");
-	var tle4 = document.getElementById("tile4");
-	//setInterval(timed, 1000);
-	$(document).ready(function() {
-		loadlink();
-		setInterval(function(){
-			loadlink()
-		}, 5000);
-	});
-	function loadlink(){
-		$('#tile4').load('http://localhost:8087/json', function () {
-			console.log($('#tile4').attr('src'));
-			$( "#tile4" ).attr({
-				  src: "http://localhost:8087/json",
-				  style: "border:none;",
-				  id: "tile4",
-				  width: "100%",
-				  height: "100%"
-				});
-			 $(this).unwrap();
-		});
-	}
-	
-	function timed() {
-		fetch('http://localhost:8087/json')
-			.then(res => res.json())
-			.then((out) => {
-				tle2.innerHTML = JSON.stringify(out);
-				console.log('Output: ', JSON.stringify(out));
-			})
-			.catch(err => setTimeout(() => {
-				/*location.reload(true);*/
-			}, 1000));
-	}
-	
-
-    </script>
+    
 </head>
-<body height="100%"
-      style="margin:0;"
-      width="100%">
-<!--
-<p id="tile2">
-    live
-    update</p>
--->
-<iframe height="100%"
-        id="tile4"
-        src="http://localhost:8087/json"
-        style="border:none;"
-        width="100%"/>
+<body style="margin:0;width:100vw;height:100vh;overflow:hidden;">
+	  
+<img id="tile"
+        style="border:none;opacity:1;"
+		src="http://localhost:8087/catch"> </img>
+<!-- <p>TEST</p> -->
+
+<script>
+
+		const server = "http://localhost";
+		const port = 8087;
+		const side = "catch";
+		
+		const urlCatch = server + ":" + port + "/" + side;
+		
+		loadlink();
+		
+		setInterval(function(){start();loadlink();}, 1000);
+		
+		function loadlink(){
+		
+			$('#tile').load(urlCatch, function () {
+				$( "#tile" ).attr({
+					  src: urlCatch,
+					  style: "border:none;opacity:" + currentOp + ";",
+					  id: "tile"
+					});
+				 $(this).unwrap();
+			});
+		}
+		
+		var jsonD;
+		var el = document.getElementById('tile');
+		var faded = true;
+		
+		var currentOp = 1;
+		var remainingRetry = 3;
+		function start() {
+			$.ajax( {url: 'http://localhost:8087/json',
+				type: 'GET',
+				dataType: "json",
+				error: function(err) {
+					/*$("p").text(JSON.stringify(err));*/
+				},
+				success: function(data) {
+					if(data.catch === "true") {
+						if(faded === true) {
+							faded = false;
+							$("#tile").animate({'opacity':'1'},1000);
+						}
+						currentOp = 1;
+					} else {
+						if(faded === false) {
+							faded = true;
+							$("#tile").animate({'opacity':'0'},1000);
+						}
+						currentOp = 0;
+					}
+					console.log(data);
+					/*$("p").text(JSON.stringify(data));*/
+				}
+			});
+		}
+		
+
+</script>
 
 </body>
 </html>

@@ -40,10 +40,10 @@ public class CommandNewCatch extends Command {
     }
     @Override
     public void run(String[] message, UserInfo info, String channel, String msgString) throws RuntimeException {
-//        twitch.sendWhisperMessage("A new catch where forced to start!", info.getDisplayName());
+
         if(info.isBroadcaster() || info.isModerator() || info.getDisplayName().equalsIgnoreCase("tattyplay")) {
             commandCatch.getTimer().newCatch();
-//            WebCommandCatch.show();
+            JSONFile.show();
             twitch.sendWhisperMessage("A new catch where forced to start!", "tattyplay");
         }
     }

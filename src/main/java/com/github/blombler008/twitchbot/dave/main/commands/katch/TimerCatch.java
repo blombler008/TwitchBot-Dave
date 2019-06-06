@@ -70,7 +70,7 @@ public class TimerCatch {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-//        WebCommandCatch.show();
+        JSONFile.show();
     }
 
     @Override

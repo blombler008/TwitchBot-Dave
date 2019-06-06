@@ -1,1 +1,0 @@
-java -jar TwitchBot-Dave.jar --noGraph

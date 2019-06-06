@@ -1,12 +1,6 @@
-//function start() {
-	/*$(document).ready(function() {
-		bcd();
-		setInterval(bcd, 1000);
-	});*/
-//}
+
 var jsonD;
-var el = document.getElementById('tile');
-var e2 = document.getElementById('tile2');
+var el = document.getElementById('pic');
 var faded = false;
 function bcd() {
 	fetch('/json') 
@@ -18,7 +12,6 @@ function bcd() {
 
 function updateTile(json) {
 	this.jsonD = JSON.parse(json);
-	tile2.innerHTML = json;
 	if(jsonD.catch === "true") {
 		if(faded === false) {
 			faded = true;
@@ -32,19 +25,11 @@ function updateTile(json) {
 	}
 	return jsonD;
 }
-function toggleOpacity(id) {
-    var el = document.getElementById(id);
-    if (el.style.opacity == 1) {
-        fadeObject(el, 0, 1, 2000);
-    } else {
-        fadeObject(el, 1, 0, 2000);
-    }
-}
 
 function fadeObject(el, start, end, duration) {
     var range = end - start;
     var goingUp = end > start;
-    var steps = duration / 20;   // arbitrarily picked 20ms for each step
+    var steps = duration / 20;   
     var increment = range / steps;
     var current = start;
     var more = true;
@@ -68,6 +53,3 @@ function fadeObject(el, start, end, duration) {
     }
     next();
 }
-
-
-

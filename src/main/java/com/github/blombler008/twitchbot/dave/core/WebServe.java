@@ -34,6 +34,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.github.blombler008.twitchbot.dave.core.Strings.*;
@@ -86,16 +87,20 @@ public class WebServe {
                 output.append(HTML_CONNECTION_CLOSE);
                 output.append(HTML_ACCESS_CONTROL_ALLOW_CREDENTIALS);
                 output.append(HTML_ACCESS_CONTROL_ALLOW_ORIGIN);
+                try {
+                    for (WebCommand cmd : commands) {
+                        if (url.get().equals(cmd.getURL())) {
+                            toSend.set(cmd.run(socketIO.getSocketOutput()));
 
-                for (WebCommand cmd : commands) {
-                    if (url.get().equals(cmd.getURL())) {
 
-                        toSend.set(cmd.run(socketIO.getSocketOutput()));
-
-                        if (Validator.isNotNull(toSend.get()) || Validator.isNotNull(cmd.getContentType())) {
-                            output.append(cmd.getContentType());
+                            if (Validator.isNotNull(toSend.get()) || Validator.isNotNull(cmd.getContentType())) {
+                                output.append(cmd.getContentType());
+                            }
                         }
                     }
+                } catch (Exception e){
+                    reader.interrupt();
+                    writer.interrupt();
                 }
 
                 if (Validator.isNotNull(url.get())) {

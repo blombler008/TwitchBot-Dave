@@ -25,10 +25,10 @@ package com.github.blombler008.twitchbot.dave.main.commands.katch;/*
 
 import com.github.blombler008.twitchbot.dave.application.commands.WebCommand;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
+import com.github.blombler008.twitchbot.dave.core.Strings;
 import com.github.blombler008.twitchbot.dave.core.config.ConfigManager;
 
-import java.io.File;
-import java.io.OutputStream;
+import java.io.*;
 
 import static com.github.blombler008.twitchbot.dave.core.Strings.HTML_CONTENT_APPLICATION_JSON;
 
@@ -44,9 +44,27 @@ public class WebCommandJson extends WebCommand {
 
     @Override
     public String run(OutputStream outputStream) {
-        String json = "{\"abd\":\"def\"}";
+        JSONFile.setFile(new File(configFolder, "json/index.json"));
         setContentType(HTML_CONTENT_APPLICATION_JSON);
-        return json;
+        StringBuilder output = new StringBuilder();
+        output.append(Strings.HTML_HTTP_11_200_OK);
+        output.append(Strings.HTML_CONNECTION_CLOSE);
+        output.append(Strings.HTML_ACCESS_CONTROL_ALLOW_CREDENTIALS);
+        output.append(Strings.HTML_ACCESS_CONTROL_ALLOW_ORIGIN);
+        output.append(getContentType());
+        output.append(Strings.HTML_CONTENT_LENGTH);
+        output.append(JSONFile.get());
+        output.append(Strings.HTML_END_OF_HEADERS);
+        output.append(JSONFile.get());
+        try {
+            outputStream.write(output.toString().getBytes());
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+
     }
 
     @Override

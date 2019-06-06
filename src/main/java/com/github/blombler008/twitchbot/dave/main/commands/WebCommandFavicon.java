@@ -70,7 +70,7 @@ public class WebCommandFavicon extends WebCommand {
 
     @Override
     public String getURL() {
-        return "favicon.ico";
+        return url;
     }
 
     @Override

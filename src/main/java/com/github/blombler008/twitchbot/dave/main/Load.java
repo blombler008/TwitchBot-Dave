@@ -25,9 +25,7 @@ package com.github.blombler008.twitchbot.dave.main;/*
 
 import com.github.blombler008.twitchbot.dave.application.commands.CommandType;
 import com.github.blombler008.twitchbot.dave.application.commands.WebCommand;
-import com.github.blombler008.twitchbot.dave.main.commands.WebCommandRoot;
-import com.github.blombler008.twitchbot.dave.main.commands.katch.CommandCatch;
-import com.github.blombler008.twitchbot.dave.main.commands.katch.CommandNewCatch;
+import com.github.blombler008.twitchbot.dave.main.commands.katch.*;
 import com.github.blombler008.twitchbot.dave.main.configs.CatchConfig;
 import com.github.blombler008.twitchbot.dave.main.configs.DiceConfig;
 import com.github.blombler008.twitchbot.dave.main.configs.TwitchConfig;
@@ -41,7 +39,6 @@ import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
 import com.github.blombler008.twitchbot.dave.core.exceptions.AuthenticationException;
 import com.github.blombler008.twitchbot.dave.main.commands.CommandDice;
 import com.github.blombler008.twitchbot.dave.main.commands.WebCommandFavicon;
-import com.github.blombler008.twitchbot.dave.main.commands.katch.WebCommandJson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,9 +90,9 @@ public class Load {
     public void createConfigWeb() {
         webCommands.add(new WebCommandJson(twitch, configManager));
         webCommands.add(new WebCommandFavicon(twitch, configManager));
-        webCommands.add(new WebCommandRoot(twitch, configManager));
+        webCommands.add(new WebCommandCatch(twitch, configManager, configCatch));
     }
-    
+
     public void createSocketWeb() {
         if (webConfig.gen()) {
             webBot = createBot(webConfig.getServer(), webConfig.getPort());
