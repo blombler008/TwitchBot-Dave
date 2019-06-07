@@ -47,7 +47,7 @@ public class TwitchConfig {
 
     public boolean gen() {
         try {
-            channel = config.getString(CONFIG_TWITCH_CHANNEL);
+            channel = config.getString(CONFIG_TWITCH_CHANNEL).toLowerCase();
             nickname = config.getString(CONFIG_TWITCH_NICKNAME);
             prefix = config.getString(CONFIG_TWITCH_PREFIX);
             externalOAuth = config.getBoolean(CONFIG_TWITCH_EXTERNAL_OAUTH);

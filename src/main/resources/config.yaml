@@ -11,7 +11,7 @@ twitch:
   nickname: 'B1naryB0t'
 
   # The bots channel ~ the bot is joining this channel and listen to the messages written on this ch for commands, games, etc.
-  channel: 'BinaryDave'
+  channel: 'binarybave'
 
   # The bots channel ~ the bot is joining this channel and listen to the messages written on this ch for commands, games, etc.
   prefix: '!'
