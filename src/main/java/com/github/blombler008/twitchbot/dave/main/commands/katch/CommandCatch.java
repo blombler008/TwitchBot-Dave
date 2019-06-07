@@ -29,12 +29,19 @@ import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListen
 import com.github.blombler008.twitchbot.dave.core.sockets.SocketIO;
 import com.github.blombler008.twitchbot.dave.main.configs.CatchConfig;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class CommandCatch extends Command {
 
     private final String cmd = "catch";
     private final CatchConfig config;
     private final TwitchIRCListener twitch;
+    private List<UserInfo> list = new ArrayList<>();
     private TimerCatch timer;
+    private Long cooldown;
+    private boolean ispoolopen = false;
 
     public CommandCatch(TwitchIRCListener twitch, CatchConfig config) {
         super(twitch);
@@ -48,6 +55,7 @@ public class CommandCatch extends Command {
     @Override
     public void run(String[] message, UserInfo info, String channel, String msgString) throws RuntimeException {
         SocketIO.executeAsLong(() -> {
+
             String username = info.getDisplayName();
 
             String winner;
@@ -58,35 +66,91 @@ public class CommandCatch extends Command {
             }
 
             if(config.isEnable()) {
-                if (!config.isWinnerRepeatEnable()) {
-                    twitch.sendMessage(config.getWinnerRepeatMessage(winner));
-                    return;
-                }
-                if (timer.setWinner(winner)) {
-                    twitch.sendMessage(config.getWinnerMessage(winner));
-                    JSONFile.hide();
-                    if(config.isWinnerRewardEnable()) {
-                        twitch.sendMessage(config.getWinnerRewardCommand(winner));
-                    }
-                } else {
-                    if (config.isMissedEnable()) {
-                        long lastWinnerTime = timer.getLastWinnerTime();
-                        long missedTime = config.getMissedTime();
-                        long timeDiff = (lastWinnerTime + missedTime);
-                        long systemTime = System.currentTimeMillis();
-                        if ( timeDiff > systemTime) {
-                            twitch.sendMessage(config.getMissedMessage(winner, timer.getLastWinner()));
-                            return;
+
+
+                if(config.isPoolEnabled()) {
+                    if(timer.isCatch()) {
+
+                        if (cooldown == null) {
+                            cooldown = (config.getPoolTime() + config.getPoolDelay());
+                            newCatch();
+                            ispoolopen = true;
                         }
+                        if(ispoolopen) {
+                            list.add(info);
+                            System.out.println("Added " + username + " to pool");
+                            if(config.isPoolMessageOngoingEnabled()) {
+                                twitch.sendMessage(config.getPoolMessageOngoing(username));
+                            }
+                        }
+
+                    } else {
+                        twitch.sendMessage(config.getPoolMessageClosed(username));
                     }
-                    twitch.sendMessage(config.getNo(username));
+
+
+                } else {
+                    if ((!config.isWinnerRepeatEnable()) && timer.isCatch()) {
+                        twitch.sendMessage(config.getWinnerRepeatMessage(winner));
+                        return;
+                    }
+                    if (timer.setWinner(winner)) {
+                        twitch.sendMessage(config.getWinnerMessage(winner));
+                        timer.endCatch();
+                        if(config.isWinnerRewardEnable()) {
+                            twitch.sendMessage(config.getWinnerRewardCommand(winner));
+                        }
+                    } else {
+                        if (config.isMissedEnable()) {
+                            long lastWinnerTime = timer.getLastWinnerTime();
+                            long missedTime = config.getMissedTime();
+                            long timeDiff = (lastWinnerTime + missedTime);
+                            long systemTime = System.currentTimeMillis();
+                            if ( timeDiff > systemTime) {
+                                twitch.sendMessage(config.getMissedMessage(winner, timer.getLastWinner()));
+                                return;
+                            }
+                        }
+                        twitch.sendMessage(config.getNo(username));
+                    }
                 }
+
             }
 
 
 
         },"Catch-Command-Executor");
 
+    }
+
+    public void newCatch() {
+        ispoolopen = true;
+        cooldown = (config.getPoolTime() + config.getPoolDelay());
+        timer.newCatch();
+        timer.startPool(() -> {
+
+
+            if(list.isEmpty()) {
+                System.out.println("Pool is empty> waiting again!");
+                newCatch();
+                return;
+            }
+            UserInfo[] users = list.toArray(new UserInfo[]{});
+
+            int random = new Random().nextInt(users.length);
+
+            String winner = users[random].getDisplayName();
+            timer.setWinner(winner);
+            twitch.sendMessage(config.getWinnerMessage(winner));
+            JSONFile.hide();
+            if(config.isWinnerRewardEnable()) {
+                String end = config.getWinnerRewardCommand(winner);
+                twitch.sendMessage(end);
+                System.out.println(" - " + end);
+            }
+            System.out.println(" - " + winner + " won the pool catch!");
+            ispoolopen = false;
+        }, cooldown);
     }
 
     public TimerCatch getTimer() {
@@ -102,4 +166,7 @@ public class CommandCatch extends Command {
                 '}';
     }
 
+    public CatchConfig getConfig() {
+        return config;
+    }
 }

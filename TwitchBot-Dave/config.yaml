@@ -29,6 +29,35 @@ game:
   # Catch Game
   catch:
 
+    
+    # Pool settings: lets the twitch users enter a pool and win individually and not the fastest one wins.
+    pool:
+      # Enables the pool phase
+      enable: true
+
+      # Time how long the pool phase is going
+      # NOTE: put nothing in that is greater than (2^31)-1.
+      time: 20000
+
+      # OBS delay in milliseconds
+      # NOTE: put nothing in that is greater than (2^31)-1.
+      delay: 2000
+
+      # This are the messages which are give out the catch users
+      messages:
+
+        # If the pool is enabled and there is no catch going the user will be notified by this message.
+        # Use '%name%' to display the users name.
+        closed: '%name% The Pool is currently closed, we do not accept more!'
+
+        # If a catch is currently on going and the pool is enabled this message is send to the user.
+        # Use '%name%' to display the users name.
+        ongoing: '%name%, you have been added to the Pool!'
+
+        # The Message above is only shown if this boolean is set to true!
+        ongoingenable: true
+
+
     # enables the use of the game
     enable: true
 
@@ -65,11 +94,11 @@ game:
         enable: true
 
         # This is the min value for the function '%min_max%' in the command entry of this tree.
-        # # NOTE: put nothing in that is grater than (2^31)-1.
+        # # NOTE: put nothing in that is greater than (2^31)-1.
         min: 60
 
         # This is the max value for the function '%min_max%' in the command entry of this tree.
-        # NOTE: put nothing in that is grater than (2^31)-1.
+        # NOTE: put nothing in that is greater than (2^31)-1.
         max: 1337
 
       # If the this is enabled the first user typing !catch will be ignored and responded with the message below.
@@ -106,6 +135,6 @@ game:
     enable: true
 
     # Sets the max bound rate of the dice (eg. 6 means the max number which can be rolled is a 6).
-    # NOTE: put nothing in that is grater than (2^31)-1.
+    # NOTE: put nothing in that is greater than (2^31)-1.
     max: 6
 

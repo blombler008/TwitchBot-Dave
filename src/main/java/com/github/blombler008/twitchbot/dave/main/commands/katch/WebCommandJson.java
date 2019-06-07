@@ -44,7 +44,6 @@ public class WebCommandJson extends WebCommand {
 
     @Override
     public String run(OutputStream outputStream) {
-        JSONFile.setFile(new File(configFolder, "json/index.json"));
         setContentType(HTML_CONTENT_APPLICATION_JSON);
         StringBuilder output = new StringBuilder();
         output.append(Strings.HTML_HTTP_11_200_OK);

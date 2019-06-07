@@ -120,7 +120,7 @@ public class TwitchIRCListener {
                             type.execute(message, userInfo, channel, msgString.toString());
                         }
                     }
-                    System.out.println(userInfo.getDisplayName() + " @ " + userInfo.isWhisper() + ": " + msgString.toString());
+                    System.out.println(userInfo.getDisplayName() + " @ [" + userInfo.isWhisper() + ", " + userInfo.getUserId() + "]: " + msgString.toString());
                 }
 
             }

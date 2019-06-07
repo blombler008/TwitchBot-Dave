@@ -110,4 +110,11 @@ public class Strings {
 
     public static final String CONFIG_CATCH_IMAGE_LOCATION = "game.catch.image.location";
 
+    public static final String CONFIG_CATCH_POOL_ENABLE = "game.catch.pool.enable";
+    public static final String CONFIG_CATCH_POOL_TIME = "game.catch.pool.time";
+    public static final String CONFIG_CATCH_POOL_DELAY = "game.catch.pool.delay";
+
+    public static final String CONFIG_CATCH_POOL_MESSAGE_CLOSED = "game.catch.pool.messages.closed";
+    public static final String CONFIG_CATCH_POOL_MESSAGE_ONGOING_ENABLE = "game.catch.pool.messages.ongoingenable";
+    public static final String CONFIG_CATCH_POOL_MESSAGE_ONGOING = "game.catch.pool.messages.ongoing";
 }

@@ -40,6 +40,7 @@ import com.github.blombler008.twitchbot.dave.core.exceptions.AuthenticationExcep
 import com.github.blombler008.twitchbot.dave.main.commands.CommandDice;
 import com.github.blombler008.twitchbot.dave.main.commands.WebCommandFavicon;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +62,7 @@ public class Load {
     private CatchConfig configCatch;
     private List<WebCommand> webCommands;
     private List<CommandType> twitchCommands;
+    private CommandCatch c;
 
     public Load(String[] args) {
         this.instance = this;
@@ -78,13 +80,21 @@ public class Load {
         load.createConfigTwitch();
         load.createConfigWeb();
         load.registerCommands();
+
+        load.startCatch();
+    }
+
+    public void startCatch() {
+        JSONFile.setFile(new File(config.getWorkingDirectory(), "json/index.json"));
+        c.newCatch();
     }
 
     public void createConfigTwitch() {
-        CommandCatch c = new CommandCatch(twitch, configCatch);
+        c = new CommandCatch(twitch, configCatch);
         twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "dice", new CommandDice(twitch, configDice)));
         twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "catch", c));
         twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "newcatch", new CommandNewCatch(twitch, c)));
+        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "endcatch", new CommandEndCatch(twitch, c)));
     }
 
     public void createConfigWeb() {

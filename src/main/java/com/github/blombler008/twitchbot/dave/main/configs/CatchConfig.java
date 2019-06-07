@@ -39,17 +39,23 @@ public class CatchConfig {
     private String winnerMessage;
     private String winnerRewardCommand;
     private String winnerRepeatMessage;
+    private String poolMessageClosed;
+    private String poolMessageOngoing;
 
     private boolean enable;
     private boolean missedEnable;
     private boolean winnerRewardEnable;
     private boolean winnerRepeatEnable;
+    private boolean poolEnable;
+    private boolean poolMessageOngoingEnabled;
 
     private int missedTime;
     private int timerMin;
     private int timerMax;
     private int winnerRewardMin;
     private int winnerRewardMax;
+    private int poolTime;
+    private int poolDelay;
 
     public CatchConfig(YamlConfiguration config) {
         this.config = config;
@@ -66,23 +72,28 @@ public class CatchConfig {
             timerMax = config.getInteger(CONFIG_CATCH_TIMER_MAX);
             no = config.getString(CONFIG_CATCH_NO);
 
+            poolEnable = config.getBoolean(CONFIG_CATCH_POOL_ENABLE);
+            poolTime = config.getInteger(CONFIG_CATCH_POOL_TIME);
+            poolDelay = config.getInteger(CONFIG_CATCH_POOL_DELAY);
+
+            poolMessageClosed = config.getString(CONFIG_CATCH_POOL_MESSAGE_CLOSED);
+            poolMessageOngoing = config.getString(CONFIG_CATCH_POOL_MESSAGE_ONGOING);
+            poolMessageOngoingEnabled = config.getBoolean(CONFIG_CATCH_POOL_MESSAGE_ONGOING_ENABLE);
+
             missedEnable = config.getBoolean(CONFIG_CATCH_MISSED_ENABLE);
-            if(missedEnable) {
-                missedMessage = config.getString(CONFIG_CATCH_MISSED_MESSAGE);
-                missedTime = config.getInteger(CONFIG_CATCH_MISSED_TIME);
-            }
+            missedMessage = config.getString(CONFIG_CATCH_MISSED_MESSAGE);
+            missedTime = config.getInteger(CONFIG_CATCH_MISSED_TIME);
+
 
             winnerRepeatEnable = config.getBoolean(CONFIG_CATCH_WINNER_REPEAT_ENABLE);
-            if(winnerRepeatEnable) {
-                winnerRepeatMessage = config.getString(CONFIG_CATCH_WINNER_REPEAT_MESSAGE);
-            }
+            winnerRepeatMessage = config.getString(CONFIG_CATCH_WINNER_REPEAT_MESSAGE);
+
 
             winnerRewardEnable = config.getBoolean(CONFIG_CATCH_WINNER_REWARD_ENABLE);
-            if(winnerRewardEnable) {
-                winnerRewardCommand = config.getString(CONFIG_CATCH_WINNER_REWARD_COMMAND);
-                winnerRewardMin = config.getInteger(CONFIG_CATCH_WINNER_REWARD_MIN);
-                winnerRewardMax = config.getInteger(CONFIG_CATCH_WINNER_REWARD_MAX);
-            }
+            winnerRewardCommand = config.getString(CONFIG_CATCH_WINNER_REWARD_COMMAND);
+            winnerRewardMin = config.getInteger(CONFIG_CATCH_WINNER_REWARD_MIN);
+            winnerRewardMax = config.getInteger(CONFIG_CATCH_WINNER_REWARD_MAX);
+
         }
     }
 
@@ -167,5 +178,30 @@ public class CatchConfig {
 
     public int getWinnerRewardMax() {
         return winnerRewardMax;
+    }
+
+    public boolean isPoolEnabled() {
+        return poolEnable;
+    }
+
+    public long getPoolTime() {
+        return poolTime;
+    }
+
+    public long getPoolDelay() {
+        return poolDelay;
+
+    }
+
+    public boolean isPoolMessageOngoingEnabled() {
+        return poolMessageOngoingEnabled;
+    }
+
+    public String getPoolMessageClosed(String name) {
+        return poolMessageClosed.replaceAll("%name%", name);
+    }
+
+    public String getPoolMessageOngoing(String name) {
+        return poolMessageOngoing.replaceAll("%name%", name);
     }
 }

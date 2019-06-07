@@ -23,6 +23,7 @@ package com.github.blombler008.twitchbot.dave.main.commands.katch;/*
  * SOFTWARE.
  */
 
+import com.github.blombler008.twitchbot.dave.core.sockets.SocketThread;
 import com.github.blombler008.twitchbot.dave.main.configs.CatchConfig;
 
 import java.util.Random;
@@ -63,6 +64,17 @@ public class TimerCatch {
         waiter.start();
     }
 
+    public void startPool(Callback c, long time) {
+        new Thread(() -> {
+            try {
+                Thread.sleep(time);
+                c.end();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
     public void newCatch() {
         katch = true;
         try {
@@ -92,17 +104,10 @@ public class TimerCatch {
     }
 
     public boolean setWinner(String name) {
-        try {
-            if(isCatch()) {
-                katch = false;
-                timing.get();
-                this.winner = name;
-                this.time = System.currentTimeMillis();
-                return true;
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return false;
+        if(isCatch()) {
+            endCatch();
+            this.winner = name;
+            return true;
         }
         return false;
     }
@@ -113,6 +118,17 @@ public class TimerCatch {
 
     public String getLastWinner() {
         return winner;
+    }
+
+    public void endCatch() {
+        try {
+            katch = false;
+            timing.get();
+            JSONFile.hide();
+            this.time = System.currentTimeMillis();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private class A {
@@ -137,4 +153,7 @@ public class TimerCatch {
         }
     }
 
+    public static interface Callback {
+        void end();
+    }
 }

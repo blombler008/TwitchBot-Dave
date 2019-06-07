@@ -27,23 +27,28 @@ import com.github.blombler008.twitchbot.dave.application.UserInfo;
 import com.github.blombler008.twitchbot.dave.application.commands.Command;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 
-public class CommandNewCatch extends Command {
+public class CommandEndCatch extends Command {
 
-    private final String cmd = "newcatch";
+    private final String cmd = "endcatch";
     private final CommandCatch commandCatch;
     private final TwitchIRCListener twitch;
 
-    public CommandNewCatch(TwitchIRCListener twitch, CommandCatch commandCatch) {
+    public CommandEndCatch(TwitchIRCListener twitch, CommandCatch commandCatch) {
         super(twitch);
         this.commandCatch = commandCatch;
         this.twitch = twitch;
+
     }
     @Override
     public void run(String[] message, UserInfo info, String channel, String msgString) throws RuntimeException {
 
         if(info.isBroadcaster() || info.isModerator()) {
-            commandCatch.newCatch();
-            twitch.sendWhisperMessage("A new catch where forced to start!", info.getDisplayName());
+            if(commandCatch.getTimer().isCatch()) {
+                commandCatch.getTimer().endCatch();
+                twitch.sendMessage("The catch where forced to end!");
+            } else {
+                twitch.sendMessage(commandCatch.getConfig().getNo(info.getDisplayName()));
+            }
         }
     }
 
