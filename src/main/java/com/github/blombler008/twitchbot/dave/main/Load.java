@@ -27,6 +27,9 @@ import com.github.blombler008.twitchbot.dave.application.commands.CommandType;
 import com.github.blombler008.twitchbot.dave.application.commands.WebCommand;
 import com.github.blombler008.twitchbot.dave.core.Strings;
 import com.github.blombler008.twitchbot.dave.main.commands.katch.*;
+import com.github.blombler008.twitchbot.dave.main.commands.points.CommandAddPoints;
+import com.github.blombler008.twitchbot.dave.main.commands.points.CommandPoints;
+import com.github.blombler008.twitchbot.dave.main.commands.points.CommandSetPoints;
 import com.github.blombler008.twitchbot.dave.main.configs.*;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 import com.github.blombler008.twitchbot.dave.core.Bot;
@@ -60,11 +63,15 @@ public class Load {
     private CatchConfig configCatch;
     private MySQLConfig configMySQL;
     private TwitchConfig twitchConfig;
+    private PointsConfig configPoints;
+
     private List<WebCommand> webCommands;
     private List<CommandType> twitchCommands;
 
     private Bot webBot;
-    private CommandCatch c;
+    private CommandCatch commandCatch;
+    private CommandAddPoints commandAddPoints;
+    private CommandSetPoints commandSetPoints;
 
     public Load(String[] args) {
         this.instance = this;
@@ -87,6 +94,7 @@ public class Load {
         load.createConfigTwitch();
         load.createConfigMySQL();
         load.createConfigWeb();
+
         load.registerCommands();
 
         load.startCatch();
@@ -106,10 +114,6 @@ public class Load {
                 statement = configMySQL.getConnection().prepareStatement(MYSQL_TABLE_POINTS_CREATE.replaceAll("%database%", configMySQL.getDatabase()));
                 code = statement.executeUpdate();
                 statement.close();
-               /* statement = configMySQL.getConnection().prepareStatement(MYSQL_TABLE_POINTS_CREATE);
-                code = statement.executeUpdate();
-*/
-
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -118,15 +122,22 @@ public class Load {
 
     public void startCatch() {
         JSONFile.setFile(new File(config.getWorkingDirectory(), "json/index.json"));
-        c.newCatch();
+        commandCatch.newCatch();
     }
 
     public void createConfigTwitch() {
-        c = new CommandCatch(twitch, configCatch);
+        commandSetPoints = new CommandSetPoints(twitch, configPoints);
+        commandAddPoints = new CommandAddPoints(twitch, configPoints, commandSetPoints);
+        commandCatch = new CommandCatch(twitch, configCatch, commandSetPoints);
+
         twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "dice", new CommandDice(twitch, configDice)));
-        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "catch", c));
-        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "newcatch", new CommandNewCatch(twitch, c)));
-        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "endcatch", new CommandEndCatch(twitch, c)));
+        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "catch", commandCatch));
+        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "newcatch", new CommandNewCatch(twitch, commandCatch)));
+        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "endcatch", new CommandEndCatch(twitch, commandCatch)));
+
+        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "setpoints",commandSetPoints));
+        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "addpoints", commandAddPoints));
+        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, configPoints.getCommand(), new CommandPoints(twitch, configPoints, commandSetPoints)));
     }
 
     public void createConfigWeb() {
@@ -164,6 +175,9 @@ public class Load {
 
         configMySQL = new MySQLConfig(config);
 
+        configPoints = new PointsConfig(config, configMySQL);
+
+        configPoints.gen();
         configMySQL.gen();
         configDice.gen();
         configCatch.gen();

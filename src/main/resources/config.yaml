@@ -1,7 +1,7 @@
 # Twitch configuration
 twitch:
 
-  # if this is enabled put the Oauth token into a text file called: 'password.txt'
+  # if this is enabled put the Oauth token into a text file called: 'twitch.txt'
   externalOAuth: true
 
   # If external oAuth is enables this can be left as it is.
@@ -18,19 +18,47 @@ twitch:
 
 # MySQL configuration
 mysql:
-  username: root
-  password: 123456789
-  database: TwitchBot-Dave
-  hostname: localhost
+  # Username is part of the connection to the mysql database and used along with the password.
+  username: 'root'
+
+  # Password is part of the connection to the MySQL database and used along with the username.
+  # NOTE: field is ignored if 'externalPassword' is set to true.
+  password: '123456789'
+
+  # Database is the location where all the bots data like Points is stored.
+  database: 'TwitchBot-Dave'
+
+  # Hostname is part of the connection to the MySQL database and used along with the username and password.
+  hostname: 'localhost'
+
+  # Port is part of the connection to the MySQL database and used along with the username and password.
+  # DEFAULT: 3306
   port: 3306
+
+  # If this is set to true the password field will be ignored and the password is stored in a file called: 'mysql.txt'
   externalPassword: true
+
+# Points configuration
+points:
+  # The command is the command in the twitch chat which shows the points of the user
+  # General-Usage: '<twitch.prefix><points.command> [username/id]'
+  # Example-Usage: '!zoggos tattyplay'
+  command: 'zoggos'
+
+  # Use-names (not usernames*) is used to store the points in the database by username instead of unique twitch Ids.
+  # NOT RECOMMENDED TO CHANGE
+  usenames: false
+
+
 
 # Web configuration
 web:
-  # The web listening port (Default: 8087)
+  # The web listening port.
+  # DEFAULT: 8087
   port: 8087
 
   # The server address where the files are located (Default: localhost)
+  # NOTE: NO USE CURRENTLY
   server: localhost
 
 # Game configurations
@@ -98,6 +126,7 @@ game:
         # command: '!addpoints %name% 20187'
 
         # Enables the reward mechanism and sends the message above with the name of the user(winner).
+        # Otherwise the reward is send to the build-in addpoints command!
         enable: true
 
         # This is the min value for the function '%min_max%' in the command entry of this tree.

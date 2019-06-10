@@ -27,6 +27,8 @@ import com.github.blombler008.twitchbot.dave.application.UserInfo;
 import com.github.blombler008.twitchbot.dave.application.commands.Command;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 import com.github.blombler008.twitchbot.dave.core.sockets.SocketIO;
+import com.github.blombler008.twitchbot.dave.main.commands.points.CommandAddPoints;
+import com.github.blombler008.twitchbot.dave.main.commands.points.CommandSetPoints;
 import com.github.blombler008.twitchbot.dave.main.configs.CatchConfig;
 
 import java.util.ArrayList;
@@ -42,9 +44,11 @@ public class CommandCatch extends Command {
     private TimerCatch timer;
     private Long cooldown;
     private boolean ispoolopen = false;
+    private CommandSetPoints commandSetPoints;
 
-    public CommandCatch(TwitchIRCListener twitch, CatchConfig config) {
+    public CommandCatch(TwitchIRCListener twitch, CatchConfig config, CommandSetPoints commandSetPoints) {
         super(twitch);
+        this.commandSetPoints = commandSetPoints;
         this.config = config;
         this.twitch = twitch;
         timer = new TimerCatch(config, this);
@@ -142,12 +146,13 @@ public class CommandCatch extends Command {
             twitch.sendMessage(config.getWinnerMessage(winner));
             JSONFile.hide();
 
+            String end = config.getWinnerRewardCommand(winner);
             if(config.isWinnerRewardEnable()) {
-                String end = config.getWinnerRewardCommand(winner);
                 twitch.sendMessage(end);
-                System.out.println(" - " + end);
+            } else {
+                commandSetPoints.add(end, winner);
             }
-
+            System.out.println(" - " + end);
             System.out.println(" - " + winner + " won the pool catch!");
             ispoolopen = false;
         }, cooldown);

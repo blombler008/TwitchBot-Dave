@@ -84,7 +84,13 @@ public class Strings {
     public static final String MYSQL_CONNECTION_STRING = "jdbc:mysql://%hostname%:%port%/?user=%username%&password=%password%&useUnicode=true&useLegacyDatetimeCode=false&serverTimezone=UTC&allowMultiQueries=true";
     public static final String MYSQL_DATABASE_CREATE = "CREATE DATABASE IF NOT EXISTS `%database%` /*!40100 COLLATE 'utf8mb4_0900_ai_ci' */;";
     public static final String MYSQL_DATABASE_USE = "USE `%database%`;";
-    public static final String MYSQL_TABLE_POINTS_CREATE = "CREATE TABLE IF NOT EXISTS `points` (`userid` INT NULL AUTO_INCREMENT,`twitchId` INT NOT NULL DEFAULT '0',`points` BIGINT UNSIGNED NULL DEFAULT '0',PRIMARY KEY (`twitchId`),UNIQUE KEY (`userid`))COLLATE='utf8mb4_0900_ai_ci';";
+    public static final String MYSQL_TABLE_POINTS_CREATE = "CREATE TABLE IF NOT EXISTS `points` (`userid` INT NULL AUTO_INCREMENT,`twitchid` INT NOT NULL DEFAULT '0',`points` BIGINT UNSIGNED NOT NULL DEFAULT '0',`name` VARCHAR(50) NOT NULL,PRIMARY KEY (`twitchid`),UNIQUE KEY (`userid`))COLLATE='utf8mb4_0900_ai_ci';";
+    public static final String MYSQL_TABLE_POINTS_GET_ROW_BY_NAME = "SELECT * FROM `%database%`.`points` WHERE `name` = '%username%';";
+    public static final String MYSQL_TABLE_POINTS_GET_ROW_BY_TWITCH_ID = "SELECT * FROM `%database%`.`points` WHERE `twitchid` = '%twitchid%';";
+
+    // POINTS //////////////////////////////////////////////////////////////////////////
+    public static final String CONFIG_POINTS_COMMAND = "points.command";
+    public static final String CONFIG_POINTS_USE_NAMES = "points.usenames";
 
     // WEB /////////////////////////////////////////////////////////////////////////////
     public static final String CONFIG_WEB_SERVER = "web.server";
