@@ -25,11 +25,9 @@ package com.github.blombler008.twitchbot.dave.main;/*
 
 import com.github.blombler008.twitchbot.dave.application.commands.CommandType;
 import com.github.blombler008.twitchbot.dave.application.commands.WebCommand;
+import com.github.blombler008.twitchbot.dave.core.Strings;
 import com.github.blombler008.twitchbot.dave.main.commands.katch.*;
-import com.github.blombler008.twitchbot.dave.main.configs.CatchConfig;
-import com.github.blombler008.twitchbot.dave.main.configs.DiceConfig;
-import com.github.blombler008.twitchbot.dave.main.configs.TwitchConfig;
-import com.github.blombler008.twitchbot.dave.main.configs.WebConfig;
+import com.github.blombler008.twitchbot.dave.main.configs.*;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 import com.github.blombler008.twitchbot.dave.core.Bot;
 import com.github.blombler008.twitchbot.dave.core.ImplBot;
@@ -41,11 +39,12 @@ import com.github.blombler008.twitchbot.dave.main.commands.CommandDice;
 import com.github.blombler008.twitchbot.dave.main.commands.WebCommandFavicon;
 
 import java.io.File;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.blombler008.twitchbot.dave.core.Strings.TWITCH_PORT;
-import static com.github.blombler008.twitchbot.dave.core.Strings.TWITCH_SERVER;
+import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 
 public class Load {
 
@@ -55,13 +54,16 @@ public class Load {
     private ConfigManager configManager;
     private YamlConfiguration config;
     private TwitchIRCListener twitch;
-    private TwitchConfig twitchConfig;
+
     private WebConfig webConfig;
-    private Bot webBot;
     private DiceConfig configDice;
     private CatchConfig configCatch;
+    private MySQLConfig configMySQL;
+    private TwitchConfig twitchConfig;
     private List<WebCommand> webCommands;
     private List<CommandType> twitchCommands;
+
+    private Bot webBot;
     private CommandCatch c;
 
     public Load(String[] args) {
@@ -69,6 +71,11 @@ public class Load {
         webCommands = new ArrayList<>();
         twitchCommands = new ArrayList<>();
         this.args = args;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
@@ -78,10 +85,35 @@ public class Load {
         load.createSocketWeb();
         load.join();
         load.createConfigTwitch();
+        load.createConfigMySQL();
         load.createConfigWeb();
         load.registerCommands();
 
         load.startCatch();
+    }
+
+    public void createConfigMySQL() {
+        if(configMySQL.connect()) {
+            try {
+                PreparedStatement statement = configMySQL.getConnection().prepareStatement(MYSQL_DATABASE_CREATE.replaceAll("%database%", configMySQL.getDatabase()));
+                int code = statement.executeUpdate();
+                statement.close();
+
+                statement = configMySQL.getConnection().prepareStatement(MYSQL_DATABASE_USE.replaceAll("%database%", configMySQL.getDatabase()));
+                code = statement.executeUpdate();
+                statement.close();
+
+                statement = configMySQL.getConnection().prepareStatement(MYSQL_TABLE_POINTS_CREATE.replaceAll("%database%", configMySQL.getDatabase()));
+                code = statement.executeUpdate();
+                statement.close();
+               /* statement = configMySQL.getConnection().prepareStatement(MYSQL_TABLE_POINTS_CREATE);
+                code = statement.executeUpdate();
+*/
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void startCatch() {
@@ -130,6 +162,9 @@ public class Load {
         configDice = new DiceConfig(config);
         configCatch = new CatchConfig(config);
 
+        configMySQL = new MySQLConfig(config);
+
+        configMySQL.gen();
         configDice.gen();
         configCatch.gen();
     }

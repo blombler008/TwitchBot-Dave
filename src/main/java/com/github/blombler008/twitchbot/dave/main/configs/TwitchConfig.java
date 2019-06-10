@@ -50,11 +50,10 @@ public class TwitchConfig {
             nickname = config.getString(CONFIG_TWITCH_NICKNAME);
             prefix = config.getString(CONFIG_TWITCH_PREFIX);
             boolean externalOAuth = config.getBoolean(CONFIG_TWITCH_EXTERNAL_OAUTH);
-            if (!externalOAuth) {
-                password = config.getString(CONFIG_TWITCH_OAUTH);
-            } else {
+
+            if (externalOAuth) {
                 StringBuilder passwordBuilder = new StringBuilder();
-                File passFile = new File(config.getWorkingDirectory(), "password.txt");
+                File passFile = new File(config.getWorkingDirectory(), "twitch.txt");
                 BufferedReader bf = new BufferedReader(new FileReader(passFile));
 
                 String ls;
@@ -64,6 +63,8 @@ public class TwitchConfig {
                 bf.close();
 
                 password = passwordBuilder.toString();
+            } else {
+                password = config.getString(CONFIG_TWITCH_OAUTH);
             }
             return true;
         } catch (IOException e) {

@@ -72,6 +72,20 @@ public class Strings {
     public static final String CONFIG_FILE = "config.yaml";
     public static final String CONFIG_DEFAULT_PATH = "TwitchBot-Dave";
 
+    // MYSQL ///////////////////////////////////////////////////////////////////////////
+    public static final String CONFIG_MYSQL_HOSTNAME = "mysql.hostname";
+    public static final String CONFIG_MYSQL_PORT = "mysql.port";
+    public static final String CONFIG_MYSQL_USERNAME = "mysql.username";
+    public static final String CONFIG_MYSQL_PASSWORD = "mysql.password";
+    public static final String CONFIG_MYSQL_EXTERNAL_PASSWORD = "mysql.externalPassword";
+    public static final String CONFIG_MYSQL_DATABASE = "mysql.database";
+
+    //////////////// MYSQL DATA STRINGS ////////////////////////////////////////////////
+    public static final String MYSQL_CONNECTION_STRING = "jdbc:mysql://%hostname%:%port%/?user=%username%&password=%password%&useUnicode=true&useLegacyDatetimeCode=false&serverTimezone=UTC&allowMultiQueries=true";
+    public static final String MYSQL_DATABASE_CREATE = "CREATE DATABASE IF NOT EXISTS `%database%` /*!40100 COLLATE 'utf8mb4_0900_ai_ci' */;";
+    public static final String MYSQL_DATABASE_USE = "USE `%database%`;";
+    public static final String MYSQL_TABLE_POINTS_CREATE = "CREATE TABLE IF NOT EXISTS `points` (`userid` INT NULL AUTO_INCREMENT,`twitchId` INT NOT NULL DEFAULT '0',`points` BIGINT UNSIGNED NULL DEFAULT '0',PRIMARY KEY (`twitchId`),UNIQUE KEY (`userid`))COLLATE='utf8mb4_0900_ai_ci';";
+
     // WEB /////////////////////////////////////////////////////////////////////////////
     public static final String CONFIG_WEB_SERVER = "web.server";
     public static final String CONFIG_WEB_PORT = "web.port";

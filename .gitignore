@@ -27,3 +27,5 @@ target/
 test-dave/
 config.properties
 logs/
+TwitchBot-Dave/twitch.txt
+TwitchBot-Dave/mysql.txt
