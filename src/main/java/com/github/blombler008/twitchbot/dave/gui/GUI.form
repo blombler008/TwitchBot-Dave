@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.github.blombler008.twitchbot.dave.gui.GUI">
+  <grid id="27dc6" binding="content" custom-create="true" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="1024" height="576"/>
+    </constraints>
+    <properties>
+      <minimumSize width="1024" height="576"/>
+      <preferredSize width="1024" height="576"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <grid id="a090e" binding="panel1" custom-create="true" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="South"/>
+        <properties/>
+        <border type="none" title=""/>
+        <children>
+          <component id="201df" class="javax.swing.JTextField" binding="dwadawdTextField" default-binding="true">
+            <constraints border-constraint="Center"/>
+            <properties>
+              <text value="dwadawd"/>
+            </properties>
+          </component>
+          <component id="703ec" class="javax.swing.JButton" binding="button1" default-binding="true">
+            <constraints border-constraint="East"/>
+            <properties>
+              <text value="Button"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="5083a" binding="panel2" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="Center"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <scrollpane id="45145">
+            <constraints border-constraint="Center"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="a809b" class="javax.swing.JTextPane" binding="textPane1" default-binding="true">
+                <constraints/>
+                <properties/>
+              </component>
+            </children>
+          </scrollpane>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

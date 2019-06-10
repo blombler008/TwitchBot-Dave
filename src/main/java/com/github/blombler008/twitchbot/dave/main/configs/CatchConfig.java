@@ -26,6 +26,7 @@ package com.github.blombler008.twitchbot.dave.main.configs;/*
 import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 
@@ -84,38 +85,40 @@ public class CatchConfig {
             missedMessage = config.getString(CONFIG_CATCH_MISSED_MESSAGE);
             missedTime = config.getInteger(CONFIG_CATCH_MISSED_TIME);
 
-
             winnerRepeatEnable = config.getBoolean(CONFIG_CATCH_WINNER_REPEAT_ENABLE);
             winnerRepeatMessage = config.getString(CONFIG_CATCH_WINNER_REPEAT_MESSAGE);
-
 
             winnerRewardEnable = config.getBoolean(CONFIG_CATCH_WINNER_REWARD_ENABLE);
             winnerRewardCommand = config.getString(CONFIG_CATCH_WINNER_REWARD_COMMAND);
             winnerRewardMin = config.getInteger(CONFIG_CATCH_WINNER_REWARD_MIN);
             winnerRewardMax = config.getInteger(CONFIG_CATCH_WINNER_REWARD_MAX);
-
         }
     }
 
     @Override
     public String toString() {
         return "CatchConfig{" +
-                "config=" + config +
-                ", no='" + no + '\'' +
+                "no='" + no + '\'' +
                 ", blendImage='" + blendImage + '\'' +
                 ", missedMessage='" + missedMessage + '\'' +
                 ", winnerMessage='" + winnerMessage + '\'' +
                 ", winnerRewardCommand='" + winnerRewardCommand + '\'' +
                 ", winnerRepeatMessage='" + winnerRepeatMessage + '\'' +
+                ", poolMessageClosed='" + poolMessageClosed + '\'' +
+                ", poolMessageOngoing='" + poolMessageOngoing + '\'' +
                 ", enable=" + enable +
                 ", missedEnable=" + missedEnable +
                 ", winnerRewardEnable=" + winnerRewardEnable +
                 ", winnerRepeatEnable=" + winnerRepeatEnable +
+                ", poolEnable=" + poolEnable +
+                ", poolMessageOngoingEnabled=" + poolMessageOngoingEnabled +
                 ", missedTime=" + missedTime +
                 ", timerMin=" + timerMin +
                 ", timerMax=" + timerMax +
                 ", winnerRewardMin=" + winnerRewardMin +
                 ", winnerRewardMax=" + winnerRewardMax +
+                ", poolTime=" + poolTime +
+                ", poolDelay=" + poolDelay +
                 '}';
     }
 
@@ -140,7 +143,7 @@ public class CatchConfig {
     }
 
     public String getWinnerRewardCommand(String name) {
-        int minMax = new Random().nextInt(getWinnerRewardMax()- getWinnerRewardMin()) + getWinnerRewardMin();
+        int minMax = ThreadLocalRandom.current().nextInt(getWinnerRewardMin(), getWinnerRewardMax() + 1);
         return winnerRewardCommand.replaceAll("%name%", name).replaceAll("%min_max%", minMax + "");
     }
 

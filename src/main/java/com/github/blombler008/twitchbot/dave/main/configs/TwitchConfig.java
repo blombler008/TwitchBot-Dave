@@ -38,7 +38,6 @@ public class TwitchConfig {
     private String nickname;
     private String password;
     private String prefix;
-    private boolean externalOAuth;
     private YamlConfiguration config;
 
     public TwitchConfig(YamlConfiguration config) {
@@ -50,7 +49,7 @@ public class TwitchConfig {
             channel = config.getString(CONFIG_TWITCH_CHANNEL).toLowerCase();
             nickname = config.getString(CONFIG_TWITCH_NICKNAME);
             prefix = config.getString(CONFIG_TWITCH_PREFIX);
-            externalOAuth = config.getBoolean(CONFIG_TWITCH_EXTERNAL_OAUTH);
+            boolean externalOAuth = config.getBoolean(CONFIG_TWITCH_EXTERNAL_OAUTH);
             if (!externalOAuth) {
                 password = config.getString(CONFIG_TWITCH_OAUTH);
             } else {

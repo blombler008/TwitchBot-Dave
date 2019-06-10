@@ -27,10 +27,12 @@ import com.github.blombler008.twitchbot.dave.core.sockets.SocketThread;
 import com.github.blombler008.twitchbot.dave.main.configs.CatchConfig;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TimerCatch {
 
     private final CatchConfig config;
+    private final CommandCatch commandCatch;
     private A timing;
 
     private Thread waiter;
@@ -41,26 +43,15 @@ public class TimerCatch {
 
     private String winner;
 
-    public TimerCatch(CatchConfig config) {
+    public TimerCatch(CatchConfig config, CommandCatch commandCatch) {
         timing = new A();
         this.config = config;
+        this.commandCatch = commandCatch;
     }
 
     public void set() {
-        waiter = new Thread(() -> {
-            try {
-                while (!waiter.isInterrupted()) {
-                    timing.put();
-                    newCatch();
-                }
-
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }, "TimerCatch-0");
-
-
+        A a = new A();
+        waiter = new Thread(a, "TimerCatch");
         waiter.start();
     }
 
@@ -77,11 +68,6 @@ public class TimerCatch {
 
     public void newCatch() {
         katch = true;
-        try {
-            timing.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         JSONFile.show();
     }
 
@@ -95,8 +81,8 @@ public class TimerCatch {
                 '}';
     }
 
-    private long getRandom() {
-        return (new Random().nextInt(config.getTimerMax()-config.getTimerMin())) + config.getTimerMin();
+    private int getRandom() {
+        return ThreadLocalRandom.current().nextInt(config.getTimerMin(), config.getTimerMax() + 1);
     }
 
     public boolean isCatch() {
@@ -123,32 +109,36 @@ public class TimerCatch {
     public void endCatch() {
         try {
             katch = false;
-            timing.get();
             JSONFile.hide();
             this.time = System.currentTimeMillis();
+            timing.get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    private class A {
+    private class A implements Runnable {
 
-        private void put() throws InterruptedException {
-            Thread.sleep(getRandom());
-            synchronized (this) {
-                if(!katch) {
-
-                    wait();
-                    newCatch();
-                }
-            }
+        private synchronized void get() throws InterruptedException {
+            notifyAll();
         }
 
-        private void get() throws InterruptedException {
+        @Override
+        public void run() {
+            try {
+                while (!waiter.isInterrupted()) {
+                    synchronized (this) {
+                        wait(getRandom());
+                    }
+                    if(!katch) {
+                        commandCatch.newCatch();
+                        System.out.println("Started a new catch");
+                    }
+                }
 
-            Thread.yield();
-            synchronized (this) {
-                notify();
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }

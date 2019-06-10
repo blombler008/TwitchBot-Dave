@@ -47,10 +47,8 @@ public class CommandCatch extends Command {
         super(twitch);
         this.config = config;
         this.twitch = twitch;
-        timer = new TimerCatch(config);
-        SocketIO.executeAsLong(() -> {
-            timer.set();
-        },"Timer-Waiter");
+        timer = new TimerCatch(config, this);
+        SocketIO.executeAsLong(() -> timer.set(),"Timer-Waiter");
     }
     @Override
     public void run(String[] message, UserInfo info, String channel, String msgString) throws RuntimeException {
@@ -117,8 +115,6 @@ public class CommandCatch extends Command {
 
             }
 
-
-
         },"Catch-Command-Executor");
 
     }
@@ -129,25 +125,29 @@ public class CommandCatch extends Command {
         timer.newCatch();
         timer.startPool(() -> {
 
-
             if(list.isEmpty()) {
                 System.out.println("Pool is empty> waiting again!");
                 newCatch();
                 return;
             }
+
             UserInfo[] users = list.toArray(new UserInfo[]{});
 
             int random = new Random().nextInt(users.length);
 
             String winner = users[random].getDisplayName();
+
             timer.setWinner(winner);
+            list.clear();
             twitch.sendMessage(config.getWinnerMessage(winner));
             JSONFile.hide();
+
             if(config.isWinnerRewardEnable()) {
                 String end = config.getWinnerRewardCommand(winner);
                 twitch.sendMessage(end);
                 System.out.println(" - " + end);
             }
+
             System.out.println(" - " + winner + " won the pool catch!");
             ispoolopen = false;
         }, cooldown);
