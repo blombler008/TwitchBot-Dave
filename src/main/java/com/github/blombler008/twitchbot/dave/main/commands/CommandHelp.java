@@ -1,8 +1,14 @@
-package com.github.blombler008.twitchbot.dave.application.commands;/*
+package com.github.blombler008.twitchbot.dave.main.commands;
+
+import com.github.blombler008.twitchbot.dave.application.UserInfo;
+import com.github.blombler008.twitchbot.dave.application.commands.Command;
+import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
+
+/*
  *
  * MIT License
  *
- * Copyright (c) 2019 blombler008
+ * Copyright (c) 2020 blombler008
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,29 +27,16 @@ package com.github.blombler008.twitchbot.dave.application.commands;/*
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
+ * Project TwitchBot-Dave
+ * Package com.github.blombler008.twitchbot.dave.main.commands
+ * User lucie
+ * Creation Date 11/03/2021
+ * Creation Time 22:47
  */
+public class CommandHelp extends Command {
 
-import com.github.blombler008.twitchbot.dave.application.UserInfo;
-import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
-
-import java.io.IOException;
-import java.io.OutputStream;
-
-public abstract class WebCommand extends Command {
-
-    private String contentType;
-
-    public WebCommand() {
-        super();
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
+    private final String command = "help";
 
 
     @Override
@@ -51,11 +44,19 @@ public abstract class WebCommand extends Command {
 
     }
 
-    public abstract String run(OutputStream outputStream) throws IOException;
-
-    public abstract String getURL();
-
-    public String getCommand() {
-        return null;
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CommandAddPoints{");
+        sb.append(", command='").append(command).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
+
+    @Override
+    public String getCommand() {
+        return command;
+    }
+
+
+
 }

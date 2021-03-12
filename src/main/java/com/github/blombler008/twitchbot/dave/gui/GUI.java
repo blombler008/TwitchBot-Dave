@@ -24,6 +24,7 @@ package com.github.blombler008.twitchbot.dave.gui;/*
  */
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class GUI extends JFrame {
@@ -73,7 +74,7 @@ public class GUI extends JFrame {
         content.setPreferredSize(new Dimension(1024, 576));
         panel1.setLayout(new BorderLayout(0, 0));
         content.add(panel1, BorderLayout.SOUTH);
-        panel1.setBorder(BorderFactory.createTitledBorder(""));
+        panel1.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         dwadawdTextField = new JTextField();
         dwadawdTextField.setText("dwadawd");
         panel1.add(dwadawdTextField, BorderLayout.CENTER);
@@ -89,8 +90,11 @@ public class GUI extends JFrame {
         scrollPane1.setViewportView(textPane1);
     }
 
-    /** @noinspection ALL */
+    /**
+     * @noinspection ALL
+     */
     public JComponent $$$getRootComponent$$$() {
         return content;
     }
+
 }

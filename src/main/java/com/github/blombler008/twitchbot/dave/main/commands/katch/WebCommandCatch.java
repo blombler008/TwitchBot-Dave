@@ -39,8 +39,8 @@ public class WebCommandCatch extends WebCommand {
     private final File configFolder;
     private final CatchConfig config;
 
-    public WebCommandCatch(TwitchIRCListener twitch, ConfigManager configManager, CatchConfig config) {
-        super(twitch);
+    public WebCommandCatch(ConfigManager configManager, CatchConfig config) {
+
         this.config = config;
         this.configFolder = configManager.getFolder();
     }

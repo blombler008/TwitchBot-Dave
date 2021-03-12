@@ -45,6 +45,7 @@ public class TwitchIRCListener {
     private final List<CommandType> commands;
     private String channel;
     private String prefix;
+    private boolean loggedIn = false;
 
     public TwitchIRCListener(Bot bot) {
         this.bot = bot;
@@ -116,7 +117,7 @@ public class TwitchIRCListener {
 
                 if (userInfo != null) {
                     for (CommandType type : commands) {
-                        if (msg.get(0).equalsIgnoreCase(prefix + type.getName())) {
+                        if (msg.get(0).equalsIgnoreCase(prefix + type.getCommandName())) {
                             type.execute(message, userInfo, channel, msgString.toString());
                         }
                     }
@@ -170,8 +171,7 @@ public class TwitchIRCListener {
         try {
             writer.send(TwitchMessageAdapter.pass(oAuth));
             writer.send(TwitchMessageAdapter.nick(nickname));
-
-            return true;
+            return (loggedIn = true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -182,4 +182,7 @@ public class TwitchIRCListener {
         writer.send(TwitchMessageAdapter.sendMessage(channel, message));
     }
 
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
 }

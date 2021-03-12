@@ -25,6 +25,7 @@ package com.github.blombler008.twitchbot.dave.main.commands;/*
 
 import com.github.blombler008.twitchbot.dave.application.UserInfo;
 import com.github.blombler008.twitchbot.dave.application.commands.Command;
+import com.github.blombler008.twitchbot.dave.main.Load;
 import com.github.blombler008.twitchbot.dave.main.configs.DiceConfig;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 
@@ -36,9 +37,8 @@ public class CommandDice extends Command {
     private DiceConfig config;
 
 
-    public CommandDice(TwitchIRCListener twitch, DiceConfig config) {
-        super(twitch);
-        this.config = config;
+    public CommandDice() {
+        this.config = Load.IMP.getDiceConfig();
     }
 
     @Override
@@ -48,9 +48,13 @@ public class CommandDice extends Command {
 
     @Override
     public String toString() {
-        return "CommandDice{" +
-                "config=" + config +
-                "command=" + command +
-                '}';
+        final StringBuilder sb = new StringBuilder("CommandAddPoints{");
+        sb.append(", command='").append(command).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
+    @Override
+    public String getCommand() {
+        return command;
     }
 }

@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.dave.main.commands.katch;/*
+package com.github.blombler008.twitchbot.dave.main.katch;/*
  *
  * MIT License
  *

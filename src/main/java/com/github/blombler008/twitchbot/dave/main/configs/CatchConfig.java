@@ -24,6 +24,8 @@ package com.github.blombler008.twitchbot.dave.main.configs;/*
  */
 
 import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
+import com.github.blombler008.twitchbot.dave.main.Load;
+import com.github.blombler008.twitchbot.dave.main.katch.CatchManager;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -33,6 +35,8 @@ import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 public class CatchConfig {
 
     private YamlConfiguration config;
+
+    private CatchManager manager;
 
     private String no;
     private String blendImage;
@@ -49,6 +53,7 @@ public class CatchConfig {
     private boolean winnerRepeatEnable;
     private boolean poolEnable;
     private boolean poolMessageOngoingEnabled;
+    private boolean started = false;
 
     private int missedTime;
     private int timerMin;
@@ -93,6 +98,9 @@ public class CatchConfig {
             winnerRewardMin = config.getInteger(CONFIG_CATCH_WINNER_REWARD_MIN);
             winnerRewardMax = config.getInteger(CONFIG_CATCH_WINNER_REWARD_MAX);
         }
+
+        manager = new CatchManager();
+        Load.IMP.addContentManager(manager);
     }
 
     @Override
@@ -206,5 +214,21 @@ public class CatchConfig {
 
     public String getPoolMessageOngoing(String name) {
         return poolMessageOngoing.replaceAll("%name%", name);
+    }
+
+    public CatchManager getManager() {
+        return manager;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public boolean setStarted(boolean started) {
+        return (this.started = started);
+    }
+
+    public boolean start() {
+        return setStarted(true);
     }
 }

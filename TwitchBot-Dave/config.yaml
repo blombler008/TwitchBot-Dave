@@ -100,7 +100,7 @@ game:
         # command: '!addpoints %name% 20187'
 
         # Enables the reward mechanism and sends the message above with the name of the user(winner).
-        enable: true
+        enable: false
 
         # This is the min value for the function '%min_max%' in the command entry of this tree.
         # # NOTE: put nothing in that is greater than (2^31)-1.

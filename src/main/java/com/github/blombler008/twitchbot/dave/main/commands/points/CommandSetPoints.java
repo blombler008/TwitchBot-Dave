@@ -27,6 +27,7 @@ import com.github.blombler008.twitchbot.dave.application.UserInfo;
 import com.github.blombler008.twitchbot.dave.application.commands.Command;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 import com.github.blombler008.twitchbot.dave.core.Strings;
+import com.github.blombler008.twitchbot.dave.main.Load;
 import com.github.blombler008.twitchbot.dave.main.configs.PointsConfig;
 
 import java.sql.Connection;
@@ -36,10 +37,10 @@ import java.sql.ResultSet;
 public class CommandSetPoints extends Command {
 
     private final PointsConfig config;
+    private final String command = "setpoints";
 
-    public CommandSetPoints(TwitchIRCListener twitch, PointsConfig config) {
-        super(twitch);
-        this.config = config;
+    public CommandSetPoints() {
+        this.config = Load.IMP.getPointConfig();
     }
 
     @Override
@@ -49,7 +50,10 @@ public class CommandSetPoints extends Command {
 
     @Override
     public String toString() {
-        return null;
+        final StringBuilder sb = new StringBuilder("CommandAddPoints{");
+        sb.append(", command='").append(command).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 
     public void add(String end, String user) {/*
@@ -77,5 +81,12 @@ public class CommandSetPoints extends Command {
 
 
 
+    }
+
+
+
+    @Override
+    public String getCommand() {
+        return command;
     }
 }

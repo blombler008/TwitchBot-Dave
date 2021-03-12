@@ -26,12 +26,15 @@ package com.github.blombler008.twitchbot.dave.main.commands.points;/*
 import com.github.blombler008.twitchbot.dave.application.UserInfo;
 import com.github.blombler008.twitchbot.dave.application.commands.Command;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
+import com.github.blombler008.twitchbot.dave.main.Load;
 import com.github.blombler008.twitchbot.dave.main.configs.PointsConfig;
 
 public class CommandPoints extends Command {
 
-    public CommandPoints(TwitchIRCListener twitch, PointsConfig config, CommandSetPoints commandSetPoints) {
-        super(twitch);
+    private final PointsConfig config;
+
+    public CommandPoints() {
+        this.config = Load.IMP.getPointConfig();
     }
 
     @Override
@@ -41,6 +44,13 @@ public class CommandPoints extends Command {
 
     @Override
     public String toString() {
-        return null;
+        final StringBuilder sb = new StringBuilder("CommandAddPoints{");
+        sb.append(", command='").append(getCommand()).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
+    @Override
+    public String getCommand() {
+        return config.getCommand();
     }
 }

@@ -26,29 +26,40 @@ package com.github.blombler008.twitchbot.dave.main.commands.katch;/*
 import com.github.blombler008.twitchbot.dave.application.UserInfo;
 import com.github.blombler008.twitchbot.dave.application.commands.Command;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
+import com.github.blombler008.twitchbot.dave.main.Load;
+import com.github.blombler008.twitchbot.dave.main.configs.CatchConfig;
+import com.github.blombler008.twitchbot.dave.main.katch.CatchManager;
+import com.github.blombler008.twitchbot.dave.main.katch.TimerCatch;
 
 public class CommandNewCatch extends Command {
 
-    private final String cmd = "newcatch";
-    private final CommandCatch commandCatch;
-    private final TwitchIRCListener twitch;
+    private final String command = "newcatch";
+    private final CatchManager manager;
 
-    public CommandNewCatch(TwitchIRCListener twitch, CommandCatch commandCatch) {
-        super(twitch);
-        this.commandCatch = commandCatch;
-        this.twitch = twitch;
+
+    public CommandNewCatch() {
+        manager = Load.IMP.getCatchConfig().getManager();
     }
+
     @Override
     public void run(String[] message, UserInfo info, String channel, String msgString) throws RuntimeException {
 
         if(info.isBroadcaster() || info.isModerator()) {
-            commandCatch.newCatch();
-            twitch.sendWhisperMessage("A new catch where forced to start!", info.getDisplayName());
+            manager.startCatch();
+            getTwitch().sendWhisperMessage("A new catch where forced to start!", info.getDisplayName());
         }
     }
 
     @Override
     public String toString() {
-        return null;
+        final StringBuilder sb = new StringBuilder("CommandAddPoints{");
+        sb.append(", command='").append(command).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public String getCommand() {
+        return command;
     }
 }

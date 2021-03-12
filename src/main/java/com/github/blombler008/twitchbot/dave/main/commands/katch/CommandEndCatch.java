@@ -26,34 +26,45 @@ package com.github.blombler008.twitchbot.dave.main.commands.katch;/*
 import com.github.blombler008.twitchbot.dave.application.UserInfo;
 import com.github.blombler008.twitchbot.dave.application.commands.Command;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
+import com.github.blombler008.twitchbot.dave.main.Load;
+import com.github.blombler008.twitchbot.dave.main.configs.CatchConfig;
+import com.github.blombler008.twitchbot.dave.main.katch.TimerCatch;
 
 public class CommandEndCatch extends Command {
 
-    private final String cmd = "endcatch";
-    private final CommandCatch commandCatch;
-    private final TwitchIRCListener twitch;
+    private final String command = "endcatch";
+    private final CatchConfig config;
+    private final TimerCatch timer;
 
-    public CommandEndCatch(TwitchIRCListener twitch, CommandCatch commandCatch) {
-        super(twitch);
-        this.commandCatch = commandCatch;
-        this.twitch = twitch;
-
+    public CommandEndCatch() {
+        config = Load.IMP.getCatchConfig();
+        timer = config.getManager().getTimer();
     }
+    
     @Override
     public void run(String[] message, UserInfo info, String channel, String msgString) throws RuntimeException {
-
+        
         if(info.isBroadcaster() || info.isModerator()) {
-            if(commandCatch.getTimer().isCatch()) {
-                commandCatch.getTimer().endCatch();
-                twitch.sendMessage("The catch where forced to end!");
-            } else {
-                twitch.sendMessage(commandCatch.getConfig().getNo(info.getDisplayName()));
+            if(config.isEnable()) {
+                if (timer.isCatch()) {
+                    timer.endCatch();
+                    getTwitch().sendMessage("The catch where forced to end!");
+                } else {
+                    getTwitch().sendMessage(config.getNo(info.getDisplayName()));
+                }
             }
         }
     }
 
     @Override
     public String toString() {
-        return null;
+        final StringBuilder sb = new StringBuilder("CommandAddPoints{");
+        sb.append(", command='").append(command).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
+    @Override
+    public String getCommand() {
+        return command;
     }
 }

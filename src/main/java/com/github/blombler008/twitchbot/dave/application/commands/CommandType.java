@@ -30,39 +30,56 @@ public class CommandType {
     public static final String TYPE_NOTICE = "NOTICE";
     public static final String TYPE_WHISPER = "WHISPER";
     public static final String TYPE_PRIVMSG = "PRIVMSG";
-    private String type;
-    private String name;
-    private Command cmd;
 
-    public CommandType(String type, String name, Command cmd) {
-        this.name = name;
-        this.cmd = cmd;
+    private final String commandType;
+    private final String commandName;
+    private final Command command;
 
 
-        switch (type) {
+    public CommandType(String commandType, Command command) {
+         this(commandType, command.getCommand(), command);
+    }
+
+
+    public CommandType(String commandType, String commandName, Command command) {
+        this.commandName = commandName;
+        this.command = command;
+
+
+        switch (commandType) {
             case TYPE_NOTICE:
-                this.type = TYPE_NOTICE;
+                this.commandType = TYPE_NOTICE;
                 break;
             case TYPE_WHISPER:
-                this.type = TYPE_WHISPER;
+                this.commandType = TYPE_WHISPER;
                 break;
             case TYPE_PRIVMSG:
-                this.type = TYPE_PRIVMSG;
+                this.commandType = TYPE_PRIVMSG;
                 break;
             default:
-                throw new IllegalStateException("Unexpected value: " + type);
+                throw new IllegalStateException("Unexpected value: " + commandType);
         }
     }
 
-    public String getType() {
-        return type;
+    public String getCommandType() {
+        return commandType;
     }
 
-    public String getName() {
-        return name;
+    public String getCommandName() {
+        return commandName;
     }
 
     public void execute(String[] message, UserInfo userInfo, String channel, String messageString) {
-        cmd.run(message, userInfo, channel, messageString);
+        command.run(message, userInfo, channel, messageString);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CommandType{");
+        sb.append("commandType='").append(commandType).append('\'');
+        sb.append(", commandName='").append(commandName).append('\'');
+        sb.append(", command=").append(command);
+        sb.append('}');
+        return sb.toString();
     }
 }

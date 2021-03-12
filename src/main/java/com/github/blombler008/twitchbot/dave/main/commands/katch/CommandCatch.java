@@ -27,9 +27,12 @@ import com.github.blombler008.twitchbot.dave.application.UserInfo;
 import com.github.blombler008.twitchbot.dave.application.commands.Command;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 import com.github.blombler008.twitchbot.dave.core.sockets.SocketIO;
-import com.github.blombler008.twitchbot.dave.main.commands.points.CommandAddPoints;
+import com.github.blombler008.twitchbot.dave.main.Load;
 import com.github.blombler008.twitchbot.dave.main.commands.points.CommandSetPoints;
 import com.github.blombler008.twitchbot.dave.main.configs.CatchConfig;
+import com.github.blombler008.twitchbot.dave.main.katch.CatchManager;
+import com.github.blombler008.twitchbot.dave.main.katch.JSONFile;
+import com.github.blombler008.twitchbot.dave.main.katch.TimerCatch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,28 +40,29 @@ import java.util.Random;
 
 public class CommandCatch extends Command {
 
-    private final String cmd = "catch";
+    private final String command = "catch";
     private final CatchConfig config;
-    private final TwitchIRCListener twitch;
-    private List<UserInfo> list = new ArrayList<>();
-    private TimerCatch timer;
-    private Long cooldown;
-    private boolean ispoolopen = false;
-    private CommandSetPoints commandSetPoints;
+    private final CatchManager manager;
+    private final TwitchIRCListener twitch = getTwitch();
 
-    public CommandCatch(TwitchIRCListener twitch, CatchConfig config, CommandSetPoints commandSetPoints) {
-        super(twitch);
-        this.commandSetPoints = commandSetPoints;
-        this.config = config;
-        this.twitch = twitch;
-        timer = new TimerCatch(config, this);
-        SocketIO.executeAsLong(() -> timer.set(),"Timer-Waiter");
+    public CommandCatch() {
+        this.config = Load.IMP.getCatchConfig();
+        this.manager = config.getManager();
     }
+
     @Override
-    public void run(String[] message, UserInfo info, String channel, String msgString) throws RuntimeException {
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CommandCatch{");
+        sb.append("command='").append(command).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public void run(String[] message, UserInfo userInfo, String channel, String msgString) throws RuntimeException {
         SocketIO.executeAsLong(() -> {
 
-            String username = info.getDisplayName();
+            String username = userInfo.getDisplayName();
 
             String winner;
             if(message.length > 1) {
@@ -71,15 +75,15 @@ public class CommandCatch extends Command {
 
 
                 if(config.isPoolEnabled()) {
-                    if(timer.isCatch()) {
+                    if(manager.getTimer().isCatch()) {
 
-                        if (cooldown == null) {
-                            cooldown = (config.getPoolTime() + config.getPoolDelay());
-                            newCatch();
-                            ispoolopen = true;
+                        if (manager.getCooldown() == null) {
+                            manager.setCooldown(config.getPoolTime() + config.getPoolDelay());
+                            manager.startCatch();;
+                            manager.closePool();
                         }
-                        if(ispoolopen) {
-                            list.add(info);
+                        if(manager.isPoolOpen()) {
+                            manager.getUserList().add(userInfo);
                             System.out.println("Added " + username + " to pool");
                             if(config.isPoolMessageOngoingEnabled()) {
                                 twitch.sendMessage(config.getPoolMessageOngoing(username));
@@ -92,24 +96,24 @@ public class CommandCatch extends Command {
 
 
                 } else {
-                    if ((!config.isWinnerRepeatEnable()) && timer.isCatch()) {
+                    if ((!config.isWinnerRepeatEnable()) && manager.getTimer().isCatch()) {
                         twitch.sendMessage(config.getWinnerRepeatMessage(winner));
                         return;
                     }
-                    if (timer.setWinner(winner)) {
+                    if (manager.getTimer().setWinner(winner)) {
                         twitch.sendMessage(config.getWinnerMessage(winner));
-                        timer.endCatch();
+                        manager.getTimer().endCatch();
                         if(config.isWinnerRewardEnable()) {
                             twitch.sendMessage(config.getWinnerRewardCommand(winner));
                         }
                     } else {
                         if (config.isMissedEnable()) {
-                            long lastWinnerTime = timer.getLastWinnerTime();
+                            long lastWinnerTime = manager.getTimer().getLastWinnerTime();
                             long missedTime = config.getMissedTime();
                             long timeDiff = (lastWinnerTime + missedTime);
                             long systemTime = System.currentTimeMillis();
                             if ( timeDiff > systemTime) {
-                                twitch.sendMessage(config.getMissedMessage(winner, timer.getLastWinner()));
+                                twitch.sendMessage(config.getMissedMessage(winner, manager.getTimer().getLastWinner()));
                                 return;
                             }
                         }
@@ -123,52 +127,10 @@ public class CommandCatch extends Command {
 
     }
 
-    public void newCatch() {
-        ispoolopen = true;
-        cooldown = (config.getPoolTime() + config.getPoolDelay());
-        timer.newCatch();
-        timer.startPool(() -> {
 
-            if(list.isEmpty()) {
-                System.out.println("Pool is empty> waiting again!");
-                newCatch();
-                return;
-            }
-
-            UserInfo[] users = list.toArray(new UserInfo[]{});
-
-            int random = new Random().nextInt(users.length);
-
-            String winner = users[random].getDisplayName();
-
-            timer.setWinner(winner);
-            list.clear();
-            twitch.sendMessage(config.getWinnerMessage(winner));
-            JSONFile.hide();
-
-            String end = config.getWinnerRewardCommand(winner);
-            if(config.isWinnerRewardEnable()) {
-                twitch.sendMessage(end);
-            } else {
-                commandSetPoints.add(end, winner);
-            }
-            System.out.println(" - " + end);
-            System.out.println(" - " + winner + " won the pool catch!");
-            ispoolopen = false;
-        }, cooldown);
-    }
-
-    public TimerCatch getTimer() {
-        return timer;
-    }
     @Override
-    public String toString() {
-        return "CommandCatch{" +
-                "cmd='" + cmd + '\'' +
-                ", config=" + config +
-                ", twitch=" + twitch +
-                ", timer=" + timer +
-                '}';
+    public String getCommand() {
+        return command;
     }
 
     public CatchConfig getConfig() {

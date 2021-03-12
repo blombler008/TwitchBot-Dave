@@ -25,14 +25,11 @@ package com.github.blombler008.twitchbot.dave.application.commands;/*
 
 import com.github.blombler008.twitchbot.dave.application.UserInfo;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
+import com.github.blombler008.twitchbot.dave.main.Load;
 
 public abstract class Command {
 
-    private final TwitchIRCListener twitch;
-
-    public Command(TwitchIRCListener twitch) {
-        this.twitch = twitch;
-    }
+    private final TwitchIRCListener twitch = Load.IMP.getTwitch();
 
     public TwitchIRCListener getTwitch() {
         return twitch;
@@ -42,4 +39,6 @@ public abstract class Command {
 
     @Override
     public abstract String toString();
+
+    public abstract String getCommand();
 }

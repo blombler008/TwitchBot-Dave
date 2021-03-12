@@ -25,7 +25,6 @@ package com.github.blombler008.twitchbot.dave.main;/*
 
 import com.github.blombler008.twitchbot.dave.application.commands.CommandType;
 import com.github.blombler008.twitchbot.dave.application.commands.WebCommand;
-import com.github.blombler008.twitchbot.dave.core.Strings;
 import com.github.blombler008.twitchbot.dave.main.commands.katch.*;
 import com.github.blombler008.twitchbot.dave.main.commands.points.CommandAddPoints;
 import com.github.blombler008.twitchbot.dave.main.commands.points.CommandPoints;
@@ -40,6 +39,8 @@ import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
 import com.github.blombler008.twitchbot.dave.core.exceptions.AuthenticationException;
 import com.github.blombler008.twitchbot.dave.main.commands.CommandDice;
 import com.github.blombler008.twitchbot.dave.main.commands.WebCommandFavicon;
+import com.github.blombler008.twitchbot.dave.main.katch.CatchManager;
+import com.github.blombler008.twitchbot.dave.main.katch.JSONFile;
 
 import java.io.File;
 import java.sql.PreparedStatement;
@@ -51,7 +52,7 @@ import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 
 public class Load {
 
-    private Load instance;
+    public static Load IMP;
     private String[] args;
     private Bot twitchBot;
     private ConfigManager configManager;
@@ -67,14 +68,11 @@ public class Load {
 
     private List<WebCommand> webCommands;
     private List<CommandType> twitchCommands;
+    private List<ContentManager> contentManagers = new ArrayList<>();
 
     private Bot webBot;
-    private CommandCatch commandCatch;
-    private CommandAddPoints commandAddPoints;
-    private CommandSetPoints commandSetPoints;
 
-    public Load(String[] args) {
-        this.instance = this;
+    private Load(String[] args) {
         webCommands = new ArrayList<>();
         twitchCommands = new ArrayList<>();
         this.args = args;
@@ -87,6 +85,12 @@ public class Load {
 
     public static void main(String[] args) {
         Load load = new Load(args);
+
+        if(IMP == null)
+            IMP = load;
+        else
+            return;
+
         load.setConfigModel();
         load.createSocketTwitch();
         load.createSocketWeb();
@@ -122,28 +126,24 @@ public class Load {
 
     public void startCatch() {
         JSONFile.setFile(new File(config.getWorkingDirectory(), "json/index.json"));
-        commandCatch.newCatch();
+        configCatch.getManager().startCatch();
     }
 
     public void createConfigTwitch() {
-        commandSetPoints = new CommandSetPoints(twitch, configPoints);
-        commandAddPoints = new CommandAddPoints(twitch, configPoints, commandSetPoints);
-        commandCatch = new CommandCatch(twitch, configCatch, commandSetPoints);
+        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, new CommandDice()));
+        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, new CommandCatch()));
+        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, new CommandNewCatch()));
+        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, new CommandEndCatch()));
 
-        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "dice", new CommandDice(twitch, configDice)));
-        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "catch", commandCatch));
-        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "newcatch", new CommandNewCatch(twitch, commandCatch)));
-        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "endcatch", new CommandEndCatch(twitch, commandCatch)));
-
-        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "setpoints",commandSetPoints));
-        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, "addpoints", commandAddPoints));
-        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, configPoints.getCommand(), new CommandPoints(twitch, configPoints, commandSetPoints)));
+        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, new CommandSetPoints()));
+        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, new CommandAddPoints()));
+        twitchCommands.add(new CommandType(CommandType.TYPE_PRIVMSG, new CommandPoints()));
     }
 
     public void createConfigWeb() {
-        webCommands.add(new WebCommandJson(twitch, configManager));
-        webCommands.add(new WebCommandFavicon(twitch, configManager));
-        webCommands.add(new WebCommandCatch(twitch, configManager, configCatch));
+        webCommands.add(new WebCommandJson(configManager));
+        webCommands.add(new WebCommandFavicon(configManager));
+        webCommands.add(new WebCommandCatch(configManager, configCatch));
     }
 
     public void createSocketWeb() {
@@ -156,14 +156,17 @@ public class Load {
     public void registerCommands() {
         for(WebCommand cmd: webCommands) {
             WebServe.addCommand(cmd);
+            System.out.println("Added WebServe: " + cmd);
         }
         for(CommandType cmd: twitchCommands) {
             twitch.addCommand(cmd);
+            System.out.println("Added Command: " + cmd);
         }
     }
 
     public void setConfigModel() {
         configManager = new ConfigManager(args);
+        addContentManager(configManager);
 
         config = configManager.getConfig();
 
@@ -213,4 +216,24 @@ public class Load {
         return builder.build();
     }
 
+    public TwitchIRCListener getTwitch() {
+        return twitch;
+    }
+
+    public CatchConfig getCatchConfig() {
+        return configCatch;
+    }
+
+    public void addContentManager(ContentManager manager) {
+        System.out.println("Added Manager: " + manager);
+        contentManagers.add(manager);
+    }
+
+    public PointsConfig getPointConfig() {
+        return configPoints;
+    }
+
+    public DiceConfig getDiceConfig() {
+        return configDice;
+    }
 }

@@ -25,6 +25,7 @@ package com.github.blombler008.twitchbot.dave.core.config;/*
 
 import com.github.blombler008.twitchbot.dave.core.StringUtils;
 import com.github.blombler008.twitchbot.dave.core.Validator;
+import com.github.blombler008.twitchbot.dave.main.ContentManager;
 
 import java.io.File;
 
@@ -32,7 +33,7 @@ import static com.github.blombler008.twitchbot.dave.core.Strings.CONFIG_DEFAULT_
 import static com.github.blombler008.twitchbot.dave.core.Strings.CONFIG_FILE;
 
 @SuppressWarnings({"FieldCanBeLocal", "ResultOfMethodCallIgnored"})
-public class ConfigManager {
+public class ConfigManager extends ContentManager {
     private File workDirectory;
     private File config;
 

@@ -1,4 +1,4 @@
-package com.github.blombler008.twitchbot.dave.main.commands.katch;/*
+package com.github.blombler008.twitchbot.dave.main.katch;/*
  *
  * MIT License
  *
@@ -23,16 +23,14 @@ package com.github.blombler008.twitchbot.dave.main.commands.katch;/*
  * SOFTWARE.
  */
 
-import com.github.blombler008.twitchbot.dave.core.sockets.SocketThread;
+import com.github.blombler008.twitchbot.dave.main.commands.katch.CommandCatch;
 import com.github.blombler008.twitchbot.dave.main.configs.CatchConfig;
 
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TimerCatch {
 
     private final CatchConfig config;
-    private final CommandCatch commandCatch;
     private A timing;
 
     private Thread waiter;
@@ -43,10 +41,9 @@ public class TimerCatch {
 
     private String winner;
 
-    public TimerCatch(CatchConfig config, CommandCatch commandCatch) {
+    public TimerCatch(CatchConfig config) {
         timing = new A();
         this.config = config;
-        this.commandCatch = commandCatch;
     }
 
     public void set() {
@@ -116,7 +113,6 @@ public class TimerCatch {
             e.printStackTrace();
         }
     }
-
     private class A implements Runnable {
 
         private synchronized void get() throws InterruptedException {
@@ -131,7 +127,7 @@ public class TimerCatch {
                         wait(getRandom());
                     }
                     if(!katch) {
-                        commandCatch.newCatch();
+                        config.getManager().startCatch();
                         System.out.println("Started a new catch");
                     }
                 }

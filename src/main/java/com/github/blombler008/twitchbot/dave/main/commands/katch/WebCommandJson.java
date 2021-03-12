@@ -27,6 +27,7 @@ import com.github.blombler008.twitchbot.dave.application.commands.WebCommand;
 import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
 import com.github.blombler008.twitchbot.dave.core.Strings;
 import com.github.blombler008.twitchbot.dave.core.config.ConfigManager;
+import com.github.blombler008.twitchbot.dave.main.katch.JSONFile;
 
 import java.io.*;
 
@@ -37,8 +38,7 @@ public class WebCommandJson extends WebCommand {
     private final String url = "/json";
     private File configFolder;
 
-    public WebCommandJson(TwitchIRCListener twitch, ConfigManager configManager) {
-        super(twitch);
+    public WebCommandJson(ConfigManager configManager) {
         this.configFolder = configManager.getFolder();
     }
 
