@@ -25,10 +25,7 @@ package com.github.blombler008.twitchbot.dave.main.configs;/*
 
 import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 
@@ -38,6 +35,7 @@ public class TwitchConfig {
     private String nickname;
     private String password;
     private String prefix;
+    private boolean externalOAuth;
     private YamlConfiguration config;
 
     public TwitchConfig(YamlConfiguration config) {
@@ -49,12 +47,18 @@ public class TwitchConfig {
             channel = config.getString(CONFIG_TWITCH_CHANNEL).toLowerCase();
             nickname = config.getString(CONFIG_TWITCH_NICKNAME);
             prefix = config.getString(CONFIG_TWITCH_PREFIX);
-            boolean externalOAuth = config.getBoolean(CONFIG_TWITCH_EXTERNAL_OAUTH);
+            externalOAuth = config.getBoolean(CONFIG_TWITCH_EXTERNAL_OAUTH);
 
             if (externalOAuth) {
                 StringBuilder passwordBuilder = new StringBuilder();
                 File passFile = new File(config.getWorkingDirectory(), "twitch.txt");
-                BufferedReader bf = new BufferedReader(new FileReader(passFile));
+                BufferedReader bf;
+
+                try {
+                    bf = new BufferedReader(new FileReader(passFile));
+                } catch (FileNotFoundException e) {
+                    return false;
+                }
 
                 String ls;
                 while ((ls = bf.readLine()) != null) {
@@ -73,6 +77,9 @@ public class TwitchConfig {
         }
     }
 
+    public boolean isExternalOAuth() {
+        return externalOAuth;
+    }
 
     public String getChannel() {
         return channel;

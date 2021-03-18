@@ -27,6 +27,7 @@ import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -61,8 +62,13 @@ public class MySQLConfig {
             if(externalPassword) {
                 StringBuilder passwordBuilder = new StringBuilder();
                 File passFile = new File(config.getWorkingDirectory(), "mysql.txt");
-                BufferedReader bf = new BufferedReader(new FileReader(passFile));
+                BufferedReader bf;
 
+                try {
+                    bf = new BufferedReader(new FileReader(passFile));
+                } catch (FileNotFoundException e) {
+                    return false;
+                }
                 String ls;
                 while ((ls = bf.readLine()) != null) {
                     passwordBuilder.append(ls);
@@ -127,10 +133,10 @@ public class MySQLConfig {
         if(!isConnected()) {
             try {
                 AtomicReference<String> connectionString = new AtomicReference<>(MYSQL_CONNECTION_STRING);
-                connectionString.set(connectionString.get().replaceAll("%hostname%", getHostname()));
-                connectionString.set(connectionString.get().replaceAll("%username%", getUsername()));
-                connectionString.set(connectionString.get().replaceAll("%password%", getPassword()));
-                connectionString.set(connectionString.get().replaceAll("%port%", getPort() + ""));
+                connectionString.set(connectionString.get().replaceAll("%hostname%", String.valueOf(getHostname())));
+                connectionString.set(connectionString.get().replaceAll("%username%", String.valueOf(getUsername())));
+                connectionString.set(connectionString.get().replaceAll("%password%", String.valueOf(getPassword())));
+                connectionString.set(connectionString.get().replaceAll("%port%", String.valueOf(getPort())));
 
                 connection = DriverManager.getConnection(connectionString.get());
 

@@ -37,6 +37,8 @@ public class ConfigManager extends ContentManager {
     private File workDirectory;
     private File config;
 
+    private boolean guiTest;
+
     public ConfigManager(String[] args) {
 
         String path = CONFIG_DEFAULT_PATH;
@@ -47,6 +49,8 @@ public class ConfigManager extends ContentManager {
                 path = (Validator.isValidPath(value)) ? value : path;
             }
         }
+        guiTest = StringUtils.hasKey(args, "gui");
+
         this.workDirectory = new File(path);
         if (this.workDirectory.isFile()) {
             this.workDirectory.delete();
@@ -69,5 +73,9 @@ public class ConfigManager extends ContentManager {
 
     public File getFolder() {
         return workDirectory;
+    }
+
+    public boolean isGuiTest() {
+        return guiTest;
     }
 }

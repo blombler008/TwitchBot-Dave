@@ -29,6 +29,11 @@ config.properties
 logs/
 TwitchBot-Dave/twitch.txt
 TwitchBot-Dave/mysql.txt
+TwitchBot-Dave/twitch-blombler008.txt
+
+# Project files
+*.iml
+*.form
 
 # Project files
 *.iml

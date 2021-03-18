@@ -4,7 +4,7 @@ twitch:
   # if this is enabled put the Oauth token into a text file called: 'twitch.txt'
   externalOAuth: true
 
-  # If external oAuth is enables this can be left as it is.
+  # If twitch.externalOAuth is enables this can be ignored.
   oAuth: 'oAuth:abdefghijklmnopqrstuvwxyz1234567890'
 
   # The bots nickname ~ useless cause this name is not shown

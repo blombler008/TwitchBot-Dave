@@ -23,8 +23,14 @@ package com.github.blombler008.twitchbot.dave.main;/*
  * SOFTWARE.
  */
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.extras.FlatInspector;
+import com.formdev.flatlaf.extras.FlatUIDefaultsInspector;
 import com.github.blombler008.twitchbot.dave.application.commands.CommandType;
 import com.github.blombler008.twitchbot.dave.application.commands.WebCommand;
+import com.github.blombler008.twitchbot.dave.core.config.ApplicationConfig;
+import com.github.blombler008.twitchbot.dave.gui.GUI;
 import com.github.blombler008.twitchbot.dave.main.commands.katch.*;
 import com.github.blombler008.twitchbot.dave.main.commands.points.CommandAddPoints;
 import com.github.blombler008.twitchbot.dave.main.commands.points.CommandPoints;
@@ -42,6 +48,8 @@ import com.github.blombler008.twitchbot.dave.main.commands.WebCommandFavicon;
 import com.github.blombler008.twitchbot.dave.main.katch.CatchManager;
 import com.github.blombler008.twitchbot.dave.main.katch.JSONFile;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -67,6 +75,7 @@ public class Load {
     private MySQLConfig configMySQL;
     private TwitchConfig twitchConfig;
     private PointsConfig configPoints;
+    private ApplicationConfig applicationConfig;
 
     private List<WebCommand> webCommands = new ArrayList<>();
     private List<CommandType> twitchCommands = new ArrayList<>();
@@ -108,17 +117,54 @@ public class Load {
 
 
         load.setConfigModel();
-        load.createSocketTwitch();
-        load.createSocketWeb();
-        load.join();
-        load.createConfigTwitch();
-        load.createConfigMySQL();
-        load.createConfigWeb();
 
-        load.registerCommands();
+        if(load.configManager.isGuiTest()) {
+            try {
+                if(load.applicationConfig.isLightTheme()) {
+                    FlatLightLaf.install();
+                } else {
+                    FlatDarkLaf.install();
+                }
+                FlatInspector.install("ctrl shift alt X");
+                FlatUIDefaultsInspector.install("ctrl shift alt Y");
+                //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                JFrame.setDefaultLookAndFeelDecorated( true );
+                JDialog.setDefaultLookAndFeelDecorated( true );
+                UIManager.put( "CheckBox.icon.style", "filled" );
+                UIManager.put( "Component.arrowType", "triangle" );
+                UIManager.put( "TabbedPane.tabLayoutPolicy", "scroll" );
+                UIManager.put( "Component.hideMnemonics", false );
 
-        load.startCatch();
+            } catch (Exception ignore) {
+            }
+
+            GUI gui = new GUI(load);
+            gui.setContentPane(gui.$$$getRootComponent$$$());
+            gui.setSize(gui.getDimension());
+            gui.setMinimumSize(gui.getMinimumDimension());
+            gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            if(gui.apply()) {
+                gui.setVisible(true);
+            }
+            ((JTabbedPane)gui.$$$getRootComponent$$$()).setSelectedIndex(1);
+            ((JTabbedPane)gui.$$$getRootComponent$$$()).setSelectedIndex(0);
+            return;
+        }
+
+        if(load.createSocketTwitch()) {
+            load.createSocketWeb();
+            load.join();
+            load.createConfigTwitch();
+            load.createConfigMySQL();
+            load.createConfigWeb();
+
+            load.registerCommands();
+
+            load.startCatch();
+
+        }
     }
+
 
     public void createConfigMySQL() {
         if(configMySQL.connect()) {
@@ -196,6 +242,10 @@ public class Load {
 
         configPoints = new PointsConfig(config, configMySQL);
 
+        applicationConfig = new ApplicationConfig(null); //TODO: add a localStorage config file
+
+
+        twitchConfig.gen();
         configPoints.gen();
         configMySQL.gen();
         configDice.gen();
@@ -208,7 +258,7 @@ public class Load {
 //        twitch.sendMessage(new Random().nextInt(100) + " - Bitte mir random stuff senden per Whisper(/w blombler008 <msg>) ... Danke ♥ ... empfehlung tattyplay ♥");
     }
 
-    public void createSocketTwitch() {
+    public boolean createSocketTwitch() {
 
         if (twitchConfig.gen()) {
             twitchBot = createBot(TWITCH_SERVER, Integer.parseInt(TWITCH_PORT));
@@ -222,6 +272,9 @@ public class Load {
                     twitch.set();
                 }
             }
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -232,6 +285,17 @@ public class Load {
         return builder.build();
     }
 
+    public ApplicationConfig getApplicationConfig() {
+        return applicationConfig;
+    }
+
+    public File getWorkingDirectory() {
+        return config.getWorkingDirectory();
+    }
+
+    public TwitchConfig getTwitchConfig() {
+        return twitchConfig;
+    }
     public TwitchIRCListener getTwitch() {
         return twitch;
     }

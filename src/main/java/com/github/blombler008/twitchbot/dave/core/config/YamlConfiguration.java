@@ -258,11 +258,12 @@ public class YamlConfiguration {
         return Integer.parseInt(getString(key));
     }
 
-    public Boolean getBoolean(String key) {
-        if (getString(key) == null) {
-            return null;
+    public boolean getBoolean(String key) {
+        String val = getString(key);
+        if (val == null || val.isEmpty()) {
+            return false;
         }
-        return Boolean.parseBoolean(getString(key));
+        return Boolean.parseBoolean(val);
     }
 
     public void reload() {

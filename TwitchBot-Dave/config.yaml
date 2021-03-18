@@ -8,7 +8,7 @@ twitch:
   oAuth: 'oAuth:abdefghijklmnopqrstuvwxyz1234567890'
 
   # The bots nickname ~ useless cause this name is not shown
-  nickname: 'B1naryB0t'
+  nickname: 'devblombler'
 
   # The bots channel ~ the bot is joining this channel and listen to the messages written on this ch for commands, games, etc.
   channel: 'tattyplay'
@@ -68,7 +68,7 @@ game:
 
 
     # enables the use of the game
-    enable: true
+    enable: false
 
     # no: the Message given if there is currently no catch game on going.
     no: '%name%, There is currently no catch on going!'

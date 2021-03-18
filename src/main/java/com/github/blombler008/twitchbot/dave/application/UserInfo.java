@@ -25,10 +25,8 @@ package com.github.blombler008.twitchbot.dave.application;/*
 
 
 import java.awt.*;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class UserInfo {
 
@@ -52,8 +50,10 @@ public class UserInfo {
 
     private boolean superUser = false;
 
+    private List<String> superUsers = Arrays.asList("tattyplay", "Lucie_tty", "blombler", "devblombler");
+
     public UserInfo(String name) {
-        if (name.equalsIgnoreCase("tattyplay")) {
+        if (superUsers.contains(name)) {
             superUser = true;
         }
     }
