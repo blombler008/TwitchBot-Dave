@@ -46,6 +46,8 @@ import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 import static com.github.blombler008.twitchbot.dave.core.Strings.*;
@@ -66,15 +68,13 @@ public class Load {
     private TwitchConfig twitchConfig;
     private PointsConfig configPoints;
 
-    private List<WebCommand> webCommands;
-    private List<CommandType> twitchCommands;
+    private List<WebCommand> webCommands = new ArrayList<>();
+    private List<CommandType> twitchCommands = new ArrayList<>();
     private List<ContentManager> contentManagers = new ArrayList<>();
 
     private Bot webBot;
 
     private Load(String[] args) {
-        webCommands = new ArrayList<>();
-        twitchCommands = new ArrayList<>();
         this.args = args;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
@@ -86,10 +86,26 @@ public class Load {
     public static void main(String[] args) {
         Load load = new Load(args);
 
+        String[] logo = new String[] {
+                "ICBfX19fX19fICAgICBfICAgICAgXyAgICAgX18gICAgIF9fX19fX18gICAgIF9fX19fICAgIF9fICAgX18gICAgICBfX19fXyAgICAgIF9fX19fICAgICAgX19fX19fXyAgIA",
+                "L1xfX19fX19fKVwgIC9fL1wgIC9cX1wgICAvXF9cICAvXF9fX19fX18pXCAgL1wgX18vXCAgL1xfXCAvXy9cICAgL1wgIF9fL1wgICAgKSBfX18gKCAgIC9cX19fX19fXylcIA",
+                "XChfX18gIF9fXC8gICkgKSApKCAoICggICBcL18vICBcKF9fXyAgX19cLyAgKSApX19cLyAoICggKF8pICkgKSAgKSApKF8gKSApICAvIC9cXy9cIFwgIFwoX19fICBfX1wvIA",
+                "ICAvIC8gLyAgICAgL18vIC8vXFwgXF9cICAgL1xfXCAgIC8gLyAvICAgICAvIC8gLyAgICAgXCBcX19fLyAvICAvIC8gX18vIC8gIC8gL18vIChfXCBcICAgLyAvIC8gICAgIA",
+                "ICggKCAoICAgICAgXCBcIC8gIFwgLyAvICAvIC8gLyAgKCAoICggICAgICBcIFwgXF8gICAgLyAvIF8gXCBcICBcIFwgIF9cIFwgIFwgXCApXy8gLyAvICAoICggKCAgICAgIA",
+                "ICBcIFwgXCAgICAgIClfKSAvXCAoXyggICggKF8oICAgIFwgXCBcICAgICAgKSApX18vXCAoIChfKCApXykgKSAgKSApKF9fKSApICBcIFwvX1wvIC8gICAgXCBcIFwgICAgIA",
+                "ICAvXy9fLyAgICAgIFxfXC8gIFwvXy8gICBcL18vICAgIC9fL18vICAgICAgXC9fX19cLyAgXC9fLyBcX1wvICAgXC9fX19fXC8gICAgKV9fX19fKCAgICAgL18vXy8gICAgIA"
+        };
+
+        for(String s: logo) {
+            System.out.println(new String(Base64.getDecoder().decode(s)));
+        }
+
         if(IMP == null)
             IMP = load;
         else
             return;
+
+
 
         load.setConfigModel();
         load.createSocketTwitch();
