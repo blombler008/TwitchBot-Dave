@@ -42,13 +42,7 @@ public class CommandPoints extends Command {
 
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("CommandAddPoints{");
-        sb.append(", command='").append(getCommand()).append('\'');
-        sb.append('}');
-        return sb.toString();
-    }
+
     @Override
     public String getCommand() {
         return config.getCommand();

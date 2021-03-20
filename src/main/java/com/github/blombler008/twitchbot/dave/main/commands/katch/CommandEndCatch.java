@@ -56,13 +56,7 @@ public class CommandEndCatch extends Command {
         }
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("CommandAddPoints{");
-        sb.append(", command='").append(command).append('\'');
-        sb.append('}');
-        return sb.toString();
-    }
+
     @Override
     public String getCommand() {
         return command;

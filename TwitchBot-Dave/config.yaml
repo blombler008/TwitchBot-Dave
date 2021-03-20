@@ -17,6 +17,20 @@ twitch:
   prefix: '!'
 
 
+
+# Points configuration
+points:
+  # The command is the command in the twitch chat which shows the points of the user
+  # General-Usage: '<twitch.prefix><points.command> [username/id]'
+  # Example-Usage: '!zoggos tattyplay'
+  command: 'zoggos'
+
+  # Use-names (not usernames*) is used to store the points in the database by username instead of unique twitch Ids.
+  # NOT RECOMMENDED TO CHANGE
+  usenames: false
+
+
+
 mysql:
   username: root
   password: 123456789

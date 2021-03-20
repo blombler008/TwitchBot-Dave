@@ -33,10 +33,7 @@ import com.github.blombler008.twitchbot.dave.core.StringUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class YamlConfiguration {
 
@@ -123,7 +120,11 @@ public class YamlConfiguration {
     }
 
     public Object get(String string) {
-        return get(string, root);
+        Object gotten = get(string, root);
+        if(Objects.isNull(gotten)) {
+            throw new NullPointerException();
+        }
+        return gotten;
     }
 
     public void save() {
@@ -157,14 +158,14 @@ public class YamlConfiguration {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Object get(String string, Map<String, Object> current) {
-        if (string.equals("*")) {
+    public Object get(String path, Map<String, Object> nodeMap) {
+        if (path.equals("*")) {
             return root;
         }
-        String[] slit = string.split("\\.+");
+        String[] slit = path.split("\\.+");
         String fold = slit[0];
         if (slit.length == 1) {
-            return current.get(string);
+            return nodeMap.get(path);
         }
         StringBuilder newOne = new StringBuilder();
         for (int i = 1; i < slit.length; i++) {
@@ -173,13 +174,13 @@ public class YamlConfiguration {
                 newOne.append(".");
             }
         }
-        if (current.containsKey(fold)) {
-            if (current.get(fold) instanceof Map) {
-                return get(newOne.toString(), (Map) current.get(fold));
-            } else if (current.get(fold) instanceof List) {
-                return (List) current.get(fold);
+        if (nodeMap.containsKey(fold)) {
+            if (nodeMap.get(fold) instanceof Map) {
+                return get(newOne.toString(), (Map) nodeMap.get(fold));
+            } else if (nodeMap.get(fold) instanceof List) {
+                return (List) nodeMap.get(fold);
             } else {
-                return current.get(fold);
+                return nodeMap.get(fold);
             }
         }
 

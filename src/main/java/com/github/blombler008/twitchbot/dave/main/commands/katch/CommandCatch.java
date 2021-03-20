@@ -50,13 +50,6 @@ public class CommandCatch extends Command {
         this.manager = config.getManager();
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("CommandCatch{");
-        sb.append("command='").append(command).append('\'');
-        sb.append('}');
-        return sb.toString();
-    }
 
     @Override
     public void run(String[] message, UserInfo userInfo, String channel, String msgString) throws RuntimeException {

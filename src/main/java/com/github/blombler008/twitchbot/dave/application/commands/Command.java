@@ -37,8 +37,14 @@ public abstract class Command {
 
     public abstract void run(String[] message, UserInfo info, String channel, String msgString) throws RuntimeException;
 
-    @Override
-    public abstract String toString();
-
     public abstract String getCommand();
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Command{");
+        sb.append(", command='").append(getCommand()).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
+
 }
