@@ -24,11 +24,9 @@ hs_err_pid*
 password.txt
 .idea/
 target/
-test-dave/
 config.properties
 logs/
-TwitchBot-Dave/twitch.txt
-TwitchBot-Dave/mysql.txt
+/TwitchBot-Dave/
 
 # Project files
 *.iml
