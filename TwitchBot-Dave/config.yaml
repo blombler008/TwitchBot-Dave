@@ -8,13 +8,27 @@ twitch:
   oAuth: 'oAuth:abdefghijklmnopqrstuvwxyz1234567890'
 
   # The bots nickname ~ useless cause this name is not shown
-  nickname: 'B1naryB0t'
+  nickname: 'devblombler'
 
   # The bots channel ~ the bot is joining this channel and listen to the messages written on this ch for commands, games, etc.
   channel: 'tattyplay'
 
   # The bots channel ~ the bot is joining this channel and listen to the messages written on this ch for commands, games, etc.
   prefix: '!'
+
+
+
+# Points configuration
+points:
+  # The command is the command in the twitch chat which shows the points of the user
+  # General-Usage: '<twitch.prefix><points.command> [username/id]'
+  # Example-Usage: '!zoggos tattyplay'
+  command: 'zoggos'
+
+  # Use-names (not usernames*) is used to store the points in the database by username instead of unique twitch Ids.
+  # NOT RECOMMENDED TO CHANGE
+  usenames: false
+
 
 
 mysql:
@@ -68,7 +82,7 @@ game:
 
 
     # enables the use of the game
-    enable: true
+    enable: false
 
     # no: the Message given if there is currently no catch game on going.
     no: '%name%, There is currently no catch on going!'
