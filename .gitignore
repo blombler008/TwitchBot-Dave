@@ -24,16 +24,11 @@ hs_err_pid*
 password.txt
 .idea/
 target/
-test-dave/
 config.properties
-logs/
-TwitchBot-Dave/twitch.txt
-TwitchBot-Dave/mysql.txt
-TwitchBot-Dave/twitch-blombler008.txt
+logs/ 
 
 # Project files
 *.iml
 *.form
+/TwitchBot-Dave/
 
-# Project files
-*.iml
