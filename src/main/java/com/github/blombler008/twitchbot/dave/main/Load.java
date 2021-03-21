@@ -96,18 +96,20 @@ public class Load {
         Load load = new Load(args);
 
         String[] logo = new String[] {
-                "ICBfX19fX19fICAgICBfICAgICAgXyAgICAgX18gICAgIF9fX19fX18gICAgIF9fX19fICAgIF9fICAgX18gICAgICBfX19fXyAgICAgIF9fX19fICAgICAgX19fX19fXyAgIA",
-                "L1xfX19fX19fKVwgIC9fL1wgIC9cX1wgICAvXF9cICAvXF9fX19fX18pXCAgL1wgX18vXCAgL1xfXCAvXy9cICAgL1wgIF9fL1wgICAgKSBfX18gKCAgIC9cX19fX19fXylcIA",
-                "XChfX18gIF9fXC8gICkgKSApKCAoICggICBcL18vICBcKF9fXyAgX19cLyAgKSApX19cLyAoICggKF8pICkgKSAgKSApKF8gKSApICAvIC9cXy9cIFwgIFwoX19fICBfX1wvIA",
-                "ICAvIC8gLyAgICAgL18vIC8vXFwgXF9cICAgL1xfXCAgIC8gLyAvICAgICAvIC8gLyAgICAgXCBcX19fLyAvICAvIC8gX18vIC8gIC8gL18vIChfXCBcICAgLyAvIC8gICAgIA",
-                "ICggKCAoICAgICAgXCBcIC8gIFwgLyAvICAvIC8gLyAgKCAoICggICAgICBcIFwgXF8gICAgLyAvIF8gXCBcICBcIFwgIF9cIFwgIFwgXCApXy8gLyAvICAoICggKCAgICAgIA",
-                "ICBcIFwgXCAgICAgIClfKSAvXCAoXyggICggKF8oICAgIFwgXCBcICAgICAgKSApX18vXCAoIChfKCApXykgKSAgKSApKF9fKSApICBcIFwvX1wvIC8gICAgXCBcIFwgICAgIA",
-                "ICAvXy9fLyAgICAgIFxfXC8gIFwvXy8gICBcL18vICAgIC9fL18vICAgICAgXC9fX19cLyAgXC9fLyBcX1wvICAgXC9fX19fXC8gICAgKV9fX19fKCAgICAgL18vXy8gICAgIA"
+                "IyMjIyMjIyMgIyMgICAgICAjIyAjIyMjICMjIyMjIyMjICAjIyMjIyMgICMjICAgICAjIyAjIyMjIyMjIyAgICMjIyMjIyMgICMjIyMjIyMjIA",
+                "ICAgIyMgICAgIyMgICMjICAjIyAgIyMgICAgICMjICAgICMjICAgICMjICMjICAgICAjIyAjIyAgICAgIyMgIyMgICAgICMjICAgICMjICAgIA",
+                "ICAgIyMgICAgIyMgICMjICAjIyAgIyMgICAgICMjICAgICMjICAgICAgICMjICAgICAjIyAjIyAgICAgIyMgIyMgICAgICMjICAgICMjICAgIA",
+                "ICAgIyMgICAgIyMgICMjICAjIyAgIyMgICAgICMjICAgICMjICAgICAgICMjIyMjIyMjIyAjIyMjIyMjIyAgIyMgICAgICMjICAgICMjICAgIA",
+                "ICAgIyMgICAgIyMgICMjICAjIyAgIyMgICAgICMjICAgICMjICAgICAgICMjICAgICAjIyAjIyAgICAgIyMgIyMgICAgICMjICAgICMjICAgIA",
+                "ICAgIyMgICAgIyMgICMjICAjIyAgIyMgICAgICMjICAgICMjICAgICMjICMjICAgICAjIyAjIyAgICAgIyMgIyMgICAgICMjICAgICMjICAgIA",
+                "ICAgIyMgICAgICMjIyAgIyMjICAjIyMjICAgICMjICAgICAjIyMjIyMgICMjICAgICAjIyAjIyMjIyMjIyAgICMjIyMjIyMgICAgICMjICAgIA"
         };
 
+        System.out.println("");
         for(String s: logo) {
             System.out.println(new String(Base64.getDecoder().decode(s)));
         }
+        System.out.println("");
 
         if(IMP == null)
             IMP = load;
@@ -255,7 +257,7 @@ public class Load {
     public void join() {
         twitch.joinChannel(twitchConfig.getChannel());
 //        twitch.joinChannel("binarydave");
-//        twitch.sendMessage(new Random().nextInt(100) + " - Bitte mir random stuff senden per Whisper(/w blombler008 <msg>) ... Danke ♥ ... empfehlung tattyplay ♥");
+//        twitch.sendMessage(new Random().nextInt(100) + " - Bitte mir random stuff senden per Whisper(/w blombler008 <msg>) ... Danke <3 ♥ ... empfehlung tattyplay ♥");
     }
 
     public boolean createSocketTwitch() {

@@ -35,12 +35,11 @@ import java.io.*;
 
 public class WebCommandCatch extends WebCommand {
 
-    private final String url = "/catch";
     private final File configFolder;
     private final CatchConfig config;
 
     public WebCommandCatch(ConfigManager configManager, CatchConfig config) {
-
+        super("/catch");
         this.config = config;
         this.configFolder = configManager.getFolder();
     }
@@ -101,16 +100,5 @@ public class WebCommandCatch extends WebCommand {
         return null;
     }
 
-    @Override
-    public String getURL() {
-        return url;
-    }
 
-    @Override
-    public String toString() {
-        return "WebCommandCatch{" +
-                "url='" + url + '\'' +
-                ", configFolder=" + configFolder +
-                '}';
-    }
 }

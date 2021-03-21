@@ -35,10 +35,10 @@ import static com.github.blombler008.twitchbot.dave.core.Strings.HTML_CONTENT_AP
 
 public class WebCommandJson extends WebCommand {
 
-    private final String url = "/json";
     private File configFolder;
 
     public WebCommandJson(ConfigManager configManager) {
+        super("/json");
         this.configFolder = configManager.getFolder();
     }
 
@@ -66,16 +66,4 @@ public class WebCommandJson extends WebCommand {
 
     }
 
-    @Override
-    public String getURL() {
-        return url;
-    }
-
-    @Override
-    public String toString() {
-        return "WebCommandJson{" +
-                "url='" + url + '\'' +
-                ", configFolder=" + configFolder +
-                '}';
-    }
 }

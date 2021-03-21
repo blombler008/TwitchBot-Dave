@@ -34,10 +34,10 @@ import java.io.*;
 
 public class WebCommandFavicon extends WebCommand {
 
-    private final String url = "/favicon.ico";
     private File configFolder;
 
     public WebCommandFavicon(ConfigManager configManager) {
+        super("/favicon.ico");
         this.configFolder = configManager.getFolder();
     }
 
@@ -65,18 +65,5 @@ public class WebCommandFavicon extends WebCommand {
             e.printStackTrace();
         }
         return null;
-    }
-
-    @Override
-    public String getURL() {
-        return url;
-    }
-
-    @Override
-    public String toString() {
-        return "WebCommandFavicon{" +
-                "configFolder=" + configFolder +
-                ", url='" + url + '\'' +
-                '}';
     }
 }

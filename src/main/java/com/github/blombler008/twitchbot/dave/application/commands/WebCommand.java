@@ -32,9 +32,11 @@ import java.io.OutputStream;
 public abstract class WebCommand extends Command {
 
     private String contentType;
+    private final String url;
 
-    public WebCommand() {
+    public WebCommand(String url) {
         super();
+        this.url = url;
     }
 
     public String getContentType() {
@@ -53,9 +55,19 @@ public abstract class WebCommand extends Command {
 
     public abstract String run(OutputStream outputStream) throws IOException;
 
-    public abstract String getURL();
+    public String getURL() {
+        return url;
+    }
 
     public String getCommand() {
         return null;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("WebCommand{");
+        sb.append("url='").append(url).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }

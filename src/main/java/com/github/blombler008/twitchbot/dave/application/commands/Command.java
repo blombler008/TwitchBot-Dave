@@ -41,10 +41,6 @@ public abstract class Command {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Command{");
-        sb.append(", command='").append(getCommand()).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return '\'' + getCommand() + '\'';
     }
-
 }
