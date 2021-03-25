@@ -55,39 +55,19 @@ public class MySQLConfig {
     }
 
     public boolean gen() {
-        try {
-            hostname = config.getString(CONFIG_MYSQL_HOSTNAME);
-            boolean externalPassword = config.getBoolean(CONFIG_MYSQL_EXTERNAL_PASSWORD);
+        hostname = config.getString(CONFIG_MYSQL_HOSTNAME);
+        boolean externalPassword = config.getBoolean(CONFIG_MYSQL_EXTERNAL_PASSWORD);
 
-            if(externalPassword) {
-                StringBuilder passwordBuilder = new StringBuilder();
-                File passFile = new File(config.getWorkingDirectory(), "mysql.txt");
-                BufferedReader bf;
-
-                try {
-                    bf = new BufferedReader(new FileReader(passFile));
-                } catch (FileNotFoundException e) {
-                    return false;
-                }
-                String ls;
-                while ((ls = bf.readLine()) != null) {
-                    passwordBuilder.append(ls);
-                }
-                bf.close();
-                password = passwordBuilder.toString();
-            } else {
-                password = config.getString(CONFIG_MYSQL_PASSWORD);
-            }
-
-            username = config.getString(CONFIG_MYSQL_USERNAME);
-            port = config.getInteger(CONFIG_MYSQL_PORT);
-            database = config.getString(CONFIG_MYSQL_DATABASE);
-            return true;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+        if(externalPassword) {
+            password = config.getPassword("mysql");
+        } else {
+            password = config.getString(CONFIG_MYSQL_PASSWORD);
         }
+
+        username = config.getString(CONFIG_MYSQL_USERNAME);
+        port = config.getInteger(CONFIG_MYSQL_PORT);
+        database = config.getString(CONFIG_MYSQL_DATABASE);
+        return true;
     }
 
     public String getHostname() {

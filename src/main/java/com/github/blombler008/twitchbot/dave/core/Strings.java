@@ -70,7 +70,7 @@ public class Strings {
     public static final String BOT_NULL_OBJECT = "Bot is not created";
 
     public static final String CONFIG_FILE = "config.yaml";
-    public static final String CONFIG_DEFAULT_PATH = "TwitchBot-Dave";
+    public static final String CONFIG_DEFAULT_PATH = "TwitchBot";
 
     // MYSQL ///////////////////////////////////////////////////////////////////////////
     public static final String CONFIG_MYSQL_HOSTNAME = "mysql.hostname";

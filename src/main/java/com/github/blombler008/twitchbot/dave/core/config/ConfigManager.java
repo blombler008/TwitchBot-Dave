@@ -37,7 +37,9 @@ public class ConfigManager extends ContentManager {
     private File workDirectory;
     private File config;
 
-    private boolean guiTest;
+    private boolean gui;
+    private boolean discord;
+    private boolean twitch;
 
     public ConfigManager(String[] args) {
 
@@ -49,7 +51,9 @@ public class ConfigManager extends ContentManager {
                 path = (Validator.isValidPath(value)) ? value : path;
             }
         }
-        guiTest = StringUtils.hasKey(args, "gui");
+        gui = StringUtils.hasKey(args, "gui");
+        discord = StringUtils.hasKey(args, "discord");
+        twitch  = StringUtils.hasKey(args, "twitch");
 
         this.workDirectory = new File(path);
         if (this.workDirectory.isFile()) {
@@ -75,7 +79,15 @@ public class ConfigManager extends ContentManager {
         return workDirectory;
     }
 
-    public boolean isGuiTest() {
-        return guiTest;
+    public boolean isGui() {
+        return gui;
+    }
+
+    public boolean isTwitch() {
+        return twitch;
+    }
+
+    public boolean isDiscord() {
+        return discord;
     }
 }

@@ -1,7 +1,7 @@
 # Twitch configuration
 twitch:
 
-  # if this is enabled put the Oauth token into a text file called: 'twitch.txt'
+  # if this is enabled put the Oauth token into a text file called: 'password.yml'
   externalOAuth: true
 
   # If twitch.externalOAuth is enables this can be ignored.

@@ -47,6 +47,12 @@ import com.github.blombler008.twitchbot.dave.main.commands.CommandDice;
 import com.github.blombler008.twitchbot.dave.main.commands.WebCommandFavicon;
 import com.github.blombler008.twitchbot.dave.main.katch.CatchManager;
 import com.github.blombler008.twitchbot.dave.main.katch.JSONFile;
+import discord4j.core.DiscordClient;
+import discord4j.core.DiscordClientBuilder;
+import discord4j.core.GatewayDiscordClient;
+import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.channel.MessageChannel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -74,6 +80,7 @@ public class Load {
     private CatchConfig configCatch;
     private MySQLConfig configMySQL;
     private TwitchConfig twitchConfig;
+    private DiscordConfig discordConfig;
     private PointsConfig configPoints;
     private ApplicationConfig applicationConfig;
 
@@ -120,7 +127,26 @@ public class Load {
 
         load.setConfigModel();
 
-        if(load.configManager.isGuiTest()) {
+        if(load.configManager.isDiscord()) {
+            try {
+
+                DiscordClient client = DiscordClient.create(load.discordConfig.getPassword());
+                GatewayDiscordClient gateway = client.login().block();
+                gateway.on(MessageCreateEvent.class).subscribe(event -> {
+                    final Message message = event.getMessage();
+                    if ("!ping".equals(message.getContent())) {
+                        final MessageChannel channel = message.getChannel().block();
+                        channel.createMessage("Pong!").block();
+                    }
+                });
+
+                gateway.onDisconnect().block();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(load.configManager.isGui()) {
             try {
                 if(load.applicationConfig.isLightTheme()) {
                     FlatLightLaf.install();
@@ -152,18 +178,19 @@ public class Load {
             ((JTabbedPane)gui.$$$getRootComponent$$$()).setSelectedIndex(0);
             return;
         }
+        if(load.configManager.isTwitch()) {
+            if (load.createSocketTwitch()) {
+                load.createSocketWeb();
+                load.join();
+                load.createConfigTwitch();
+                load.createConfigMySQL();
+                load.createConfigWeb();
 
-        if(load.createSocketTwitch()) {
-            load.createSocketWeb();
-            load.join();
-            load.createConfigTwitch();
-            load.createConfigMySQL();
-            load.createConfigWeb();
+                load.registerCommands();
 
-            load.registerCommands();
+                load.startCatch();
 
-            load.startCatch();
-
+            }
         }
     }
 
@@ -235,6 +262,7 @@ public class Load {
         config = configManager.getConfig();
 
         twitchConfig = new TwitchConfig(config);
+        discordConfig = new DiscordConfig(config);
         webConfig = new WebConfig(config);
 
         configDice = new DiceConfig(config);
@@ -248,6 +276,7 @@ public class Load {
 
 
         twitchConfig.gen();
+        discordConfig.gen();
         configPoints.gen();
         configMySQL.gen();
         configDice.gen();

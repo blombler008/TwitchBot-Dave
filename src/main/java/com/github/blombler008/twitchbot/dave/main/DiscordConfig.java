@@ -1,8 +1,16 @@
-package com.github.blombler008.twitchbot.dave.main.configs;/*
+package com.github.blombler008.twitchbot.dave.main;
+
+import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
+
+import java.io.*;
+
+import static com.github.blombler008.twitchbot.dave.core.Strings.*;
+
+/*
  *
  * MIT License
  *
- * Copyright (c) 2019 blombler008
+ * Copyright (c) 2020 blombler008
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,16 +29,14 @@ package com.github.blombler008.twitchbot.dave.main.configs;/*
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
+ * Project TwitchBot-Dave
+ * Package com.github.blombler008.twitchbot.dave.main
+ * User lucie
+ * Creation Date 25/03/2021
+ * Creation Time 10:48
  */
-
-import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
-
-import java.io.*;
-
-import static com.github.blombler008.twitchbot.dave.core.Strings.*;
-
-public class TwitchConfig {
-
+public class DiscordConfig {
     private String channel;
     private String nickname;
     private String password;
@@ -38,7 +44,7 @@ public class TwitchConfig {
     private boolean externalOAuth;
     private YamlConfiguration config;
 
-    public TwitchConfig(YamlConfiguration config) {
+    public DiscordConfig(YamlConfiguration config) {
         this.config = config;
     }
 
@@ -49,7 +55,7 @@ public class TwitchConfig {
         externalOAuth = config.getBoolean(CONFIG_TWITCH_EXTERNAL_OAUTH);
 
         if (externalOAuth) {
-            password = config.getPassword("twitch");
+            password = config.getPassword("discord");
         } else {
             password = config.getString(CONFIG_TWITCH_OAUTH);
         }

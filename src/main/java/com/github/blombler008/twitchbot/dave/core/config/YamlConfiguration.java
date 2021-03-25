@@ -30,9 +30,7 @@ import com.esotericsoftware.yamlbeans.YamlReader;
 import com.esotericsoftware.yamlbeans.YamlWriter;
 import com.github.blombler008.twitchbot.dave.core.StringUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class YamlConfiguration {
@@ -291,5 +289,38 @@ public class YamlConfiguration {
 
     public File getWorkingDirectory() {
         return workingDirectory;
+    }
+
+    public String getPassword(String entry) {
+        return getPassword("password.yml", entry);
+    }
+
+    public String getPassword(String file, String entry) {
+        YamlReader reader = null;
+        BufferedReader bf = null;
+
+        try {
+            StringBuilder passwordBuilder = new StringBuilder();
+            File passFile = new File(getWorkingDirectory(), file);
+
+            try {
+                bf = new BufferedReader(new FileReader(passFile));
+            } catch (FileNotFoundException e) {
+                return null;
+            }
+
+            reader = new YamlReader(bf, new YamlConfig());
+            return (String )reader.get("entry");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(bf != null)  bf.close();
+
+                if(reader != null) reader.close();
+            } catch (IOException ignore) {}
+        }
+        return null;
+
     }
 }
