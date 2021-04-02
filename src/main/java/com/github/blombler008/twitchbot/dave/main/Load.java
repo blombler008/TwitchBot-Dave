@@ -66,6 +66,7 @@ import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.entity.channel.VoiceChannel;
 import discord4j.core.object.presence.Activity;
 import discord4j.core.object.presence.Presence;
+import discord4j.discordjson.json.ActivityUpdateRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,14 +121,15 @@ public class Load {
 
     // Some constants for the discord bot
     private final static Snowflake CHANNEL_VERIFICATION_ID = Snowflake.of(824623601273405440L);
-    private final static Snowflake CHANNEL_MEMBERS_LIST_ID = Snowflake.of(825021730765930576L);
+    private final static Snowflake CHANNEL_MEMBERS_LIST_ID = Snowflake.of(825021730765930576L); // Channel does currently not exist
     private final static Snowflake MESSAGE_VERIFICATION_ID = Snowflake.of(824624336392421418L);
     private final static Snowflake ROLE_VERIFIED_ID = Snowflake.of(824620958719410206L);
     private final static Snowflake ROLE_UNVERIFIED_ID = Snowflake.of(824622725023924264L);
     private final static Snowflake GUILD_ID = Snowflake.of(432270031922003969L);
-    private final static String emoteCheckmark = "✅";
-    private final static String nickname = "lucie";
-    private final static String status = "deinen befehlen";
+    private final static String emoteCheckmark = "✅"; // :white_check_mark: emote :: one default discord unicode
+    private final static String nickname = "Lucie"; // Bot nickname on the Discord server
+    private final static String statusMessage = "deinen befehlen"; // status activity and message
+    private final static ActivityUpdateRequest statusActivity = Activity.listening(statusMessage); // status activity and message
 
 
 
@@ -188,8 +190,32 @@ public class Load {
                     if (Objects.nonNull(currentGuild)) {
                         currentGuild.changeSelfNickname(nickname).block();
 
-                        gateway.updatePresence(Presence.online(Activity.listening(status))).block();
+                        // update bot presence
+                        gateway.updatePresence(Presence.online(statusActivity)).block();
 
+
+                        // Give a role upon joining the server
+                        gateway.on(MemberJoinEvent.class).subscribe(event -> {
+
+                            // extracting the member who joined
+                            final Member member = event.getMember();
+
+                            log.info(member.getMention() + " Joined");
+
+                            // if the member is a bot ignore him!
+                            if (member.isBot()) {
+                                log.info(member.getMention() + " ignored (bot)");
+                                return;
+                            }
+                            member.addRole(ROLE_UNVERIFIED_ID).block();
+
+
+                            log.info(member.getMention() + " Added Role");
+                        });
+
+
+                        // simple bot ping command example // -> !ping results in an replay like : `@blombler: !ping -> Pong!`
+                        // TODO: remove later and create a command interface for commands
                         gateway.on(MessageCreateEvent.class).subscribe(event -> {
                             final Message oldMessage = event.getMessage();
                             if ("!ping".equals(oldMessage.getContent())) {
@@ -198,13 +224,12 @@ public class Load {
                                         oldMessage.getAuthor().get().getMention()
                                                 + ": "
                                                 + oldMessage.getContent()
-                                                + " -> Pong!"
+                                                + " -> pong!"
                                 ).block();
                                 if(event.getGuildId().isPresent())
                                     oldMessage.delete().block();
                             }
                         });
-
 
                         // Message verification on reaction hit
                         gateway.on(ReactionAddEvent.class).subscribe(event -> {
@@ -287,31 +312,21 @@ public class Load {
                             }
                         });
 
-                        // start :1: update members as when a user joins or leaves
-                        if(Objects.nonNull(currentGuild.getChannelById(CHANNEL_MEMBERS_LIST_ID))) {
-                            gateway.on(MemberLeaveEvent.class).subscribe(load::updateMembers);
-                            gateway.on(MemberJoinEvent.class).subscribe(load::updateMembers);
-                        }
-                        // end :1:
 
-                        gateway.on(MemberJoinEvent.class).subscribe(event -> {
+                        try {
 
-                            final Member member = event.getMember();
+                            // update members as when a user joins or leaves
+                            currentGuild.getChannelById(CHANNEL_MEMBERS_LIST_ID).doOnSuccess(guildChannel -> {
+                                gateway.on(MemberLeaveEvent.class).subscribe(load::updateMembers);
+                                gateway.on(MemberJoinEvent.class).subscribe(load::updateMembers);
+                            }).block();
 
-                            log.info(member.getMention() + " Joined");
-                            if (member.isBot()) {
-                                log.info(member.getMention() + " ignored (bot)");
-                                return;
-                            }
-                            member.addRole(ROLE_UNVERIFIED_ID).block();
-                            log.info(member.getMention() + " Added Role");
-                        });
+                        } catch (Exception ingore) {}
 
-
-                        return;
                     }
-                    gateway.onDisconnect().block();
-
+                    // log the completion of the code execution
+                    new Thread(() -> gateway.onDisconnect().block()).start();
+                    log.info("DiscordBot started");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
