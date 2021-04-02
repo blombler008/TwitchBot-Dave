@@ -37,10 +37,7 @@ import static com.github.blombler008.twitchbot.dave.core.Strings.*;
  * Creation Time 10:48
  */
 public class DiscordConfig {
-    private String channel;
-    private String nickname;
     private String password;
-    private String prefix;
     private boolean externalOAuth;
     private YamlConfiguration config;
 
@@ -49,15 +46,12 @@ public class DiscordConfig {
     }
 
     public boolean gen() {
-        channel = config.getString(CONFIG_TWITCH_CHANNEL).toLowerCase();
-        nickname = config.getString(CONFIG_TWITCH_NICKNAME);
-        prefix = config.getString(CONFIG_TWITCH_PREFIX);
-        externalOAuth = config.getBoolean(CONFIG_TWITCH_EXTERNAL_OAUTH);
+        externalOAuth = config.getBoolean(CONFIG_DISCORD_EXTERNAL_TOKEN);
 
         if (externalOAuth) {
             password = config.getPassword("discord");
         } else {
-            password = config.getString(CONFIG_TWITCH_OAUTH);
+            password = config.getString(CONFIG_DISCORD_TOKEN);
         }
         return true;
     }
@@ -66,19 +60,8 @@ public class DiscordConfig {
         return externalOAuth;
     }
 
-    public String getChannel() {
-        return channel;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
     public String getPassword() {
         return password;
     }
 
-    public String getPrefix() {
-        return prefix;
-    }
 }

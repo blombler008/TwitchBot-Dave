@@ -29,52 +29,85 @@ import com.formdev.flatlaf.extras.FlatInspector;
 import com.formdev.flatlaf.extras.FlatUIDefaultsInspector;
 import com.github.blombler008.twitchbot.dave.application.commands.CommandType;
 import com.github.blombler008.twitchbot.dave.application.commands.WebCommand;
+import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
+import com.github.blombler008.twitchbot.dave.core.Bot;
+import com.github.blombler008.twitchbot.dave.core.ImplBot;
+import com.github.blombler008.twitchbot.dave.core.WebServe;
 import com.github.blombler008.twitchbot.dave.core.config.ApplicationConfig;
+import com.github.blombler008.twitchbot.dave.core.config.ConfigManager;
+import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
+import com.github.blombler008.twitchbot.dave.core.exceptions.AuthenticationException;
 import com.github.blombler008.twitchbot.dave.gui.GUI;
+import com.github.blombler008.twitchbot.dave.main.commands.CommandDice;
+import com.github.blombler008.twitchbot.dave.main.commands.WebCommandFavicon;
 import com.github.blombler008.twitchbot.dave.main.commands.katch.*;
 import com.github.blombler008.twitchbot.dave.main.commands.points.CommandAddPoints;
 import com.github.blombler008.twitchbot.dave.main.commands.points.CommandPoints;
 import com.github.blombler008.twitchbot.dave.main.commands.points.CommandSetPoints;
 import com.github.blombler008.twitchbot.dave.main.configs.*;
-import com.github.blombler008.twitchbot.dave.application.threads.TwitchIRCListener;
-import com.github.blombler008.twitchbot.dave.core.Bot;
-import com.github.blombler008.twitchbot.dave.core.ImplBot;
-import com.github.blombler008.twitchbot.dave.core.WebServe;
-import com.github.blombler008.twitchbot.dave.core.config.ConfigManager;
-import com.github.blombler008.twitchbot.dave.core.config.YamlConfiguration;
-import com.github.blombler008.twitchbot.dave.core.exceptions.AuthenticationException;
-import com.github.blombler008.twitchbot.dave.main.commands.CommandDice;
-import com.github.blombler008.twitchbot.dave.main.commands.WebCommandFavicon;
-import com.github.blombler008.twitchbot.dave.main.katch.CatchManager;
 import com.github.blombler008.twitchbot.dave.main.katch.JSONFile;
+import discord4j.common.util.Snowflake;
 import discord4j.core.DiscordClient;
-import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
+import discord4j.core.event.domain.guild.MemberJoinEvent;
+import discord4j.core.event.domain.guild.MemberLeaveEvent;
+import discord4j.core.event.domain.guild.MemberUpdateEvent;
+import discord4j.core.event.domain.lifecycle.GatewayLifecycleEvent;
+import discord4j.core.event.domain.lifecycle.ReconnectEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.event.domain.message.ReactionAddEvent;
+import discord4j.core.object.entity.Guild;
+import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.Role;
+import discord4j.core.object.entity.channel.Channel;
+import discord4j.core.object.entity.channel.GuildChannel;
 import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.core.object.entity.channel.VoiceChannel;
+import discord4j.core.object.presence.Activity;
+import discord4j.core.object.presence.Presence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 
 import static com.github.blombler008.twitchbot.dave.core.Strings.*;
 
 public class Load {
 
-    public static Load IMP;
-    private String[] args;
+    public static Load IMP; // root initialisation object
+    public static Logger log; // logger
+    private final String[] args; // start arguments
+    private final List<WebCommand> webCommands = new ArrayList<>(); // web access commands
+    private final List<CommandType> twitchCommands = new ArrayList<>(); // twitch irc commands
+
+    // content managers for relation between web, twitch, discord, sql and teamspeak
+    private final List<ContentManager> contentManagers = new ArrayList<>();
+
+    // twitch bot instance
     private Bot twitchBot;
+
+    // web bot instance
+    private Bot webBot;
+
+    // managing object of the configuration object
     private ConfigManager configManager;
+
+    // root config of the configuration file
     private YamlConfiguration config;
+
+    // root IRC listener of the twitch chat
     private TwitchIRCListener twitch;
 
+    // Configuration objects
     private WebConfig webConfig;
     private DiceConfig configDice;
     private CatchConfig configCatch;
@@ -84,11 +117,19 @@ public class Load {
     private PointsConfig configPoints;
     private ApplicationConfig applicationConfig;
 
-    private List<WebCommand> webCommands = new ArrayList<>();
-    private List<CommandType> twitchCommands = new ArrayList<>();
-    private List<ContentManager> contentManagers = new ArrayList<>();
 
-    private Bot webBot;
+    // Some constants for the discord bot
+    private final static Snowflake CHANNEL_VERIFICATION_ID = Snowflake.of(824623601273405440L);
+    private final static Snowflake CHANNEL_MEMBERS_LIST_ID = Snowflake.of(825021730765930576L);
+    private final static Snowflake MESSAGE_VERIFICATION_ID = Snowflake.of(824624336392421418L);
+    private final static Snowflake ROLE_VERIFIED_ID = Snowflake.of(824620958719410206L);
+    private final static Snowflake ROLE_UNVERIFIED_ID = Snowflake.of(824622725023924264L);
+    private final static Snowflake GUILD_ID = Snowflake.of(432270031922003969L);
+    private final static String emoteCheckmark = "✅";
+    private final static String nickname = "lucie";
+    private final static String status = "deinen befehlen";
+
+
 
     private Load(String[] args) {
         this.args = args;
@@ -102,7 +143,7 @@ public class Load {
     public static void main(String[] args) {
         Load load = new Load(args);
 
-        String[] logo = new String[] {
+        String[] logo = new String[]{
                 "IyMjIyMjIyMgIyMgICAgICAjIyAjIyMjICMjIyMjIyMjICAjIyMjIyMgICMjICAgICAjIyAjIyMjIyMjIyAgICMjIyMjIyMgICMjIyMjIyMjIA",
                 "ICAgIyMgICAgIyMgICMjICAjIyAgIyMgICAgICMjICAgICMjICAgICMjICMjICAgICAjIyAjIyAgICAgIyMgIyMgICAgICMjICAgICMjICAgIA",
                 "ICAgIyMgICAgIyMgICMjICAjIyAgIyMgICAgICMjICAgICMjICAgICAgICMjICAgICAjIyAjIyAgICAgIyMgIyMgICAgICMjICAgICMjICAgIA",
@@ -112,43 +153,174 @@ public class Load {
                 "ICAgIyMgICAgICMjIyAgIyMjICAjIyMjICAgICMjICAgICAjIyMjIyMgICMjICAgICAjIyAjIyMjIyMjIyAgICMjIyMjIyMgICAgICMjICAgIA"
         };
 
-        System.out.println("");
-        for(String s: logo) {
+        System.out.println();
+        for (String s : logo) {
             System.out.println(new String(Base64.getDecoder().decode(s)));
         }
-        System.out.println("");
+        System.out.println();
 
-        if(IMP == null)
+        if (IMP == null)
             IMP = load;
         else
             return;
 
 
-
         load.setConfigModel();
 
-        if(load.configManager.isDiscord()) {
+        load.enableLogger();
+
+        if (load.configManager.isDiscord()) {
+
             try {
-
+                // Creating a client using the discord configs token
                 DiscordClient client = DiscordClient.create(load.discordConfig.getPassword());
-                GatewayDiscordClient gateway = client.login().block();
-                gateway.on(MessageCreateEvent.class).subscribe(event -> {
-                    final Message message = event.getMessage();
-                    if ("!ping".equals(message.getContent())) {
-                        final MessageChannel channel = message.getChannel().block();
-                        channel.createMessage("Pong!").block();
-                    }
-                });
 
-                gateway.onDisconnect().block();
+                // logging in
+                GatewayDiscordClient gateway = client.login().block();
+
+                // gateway null check
+                if (Objects.nonNull(gateway)) {
+
+                    Guild currentGuild = gateway.getGuildById(GUILD_ID).block();
+
+                    // set self nickname and Update Presence to something funny
+                    // check the guild to be available
+                    if (Objects.nonNull(currentGuild)) {
+                        currentGuild.changeSelfNickname(nickname).block();
+
+                        gateway.updatePresence(Presence.online(Activity.listening(status))).block();
+
+                        gateway.on(MessageCreateEvent.class).subscribe(event -> {
+                            final Message oldMessage = event.getMessage();
+                            if ("!ping".equals(oldMessage.getContent())) {
+                                final MessageChannel channel = oldMessage.getChannel().block();
+                                Message newMessage = channel.createMessage(
+                                        oldMessage.getAuthor().get().getMention()
+                                                + ": "
+                                                + oldMessage.getContent()
+                                                + " -> Pong!"
+                                ).block();
+                                if(event.getGuildId().isPresent())
+                                    oldMessage.delete().block();
+                            }
+                        });
+
+
+                        // Message verification on reaction hit
+                        gateway.on(ReactionAddEvent.class).subscribe(event -> {
+
+
+                            // TODO: user later for a function
+                            boolean removeReaction = true;
+                            boolean passedVerification = true;
+
+                            // extract the message
+                            Message message = event.getMessage().block();
+
+                            // check message for null ... never seen it happen
+                            if (Objects.isNull(message)) {
+                                log.info("Message happens to be null somehow !?!?!?!?");
+                                return;
+                            }
+
+                            // check if the event member is present
+                            if (event.getMember().isPresent()) {
+                                final Member member = event.getMember().get();
+
+                                // check if the member is a bot
+                                if (member.isBot()) {
+                                    return;
+                                }
+
+
+                                // check if the guild is not null (usually it don't but happens sometimes)
+                                if (Objects.isNull(currentGuild)) {
+                                    log.info("Guild is not valid!");
+                                    return;
+                                }
+
+                                // check if the event emote is a unicode
+                                if (event.getEmoji().asUnicodeEmoji().isPresent()) {
+
+                                    // extracting the unicode emote
+                                    String emote = event.getEmoji().asUnicodeEmoji().get().getRaw();
+
+
+                                    // check if the emote is a checkmark
+                                    // and verify that the user reacted is in the right channel
+                                    // and verify that the user reacted message is the right message
+                                    if (emote.equals(emoteCheckmark)
+                                            && event.getChannelId().equals(CHANNEL_VERIFICATION_ID)
+                                            && event.getMessageId().equals(MESSAGE_VERIFICATION_ID)) {
+                                        // extracting the Role of the guild and verify that the user does have the role
+                                        Role currentGuildUnverifiedRole = currentGuild.getRoleById(ROLE_UNVERIFIED_ID).block();
+                                        // make sure the role is not null -.-
+                                        if (Objects.nonNull(currentGuildUnverifiedRole)) {
+
+                                            // extraction of the value for a null check
+                                            // and check for true
+                                            Boolean block = member.getRoles().hasElement(currentGuildUnverifiedRole).block();
+                                            if (Objects.nonNull(block) && block) {
+
+                                                // remove the user reaction
+                                                //noinspection ConstantConditions
+                                                if (removeReaction) {
+                                                    message.removeReaction(event.getEmoji(), member.getId()).block();
+                                                }
+
+                                                // remove verified user role and add verified role
+                                                //noinspection ConstantConditions
+                                                if (passedVerification) {
+
+                                                    member.removeRole(ROLE_UNVERIFIED_ID).block();
+                                                    member.addRole(ROLE_VERIFIED_ID).block();
+                                                }
+                                                log.info(member.getMention() + " Verified ");
+                                            }
+                                        } else {
+                                            log.info("Role is null!");
+                                        }
+                                    }
+                                } else {
+                                    log.info("Emote is not a unicode!");
+                                }
+                            }
+                        });
+
+                        // start :1: update members as when a user joins or leaves
+                        if(Objects.nonNull(currentGuild.getChannelById(CHANNEL_MEMBERS_LIST_ID))) {
+                            gateway.on(MemberLeaveEvent.class).subscribe(load::updateMembers);
+                            gateway.on(MemberJoinEvent.class).subscribe(load::updateMembers);
+                        }
+                        // end :1:
+
+                        gateway.on(MemberJoinEvent.class).subscribe(event -> {
+
+                            final Member member = event.getMember();
+
+                            log.info(member.getMention() + " Joined");
+                            if (member.isBot()) {
+                                log.info(member.getMention() + " ignored (bot)");
+                                return;
+                            }
+                            member.addRole(ROLE_UNVERIFIED_ID).block();
+                            log.info(member.getMention() + " Added Role");
+                        });
+
+
+                        return;
+                    }
+                    gateway.onDisconnect().block();
+
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        if(load.configManager.isGui()) {
+        if (load.configManager.isGui()) {
             try {
-                if(load.applicationConfig.isLightTheme()) {
+                if (load.applicationConfig.isLightTheme()) {
                     FlatLightLaf.install();
                 } else {
                     FlatDarkLaf.install();
@@ -156,12 +328,12 @@ public class Load {
                 FlatInspector.install("ctrl shift alt X");
                 FlatUIDefaultsInspector.install("ctrl shift alt Y");
                 //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                JFrame.setDefaultLookAndFeelDecorated( true );
-                JDialog.setDefaultLookAndFeelDecorated( true );
-                UIManager.put( "CheckBox.icon.style", "filled" );
-                UIManager.put( "Component.arrowType", "triangle" );
-                UIManager.put( "TabbedPane.tabLayoutPolicy", "scroll" );
-                UIManager.put( "Component.hideMnemonics", false );
+                JFrame.setDefaultLookAndFeelDecorated(true);
+                JDialog.setDefaultLookAndFeelDecorated(true);
+                UIManager.put("CheckBox.icon.style", "filled");
+                UIManager.put("Component.arrowType", "triangle");
+                UIManager.put("TabbedPane.tabLayoutPolicy", "scroll");
+                UIManager.put("Component.hideMnemonics", false);
 
             } catch (Exception ignore) {
             }
@@ -171,14 +343,15 @@ public class Load {
             gui.setSize(gui.getDimension());
             gui.setMinimumSize(gui.getMinimumDimension());
             gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            if(gui.apply()) {
+            if (gui.apply()) {
                 gui.setVisible(true);
             }
-            ((JTabbedPane)gui.$$$getRootComponent$$$()).setSelectedIndex(1);
-            ((JTabbedPane)gui.$$$getRootComponent$$$()).setSelectedIndex(0);
+            ((JTabbedPane) gui.$$$getRootComponent$$$()).setSelectedIndex(1);
+            ((JTabbedPane) gui.$$$getRootComponent$$$()).setSelectedIndex(0);
             return;
         }
-        if(load.configManager.isTwitch()) {
+
+        if (load.configManager.isTwitch()) {
             if (load.createSocketTwitch()) {
                 load.createSocketWeb();
                 load.join();
@@ -192,11 +365,48 @@ public class Load {
 
             }
         }
+
+    }
+
+    private void updateMembers(MemberLeaveEvent event) {
+        Guild currentGuild = event.getGuild().block();
+        if(Objects.nonNull(currentGuild)) {
+            updateMembers(CHANNEL_MEMBERS_LIST_ID, currentGuild, currentGuild.getMembers().count().block());
+        }
+    }
+
+    private void updateMembers(MemberJoinEvent event) {
+        Guild currentGuild = event.getGuild().block();
+        if(Objects.nonNull(currentGuild)) {
+            updateMembers(CHANNEL_MEMBERS_LIST_ID, currentGuild, currentGuild.getMembers().count().block());
+        }
+    }
+
+    private void updateMembers(Snowflake channel, Guild currentGuild, long memberCount) {
+        try {
+            VoiceChannel members_channel = currentGuild.getChannelById(channel).cast(VoiceChannel.class).block();
+            log.info("Members in discord: " + memberCount);
+            if (Objects.nonNull(members_channel))  {
+                members_channel.edit(spec -> {
+                    spec.setName("Members: " + memberCount);
+                }).block(Duration.ofSeconds(30));
+            }
+            log.info("Members channel updated");
+        } catch (IllegalStateException e) {
+            log.info("Members channel update Failed");
+        }
+
+    }
+
+    public void enableLogger() {
+        if (Objects.isNull(Load.log)) {
+            Load.log = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        }
     }
 
 
     public void createConfigMySQL() {
-        if(configMySQL.connect()) {
+        if (configMySQL.connect()) {
             try {
                 PreparedStatement statement = configMySQL.getConnection().prepareStatement(MYSQL_DATABASE_CREATE.replaceAll("%database%", configMySQL.getDatabase()));
                 int code = statement.executeUpdate();
@@ -245,11 +455,11 @@ public class Load {
     }
 
     public void registerCommands() {
-        for(WebCommand cmd: webCommands) {
+        for (WebCommand cmd : webCommands) {
             WebServe.addCommand(cmd);
             System.out.println("Added WebServe: " + cmd);
         }
-        for(CommandType cmd: twitchCommands) {
+        for (CommandType cmd : twitchCommands) {
             twitch.addCommand(cmd);
             System.out.println("Added Command: " + cmd);
         }
@@ -327,6 +537,7 @@ public class Load {
     public TwitchConfig getTwitchConfig() {
         return twitchConfig;
     }
+
     public TwitchIRCListener getTwitch() {
         return twitch;
     }

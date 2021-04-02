@@ -103,6 +103,12 @@ public class Strings {
     public static final String CONFIG_TWITCH_OAUTH = "twitch.OAuth";
     public static final String CONFIG_TWITCH_PREFIX = "twitch.prefix";
 
+    // DISCORD //////////////////////////////////////////////////////////////////////////
+    public static final String CONFIG_DISCORD_EXTERNAL_TOKEN = "discord.externalToken";
+    public static final String CONFIG_DISCORD_TOKEN = "discord.Token";
+
+
+
     // DICE /////////////////////////////////////////////////////////////////////////////
     public static final String CONFIG_DICE_ENABLE = "game.dice.enable";
     public static final String CONFIG_DICE_MAX_BOUND = "game.dice.max";

@@ -300,7 +300,6 @@ public class YamlConfiguration {
         BufferedReader bf = null;
 
         try {
-            StringBuilder passwordBuilder = new StringBuilder();
             File passFile = new File(getWorkingDirectory(), file);
 
             try {
@@ -310,7 +309,8 @@ public class YamlConfiguration {
             }
 
             reader = new YamlReader(bf, new YamlConfig());
-            return (String )reader.get("entry");
+            Map<?,?> map = getMapFromObject(reader.read(HashMap.class));
+            return (String) map.get(entry);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
