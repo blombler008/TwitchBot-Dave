@@ -3,9 +3,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.blombler008.twitchbot.dave</groupId>
-    <artifactId>TwitchBot-Dave</artifactId>
+    <artifactId>TwitchBot</artifactId>
 
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1.2-SNAPSHOT</version>
 
     <repositories>
         <repository>
@@ -86,7 +86,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.github.blombler008.twitchbot.dave.main.Load</mainClass>
+                            <mainClass>com.github.blombler008.twitchbot.main.Load</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
