@@ -60,16 +60,20 @@ import discord4j.core.object.entity.channel.VoiceChannel;
 import discord4j.core.object.presence.Activity;
 import discord4j.core.object.presence.Presence;
 import discord4j.discordjson.json.ActivityUpdateRequest;
+import discord4j.rest.util.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
+import java.net.URLEncoder;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.util.*;
+import java.util.List;
 
 public class Load {
 
@@ -203,36 +207,117 @@ public class Load {
                             log.info(member.getMention() + " Added Role");
                         });
 
-
                         // simple bot ping command example // -> !ping results in an replay like : `@blombler: !ping -> Pong!`
                         // TODO: remove later and create a command interface for commands
                         gateway.on(MessageCreateEvent.class).subscribe(event -> {
                             try {
+
                                 final Message oldMessage = event.getMessage();
-                                if ("!ping".equals(oldMessage.getContent())) {
+                                final String message = oldMessage.getContent();
+                                // "!ping test";
+                                // "!ping", "test"
+                                List<String> arrayList = new ArrayList<>(Arrays.asList(message.split(" ")));
+
+                                String cmd = arrayList.get(0);
+
+                                try {
+                                    arrayList.remove(0);
+                                } catch (Exception ignore) {
+                                    arrayList.clear();
+                                }
+
+
+                                final String [] messageArgs = arrayList.toArray(new String[0]);
+                                final int argSize = messageArgs.length - 1;
+
+
+
+                                if (cmd.startsWith("!")) {
+
+                                    final User author = oldMessage.getAuthor().get();
+                                    final Member member = oldMessage.getAuthorAsMember().block();
+
+                                    final String command = cmd.replaceFirst("!", "").toLowerCase();
                                     final MessageChannel channel = oldMessage.getChannel().block();
 
-                                    if (Objects.isNull(channel) || !(oldMessage.getAuthor().isPresent())) {
+                                    if (Objects.isNull(channel) || !(oldMessage.getAuthor().isPresent()) || Objects.isNull(member)) {
                                         log.info("Unknown Channel or Author");
                                         return;
                                     }
 
-                                    final User author = oldMessage.getAuthor().get();
+                                    if (member.isBot()) {
+                                        log.info("Member is Bot!");
+                                    }
 
-                                    Mono<Message> newMessage = channel.createMessage(
-                                            author.getMention()
-                                                    + ": "
-                                                    + oldMessage.getContent()
-                                                    + " -> pong!"
-                                    );
+                                    log.info(author.getTag() + "(" + author.getUsername() + ")" + " used " + command + " {" + Arrays.toString(messageArgs) + "}");
 
-                                    if (Objects.nonNull(newMessage)) newMessage.block();
+                                    // Ping command
+                                    if (command.equalsIgnoreCase("ping")) {
+                                        Mono<Message> newMessage = channel.createMessage(
+                                                author.getMention()
+                                                        + ": "
+                                                        + oldMessage.getContent()
+                                                        + " -> pong!"
+                                        );
+
+                                        if (Objects.nonNull(newMessage)) newMessage.block();
+
+                                        if (event.getGuildId().isPresent())
+                                            oldMessage.delete().block();
 
 
-                                    log.info(author.getTag() + "(" + author.getUsername() + ")" + " used ping");
+                                    }
 
-                                    if (event.getGuildId().isPresent())
-                                        oldMessage.delete().block();
+                                    // bing command
+                                    if (
+                                            command.equals("bing") ||
+                                            command.equals("google")
+                                    ) {
+                                        final String bing = "https://www.bing.com/search?q=%query%";
+                                        final String bingThumb = "https://static.wikia.nocookie.net/logopedia/images/a/ae/Microsoft_Bing.svg/revision/latest/scale-to-width-down/300?cb=20201005204303";
+                                        final String google = "https://www.google.com/search?q=%query%";
+                                        final String googleThumb = "https://static.wikia.nocookie.net/logopedia/images/2/28/Google_2015.svg/revision/latest/scale-to-width-down/300?cb=20210413085830";
+                                        if(messageArgs.length > 0) {
+                                            String content = null;
+                                            String thumbnail = null;
+                                            if(command.equals("bing")) {
+                                                content = bing.replaceAll("%query%", URLEncoder.encode(String.join("+", messageArgs), "UTF-8"));
+                                                thumbnail = bingThumb;
+                                            }
+                                            if(command.equals("google")) {
+                                                content = google.replaceAll("%query%", URLEncoder.encode(String.join("+", messageArgs), "UTF-8"));
+                                                thumbnail = googleThumb;
+                                            }
+                                            final String finalContent = content;
+                                            final String finalThumbnail = thumbnail;
+
+                                            log.info(content);
+
+                                            Mono<Message> newMessage = channel.createEmbed(embedCreateSpec -> {
+
+                                                String s1 = (command.charAt(0)+ "").toUpperCase();
+                                                String s2 = s1.concat(command.substring(1));
+
+                                                embedCreateSpec.setUrl(finalContent);
+                                                embedCreateSpec.setTitle(s2 + " Suchergebnisse!");
+                                                embedCreateSpec.setColor(Color.YELLOW);
+                                                embedCreateSpec.setDescription("\n[" + member.getNicknameMention() + " suchte nach: " + String.join(" ", messageArgs) + "](" + finalContent +")");
+
+                                                embedCreateSpec.setThumbnail(finalThumbnail);
+                                            });
+
+                                            if (Objects.nonNull(newMessage)) newMessage.block();
+
+                                            if (event.getGuildId().isPresent())
+                                                oldMessage.delete().block();
+
+                                        }
+
+
+
+                                    }
+
+
                                 }
                             } catch (Exception e) {
                                 log.error(e.getMessage());

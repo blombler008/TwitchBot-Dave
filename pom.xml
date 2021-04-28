@@ -5,7 +5,7 @@
     <groupId>com.github.blombler008.twitchbot.dave</groupId>
     <artifactId>TwitchBot</artifactId>
 
-    <version>1.1.2-SNAPSHOT</version>
+    <version>1.1.3-SNAPSHOT</version>
 
     <repositories>
         <repository>
@@ -18,7 +18,7 @@
         <dependency>
             <groupId>com.discord4j</groupId>
             <artifactId>discord4j-core</artifactId>
-            <version>3.1.3</version>
+            <version>3.1.5</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
