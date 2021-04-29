@@ -74,6 +74,7 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Load {
 
@@ -214,8 +215,6 @@ public class Load {
 
                                 final Message oldMessage = event.getMessage();
                                 final String message = oldMessage.getContent();
-                                // "!ping test";
-                                // "!ping", "test"
                                 List<String> arrayList = new ArrayList<>(Arrays.asList(message.split(" ")));
 
                                 String cmd = arrayList.get(0);
@@ -251,72 +250,86 @@ public class Load {
 
                                     log.info(author.getTag() + "(" + author.getUsername() + ")" + " used " + command + " {" + Arrays.toString(messageArgs) + "}");
 
-                                    // Ping command
-                                    if (command.equalsIgnoreCase("ping")) {
-                                        Mono<Message> newMessage = channel.createMessage(
-                                                author.getMention()
-                                                        + ": "
-                                                        + oldMessage.getContent()
-                                                        + " -> pong!"
-                                        );
-
-                                        if (Objects.nonNull(newMessage)) newMessage.block();
-
-                                        if (event.getGuildId().isPresent())
-                                            oldMessage.delete().block();
-
-
-                                    }
-
-                                    // bing command
-                                    if (
-                                            command.equals("bing") ||
-                                            command.equals("google")
-                                    ) {
-                                        final String bing = "https://www.bing.com/search?q=%query%";
-                                        final String bingThumb = "https://static.wikia.nocookie.net/logopedia/images/a/ae/Microsoft_Bing.svg/revision/latest/scale-to-width-down/300?cb=20201005204303";
-                                        final String google = "https://www.google.com/search?q=%query%";
-                                        final String googleThumb = "https://static.wikia.nocookie.net/logopedia/images/2/28/Google_2015.svg/revision/latest/scale-to-width-down/300?cb=20210413085830";
-                                        if(messageArgs.length > 0) {
-                                            String content = null;
-                                            String thumbnail = null;
-                                            if(command.equals("bing")) {
-                                                content = bing.replaceAll("%query%", URLEncoder.encode(String.join("+", messageArgs), "UTF-8"));
-                                                thumbnail = bingThumb;
-                                            }
-                                            if(command.equals("google")) {
-                                                content = google.replaceAll("%query%", URLEncoder.encode(String.join("+", messageArgs), "UTF-8"));
-                                                thumbnail = googleThumb;
-                                            }
-                                            final String finalContent = content;
-                                            final String finalThumbnail = thumbnail;
-
-                                            log.info(content);
-
-                                            Mono<Message> newMessage = channel.createEmbed(embedCreateSpec -> {
-
-                                                String s1 = (command.charAt(0)+ "").toUpperCase();
-                                                String s2 = s1.concat(command.substring(1));
-
-                                                embedCreateSpec.setUrl(finalContent);
-                                                embedCreateSpec.setTitle(s2 + " Suchergebnisse!");
-                                                embedCreateSpec.setColor(Color.YELLOW);
-                                                embedCreateSpec.setDescription("\n[" + member.getNicknameMention() + " suchte nach: " + String.join(" ", messageArgs) + "](" + finalContent +")");
-
-                                                embedCreateSpec.setThumbnail(finalThumbnail);
-                                            });
+                                    switch (command) {
+                                        // Ping command
+                                        case "ping": {
+                                            Mono<Message> newMessage = channel.createMessage(
+                                                    author.getMention()
+                                                            + ": "
+                                                            + oldMessage.getContent()
+                                                            + " -> pong!"
+                                            );
 
                                             if (Objects.nonNull(newMessage)) newMessage.block();
 
                                             if (event.getGuildId().isPresent())
                                                 oldMessage.delete().block();
+                                            break;
+                                        }
 
+                                        // bing / google command
+                                        case "bing":
+                                        case "google": {
+                                            final String bing = "https://www.bing.com/search?q=%query%";
+                                            final String bingThumb = "https://static.wikia.nocookie.net/logopedia/images/a/ae/Microsoft_Bing.svg/revision/latest/scale-to-width-down/300?cb=20201005204303";
+                                            final String google = "https://www.google.com/search?q=%query%";
+                                            final String googleThumb = "https://static.wikia.nocookie.net/logopedia/images/2/28/Google_2015.svg/revision/latest/scale-to-width-down/300?cb=20210413085830";
+
+                                            if (messageArgs.length > 0) {
+
+                                                final AtomicReference<String> content = new AtomicReference<>();
+                                                final AtomicReference<String> thumbnail = new AtomicReference<>();
+
+                                                final String searchString = String.join(" ", messageArgs);
+                                                final String encodedSearchString = URLEncoder.encode(searchString, "UTF-8");
+
+                                                switch (command) {
+                                                    case "bing":
+                                                        content.set(bing.replaceAll("%query%", encodedSearchString));
+                                                        thumbnail.set(bingThumb);
+                                                        break;
+
+                                                    case "google":
+                                                        content.set(google.replaceAll("%query%", encodedSearchString));
+                                                        thumbnail.set(googleThumb);
+                                                        break;
+                                                }
+
+                                                log.info(content.get());
+
+                                                Mono<Message> newMessage = channel.createEmbed(embedCreateSpec -> {
+
+                                                    String s1 = (command.charAt(0) + "").toUpperCase();
+                                                    String s2 = s1.concat(command.substring(1));
+
+                                                    embedCreateSpec.setUrl(content.get());
+                                                    embedCreateSpec.setTitle(s2 + " Suchergebnisse!");
+                                                    embedCreateSpec.setColor(Color.YELLOW);
+
+                                                    // [${metntion} suchte nach: ${search String}](${url})
+                                                    embedCreateSpec.setDescription(String.format(
+                                                            "\n[%1$s suchte nach: %2$s](%3$s)",
+                                                            member.getNicknameMention(),
+                                                            searchString,
+                                                            content.get())
+                                                    );
+
+                                                    embedCreateSpec.setThumbnail(thumbnail.get());
+                                                });
+
+                                                if (Objects.nonNull(newMessage)) newMessage.block();
+
+                                                if (event.getGuildId().isPresent())
+                                                    oldMessage.delete().block();
+
+                                            }
+
+
+                                            break;
                                         }
 
 
-
                                     }
-
 
                                 }
                             } catch (Exception e) {
